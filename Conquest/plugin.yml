@@ -1,0 +1,15 @@
+name: Conquest
+main: eu.kingconquest.conquest.Main
+softdepend: []
+version: 0.4d_SNAPSHOT
+author: Thomas Lundqvist
+website: www.kingconquest.eu
+description: World Domination, Done Right! 
+
+commands:
+  kingconquest:
+    description: Main Commmand
+  kc:
+    description: Main Commmand
+  kingc:
+    description: Main Commmand
