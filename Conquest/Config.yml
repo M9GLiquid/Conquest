@@ -2,7 +2,7 @@
 # | Author: Thomas (Liquid) Lundqvist
 # | Server IP: play.kingconquest.eu
 # | Website: www.kingconquest.eu
-========================================================
+#========================================================
 # | General Settings:
 # |  <AutoReloadUpdate>:		Toggle the console message update for config AutoReload.
 # |  <AutoReload>:				The time before the plugin will auto save/load to config (minutes).
@@ -25,7 +25,7 @@
 # |     <DistanceBetween>:		Amount of Blocks away from other outposts you need to be to create a new Outpost (X|Z).
 # |    Debug:
 # |      <DynmapMarkers>: true	Allow debug messages for dynmap markers.
-# # ========================================================
+# ========================================================
 General:
   AutoReloadUpdate: true
   AutoReload: 30
@@ -57,6 +57,42 @@ ActiveWorlds:
     Debug:
       DynmapMarkers: true
   Sezty:
+    General:
+      RespawnDelay: 10
+      TeleportDelay: 10
+    Income:
+      CapCash: 100
+      IncomeDelay: 60000
+      ObjectiveBaseValue: 0.2
+      OutpostBaseValue: 0.5
+    Combat:
+      CaptureRate: 0.3
+      CaptureDistance: 17.0
+      CaptureMaxY: 5.0
+      CaptureMinY: 1.0
+    Build:
+      DistanceBetween: 25
+    Debug:
+      DynmapMarkers: true
+  Testing_World:
+    General:
+      RespawnDelay: 10
+      TeleportDelay: 10
+    Income:
+      CapCash: 100
+      IncomeDelay: 60000
+      ObjectiveBaseValue: 0.2
+      OutpostBaseValue: 0.5
+    Combat:
+      CaptureRate: 0.3
+      CaptureDistance: 17.0
+      CaptureMaxY: 5.0
+      CaptureMinY: 1.0
+    Build:
+      DistanceBetween: 25
+    Debug:
+      DynmapMarkers: true
+  Building_World:
     General:
       RespawnDelay: 10
       TeleportDelay: 10

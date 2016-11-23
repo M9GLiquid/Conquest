@@ -8,12 +8,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.core.util.Cach;
-import eu.kingconquest.conquest.core.util.ChatManager;
-import eu.kingconquest.conquest.core.util.ColorManager;
-import eu.kingconquest.conquest.core.util.Config;
-import eu.kingconquest.conquest.core.util.Marker;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.util.Cach;
+import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.ColorManager;
+import eu.kingconquest.conquest.util.Config;
+import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Validate;
+
 
 public class Kingdom extends Objective{
 	private UUID king;
@@ -50,20 +51,12 @@ public class Kingdom extends Objective{
 	 */
 	public  void join(Player p){
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
-		//If Player already belong to a Kingdom
-		if (wrapper.isInKingdom()){
-			Cach.StaticKingdom = wrapper.getKingdom();
-			ChatManager.Chat(p, Config.getChat("BelongTo"));
-			return;
-		}
 		
 		//Player joins this Kingdom
-		wrapper.setKingdom(this);
 		Cach.StaticKingdom = this;
-		
-		wrapper.getScoreboard().kingdomBoard(p);
 		ChatManager.Chat(p, Config.getChat("JoinSuccess"));
-		
+		wrapper.setKingdom(this);
+		wrapper.getScoreboard().kingdomBoard(p);
 		addMember(p.getUniqueId());
 		Config.saveUsers(getLocation().getWorld());
 	}
@@ -76,21 +69,17 @@ public class Kingdom extends Objective{
 	 */
 	public  void leave(Player p){
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
-			if (getMembers().contains(p.getUniqueId()) 
-					&& wrapper.isInKingdom()){
-				if (removeMember(p.getUniqueId()))
-					Config.saveUsers(getLocation().getWorld());
-				return;
-			}
-			if (!getMembers().contains(p.getUniqueId()))
-				return;
-			Cach.StaticKingdom = this;
-			wrapper.setKingdom(null);
-			wrapper.getScoreboard().neutralBoard(p);
-			if (removeMember(p.getUniqueId())){
-				ChatManager.Chat(p, Config.getChat("LeaveSuccess"));
-				Config.saveUsers(getLocation().getWorld());
-			}
+		if (!wrapper.getKingdom().equals(this))
+			return;
+		if(!getMembers().contains(p.getUniqueId()))
+			return;
+		
+		Cach.StaticKingdom = this;
+		ChatManager.Chat(p, Config.getChat("LeaveSuccess"));
+		wrapper.setKingdom(null);
+		wrapper.getScoreboard().neutralBoard(p);
+		removeMember(p.getUniqueId());
+		Config.saveUsers(getLocation().getWorld());
 	}
 	
 //Getters
@@ -118,10 +107,10 @@ public class Kingdom extends Objective{
 	public Double getCapturePercent(){
 		for(Village op : Village.getVillages()){
 			if(op.getParent() == null){
-				Villages.add(op);
+				villages.add(op);
 			}
 		}
-		double kingdomturePercent = Math.ceil(((Towns.size() + Villages.size()/Town.getTowns().size() * 100)));
+		double kingdomturePercent = Math.ceil(((towns.size() + villages.size()/Town.getTowns().size() * 100)));
 
 		return kingdomturePercent;
 	}
@@ -157,11 +146,11 @@ public class Kingdom extends Objective{
 	}
 
 //Outposts
-	private ArrayList<Village> Villages = new ArrayList<Village>();
+	private ArrayList<Village> villages = new ArrayList<Village>();
 	
 	public Village getOutpost(UUID ID) {
 		
-		for (Village op : Villages) {
+		for (Village op : villages) {
 			if (!op.getUUID().equals(ID))
 				continue;
 			return op;
@@ -169,35 +158,35 @@ public class Kingdom extends Objective{
 		return null;
 	}
 	public ArrayList<Village> getOutposts(){
-		return Villages;
+		return villages;
 	}
 	public boolean addOutpost(Village op) {
-		if (Villages.add(op))
+		if (villages.add(op))
 			return true;
 		return false;
 	}
 	public boolean addOutposts(ArrayList<Village> ops) {
-		if (Villages.addAll(ops))
+		if (villages.addAll(ops))
 			return true;
 		return false;
 	}
 	public boolean removeOutpost(Village op) {
-		if (Villages.remove(op))
+		if (villages.remove(op))
 			return true;
 		return false;
 	}
 	public boolean removeOutposts(ArrayList<Village> ops) {
-		if (Villages.removeAll(ops))
+		if (villages.removeAll(ops))
 			return true;
 		return false;
 		
 	}
 	
 //Objectives
-	private ArrayList<Town> Towns = new ArrayList<Town>();
+	private ArrayList<Town> towns = new ArrayList<Town>();
 	
 	public Town getObjective(UUID ID) {
-		for (Town obj : Towns){
+		for (Town obj : towns){
 			if (!obj.getUUID().equals(ID))
 				continue;
 			return obj;
@@ -206,7 +195,7 @@ public class Kingdom extends Objective{
 		
 	}
 	public ArrayList<Town> getObjectives(){
-		return Towns;
+		return towns;
 		
 	}
 	/**
@@ -215,10 +204,10 @@ public class Kingdom extends Objective{
 	 * @return void
 	 */
 	public void addObj(Town obj){
-		this.Towns.add(obj);
+		this.towns.add(obj);
 	}
 	public void addObjs(ArrayList<Town> objs){
-		this.Towns.addAll(objs);
+		this.towns.addAll(objs);
 	}
 	/**
 	 * Remove Objective from Kingdom Objectives
@@ -226,10 +215,10 @@ public class Kingdom extends Objective{
 	 * @return void
 	 */
 	public void removeObjective(Town obj){
-		this.Towns.remove(obj);
+		this.towns.remove(obj);
 	}
 	public void removeObjectives(ArrayList<Town> objs){
-		this.Towns.removeAll(objs);
+		this.towns.removeAll(objs);
 	}
 	
 //Members
@@ -287,26 +276,18 @@ public class Kingdom extends Objective{
 			});
 		return kingdoms;
 	}
-	public static Kingdom getKingdom(UUID ID){
+	public static Kingdom getKingdom(UUID ID, World world){
 		for (Kingdom kingdom : getKingdoms()){
-			if (!kingdom.getUUID().equals(ID))
-				continue;
-			return kingdom;
-		}
-		return null;
-	}
-	public static Kingdom getKingdom(String name){
-		for (Kingdom kingdom : getKingdoms()) {
-			if (!kingdom.getName().equals(name))
-				continue;
+			if (kingdom.getUUID().equals(ID)
+					&& kingdom.getLocation().getWorld().equals(world))
 			return kingdom;
 		}
 		return null;
 	}
 	public static Kingdom getKingdom(String name, World world){
 		for (Kingdom kingdom : getKingdoms(world)){
-			if (!kingdom.getName().equals(name))
-				continue;
+			if (kingdom.getName().equals(name)
+					&& kingdom.getLocation().getWorld().equals(world))
 			return kingdom;
 		}
 		return null;
@@ -329,12 +310,13 @@ public class Kingdom extends Objective{
 		return false;
 	}
 
-	public static void clearKingdoms(World world){
-		kingdoms.forEach(kingdom->{
-			kingdoms.remove(kingdom);
-			Config.removeKingdoms(kingdom.getLocation().getWorld());
-			Config.removeUsers(kingdom.getLocation().getWorld());
+	public static void clear(){
+		Kingdom.getKingdoms().forEach(kingdom->{
+			kingdom.members.clear();
+			kingdom.towns.clear();
+			kingdom.villages.clear();
 		});
+		kingdoms.clear();
 	}
 	
 	@Override
@@ -346,7 +328,6 @@ public class Kingdom extends Objective{
 		}
 		return false;
 	}
-
 	@Override
 	public boolean delete(){
 		removeKingdom(this);
@@ -354,7 +335,6 @@ public class Kingdom extends Objective{
 			return true;
 		return false;
 	}
-
 	@Override
 	public void updateGlass(){
 	}

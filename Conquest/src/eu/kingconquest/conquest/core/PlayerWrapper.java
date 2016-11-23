@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.core.util.SimpleScoreboard;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.util.SimpleScoreboard;
+import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerWrapper{
 	private static HashMap<UUID, PlayerWrapper> map = new HashMap<UUID, PlayerWrapper>();

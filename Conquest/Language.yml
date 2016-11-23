@@ -51,9 +51,10 @@ Language:
       EditParent: '&f{village}s &6Parent Changed to &f{town}'
       EditSpawn: '&f{village}s &6Spawn Location Changed'
       EditLocation: '&f{village}s &6Dynmap Location Changed'
-  Broadcast:
-    Distress: '&cVillage &f{village} &cis currently under attack!'
-    CapComplete: Village &f{village} &6has been captured by {color}{kingdom}
   Errors:
-    AlreadyExists: '&cError, Name exist, please choose another!'
+    AlreadyExists: '&cOBS!, Name exist, perhaps choose another?!'
     ToClose: '&cError, To close to another Objective!'
+  Broadcast:
+    WarnDistress: '&7{village} &cis currently under attack!'
+    WarnNeutral: '&f{village} &7is now &fNeutral!'
+    Captured: Village &f{village} &6is now under controle of {color}{kingdom}!

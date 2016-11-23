@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 
-import eu.kingconquest.conquest.core.event.CaptureZoneEnterEvent;
-import eu.kingconquest.conquest.core.event.CaptureZoneExitEvent;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.event.CaptureZoneEnterEvent;
+import eu.kingconquest.conquest.event.CaptureZoneExitEvent;
+import eu.kingconquest.conquest.util.Validate;
 
 /**
  * Capture Event for Outpost

@@ -14,10 +14,10 @@ import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.core.util.ChatManager;
-import eu.kingconquest.conquest.core.util.Config;
-import eu.kingconquest.conquest.core.util.Marker;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Config;
+import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Validate;
 
 public class Dynmap{
 	public static Plugin dynMap = null;
