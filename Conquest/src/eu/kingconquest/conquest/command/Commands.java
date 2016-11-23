@@ -3,12 +3,12 @@ package eu.kingconquest.conquest.command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.core.gui.HomeGUI;
+import eu.kingconquest.conquest.gui.HomeGUI;
+import eu.kingconquest.conquest.util.Config;
 import net.milkbowl.vault.permission.Permission;
 
 public class Commands{
 	public static Permission perms = null;
-	private static Player p = null;
 
 	/**
 	 * On Command Do..
@@ -18,11 +18,15 @@ public class Commands{
 	 * @param args
 	 */
 	public static void Main(CommandSender sender, String[] args) {
-
 //# Player based commands
 		if (sender instanceof Player){
-			p = (Player) sender;
-			new HomeGUI(p);
+			Player player = (Player) sender;
+
+			Config.getWorlds().forEach(world->{
+				if (player.getWorld().equals(world)){
+					new HomeGUI(player);
+				}
+			});
 		}
 	}
 }

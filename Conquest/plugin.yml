@@ -1,7 +1,7 @@
 name: Conquest
 main: eu.kingconquest.conquest.Main
 softdepend: []
-version: 0.4d_SNAPSHOT
+version: 0.6a_SNAPSHOT
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 

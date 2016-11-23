@@ -1,14 +1,16 @@
 package eu.kingconquest.conquest.core;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.core.util.ColorManager;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.util.ColorManager;
+import eu.kingconquest.conquest.util.Validate;
 
 public abstract class Objective{
 	private String name = "";
@@ -53,7 +55,12 @@ public abstract class Objective{
 	public Kingdom getOwner() {
 		return this.owner;
 	}
-	
+	public static ArrayList<Objective> getObjectives(World world){
+		ArrayList<Objective> objectives = new ArrayList<Objective>();
+		objectives.addAll(Town.getTowns(world));
+		objectives.addAll(Village.getVillages(world));
+		return objectives;
+	}
 	
 	public void newUUID() {
 		this.uniqueID = UUID.randomUUID();

@@ -2,7 +2,8 @@ package eu.kingconquest.conquest.hook;
 
 import java.util.HashMap;
 
-import eu.kingconquest.conquest.core.util.ChatManager;
+import eu.kingconquest.conquest.util.ChatManager;
+
 
 public class Hooks{
 	private static String headerMsg = 	"&6| - &aHooked:";

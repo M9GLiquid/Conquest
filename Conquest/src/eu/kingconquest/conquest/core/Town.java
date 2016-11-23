@@ -14,34 +14,34 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.core.util.Cach;
-import eu.kingconquest.conquest.core.util.ChatManager;
-import eu.kingconquest.conquest.core.util.Config;
-import eu.kingconquest.conquest.core.util.Marker;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.util.Cach;
+import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Config;
+import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Validate;
 
 public class Town extends Objective{
-	public Town(String name, Location loc, Location spawn, ArrayList<Village> children){
-		this(name, null, loc, spawn, null, children);
+	public Town(String name, Location loc, Location spawn){
+		this(name
+				, null
+				, loc
+				, spawn
+				, null);
 	}
-	public Town(String name, Location loc, Location spawn, Kingdom owner, ArrayList<Village> children){
+	public Town(String name, Location loc, Location spawn, Kingdom owner){
 		this(name
 				,null
 				,loc
 				,spawn
-				,owner
-				,children);
+				,owner);
 	}
-	public Town(String name, String uniqueID, Location loc, Location spawn, Kingdom owner, ArrayList<Village> children){
+	public Town(String name, String uniqueID, Location loc, Location spawn, Kingdom owner){
 		super(name, loc, spawn, uniqueID);
 		
 		if (!Validate.isNull(owner))
 			setOwner(owner);
 		else
-			setOwner(Kingdom.getKingdom("Neutral"));
-		
-		if (!Validate.isNull(children))
-			addChildren(children);
+			setOwner(Kingdom.getKingdom("Neutral", loc.getWorld()));
 
 		addTown(this);
 		Marker.create(this);
@@ -54,7 +54,7 @@ public class Town extends Objective{
 	 * @return Arraylist<Outpost>
 	 */
 	public ArrayList<Village> getChildren(){
-		return Children;
+		return children;
 	}
 
 //Setters
@@ -63,18 +63,18 @@ public class Town extends Objective{
 	 * @return void
 	 */
 	public void setNeutral(){
-			setOwner(Kingdom.getKingdom("Neutral"));
+			setOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
 			updateGlass();
 			Marker.update(this);
 	}
 
-	private ArrayList<Village> Children = new ArrayList<Village>();
+	private ArrayList<Village> children = new ArrayList<Village>();
 	/**
 	 * If Town has Children
 	 * @return boolean
 	 */
 	public boolean hasChildren(){
-		if (Children.size() != 0)
+		if (children.size() != 0)
 			return true;
 		return false;
 	}
@@ -84,7 +84,7 @@ public class Town extends Objective{
 	 * @return void
 	 */
 	public void addChild(Village village){
-		Children.add(village);
+		children.add(village);
 	}
 	/**
 	 * Add an ArrayList of Outposts to bind to Town
@@ -92,7 +92,7 @@ public class Town extends Objective{
 	 * @return void
 	 */
 	public void addChildren(ArrayList<Village> villages){
-		Children = villages;
+		children = villages;
 	}
 	/**
 	 * Remove Towns bound Outposts
@@ -100,7 +100,7 @@ public class Town extends Objective{
 	 * @return void
 	 */
 	public void removeChild(Village village){
-		Children.remove(village);
+		children.remove(village);
 	}
 
 
@@ -118,33 +118,36 @@ public class Town extends Objective{
 			});
 		return towns;
 	}
-	public static Town getTown(UUID ID) {
+	public static Town getTown(UUID ID, World world) {
 		for (Town town : getTowns())
-			if (town.getUUID().equals(ID))
+			if (town.getUUID().equals(ID)
+					&& town.getLocation().getWorld().equals(world))
 				return town;
 		return null;
 	}
-	public static Town getTown(String name) {
+	public static Town getTown(String name, World world) {
 		for (Town town : getTowns())
-			if (town.getUUID().equals(name))
+			if (town.getUUID().equals(name)
+					&& town.getLocation().getWorld().equals(world))
 				return town;
 		return null;
 	}
-	public static ArrayList<Town> getTowns(String name) {
+	public static ArrayList<Town> getTowns(String name, World world) {
 		ArrayList<Town> townect= new ArrayList<Town>();
 		for (Town town : getTowns())
-			if (town.getName().equals(name))
+			if (town.getName().equals(name)
+					&& town.getLocation().getWorld().equals(world))
 				townect.add(town);
 		return townect;
 	}
 	public static void addTown(Town town) {
 		towns.add(town);
 	}
-	public static void addTowns(ArrayList<Town> ts) {
-		towns.addAll(ts);
+	public static void addTowns(ArrayList<Town> towns) {
+		towns.addAll(towns);
 	}
-	public static void removeTowns(ArrayList<Town> ts) {
-		towns.removeAll(ts);
+	public static void removeTowns(ArrayList<Town> towns) {
+		towns.removeAll(towns);
 	}
 	public static void removeTown(Town town) {
 		towns.remove(town);
@@ -154,30 +157,27 @@ public class Town extends Objective{
 			return true;
 		return false;
 	}
-	public static void clearTowns(){
+	public static void clear(){
+		Town.getTowns().forEach(town->{
+			town.children.clear();
+		});
 		towns.clear();
 	}
-	
 	@Override
 	public boolean create(Player p){
 		try{
-			for (Town town : Town.getTowns(getLocation().getWorld())){
-				if (Validate.isWithinArea(p.getLocation(), town.getLocation(), 20.0d, 20.0d, 20.0d)){
+			for (Objective objective : Objective.getObjectives(getLocation().getWorld())){
+				if (objective.equals(this))
+					continue;
+				if (Validate.isWithinArea(p.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
 					ChatManager.Chat(p, Config.getChat("ToClose"));
 					return false;
 				}
 			}
-			for (Village village : Village.getVillages(getLocation().getWorld())){
-				if (Validate.isWithinArea(p.getLocation(), village.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(p, Config.getChat("ToClose"));
-					return false;
-				}
-			}
-			if (getTowns(getName()).size() == 0) {
+			if (getTowns(getName(), getLocation().getWorld()).size() > 1) 
 				ChatManager.Chat(p, Config.getChat("AlreadyExists"));
-				return false;
-			}
-			setOwner(Kingdom.getKingdom("Neutral"));
+			
+			setOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
 
 			Location loc = p.getLocation().clone();
 			int rows = 5;

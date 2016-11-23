@@ -3,14 +3,13 @@ package eu.kingconquest.conquest.hook;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import eu.kingconquest.conquest.Main;
-import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 public class Vault {
     public static Economy econ = null;
     public static Permission perms = null;
-    public static Chat chat = null;
+    //public static Chat chat = null;
 
 	/**
 	 * @info Vault hook.
@@ -21,6 +20,11 @@ public class Vault {
 			Hooks.put("&6| --&3 Permissions [&6Vault&3]", true);
 		else
 			Hooks.put("&6| --&3 Permissions [&6Vault&3]", false);
+		
+		if (setupEconomy())
+			Hooks.put("&6| --&3 Economy [&6Vault&3]", true);
+		else
+			Hooks.put("&6| --&3 Economy [&6Vault&3]", false);
 	}
 
 	/**
@@ -33,5 +37,17 @@ public class Vault {
         	return false;
         perms = rsp.getProvider();
         return perms != null;
+    }
+
+	/**
+	 * @info Access economy
+	 * @return boolean
+	 */
+    private boolean setupEconomy(){
+        RegisteredServiceProvider<Economy> rsp = Main.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null)
+        	return false;
+        econ = rsp.getProvider();
+        return econ != null;
     }
 }

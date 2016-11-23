@@ -9,21 +9,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 import eu.kingconquest.conquest.command.Commands;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.VillageProximity;
-import eu.kingconquest.conquest.core.event.ServerRestartEvent;
-import eu.kingconquest.conquest.core.listener.CaptureProgressListener;
-import eu.kingconquest.conquest.core.listener.CaptureZoneListener;
-import eu.kingconquest.conquest.core.listener.ChestGuiListener;
-import eu.kingconquest.conquest.core.listener.PlayerDeathListener;
-import eu.kingconquest.conquest.core.listener.PlayerJoinListener;
-import eu.kingconquest.conquest.core.listener.PlayerRespawnListener;
-import eu.kingconquest.conquest.core.listener.ResetListener;
-import eu.kingconquest.conquest.core.listener.ServerRestartListener;
-import eu.kingconquest.conquest.core.util.ChatManager;
-import eu.kingconquest.conquest.core.util.Config;
-import eu.kingconquest.conquest.core.util.Validate;
+import eu.kingconquest.conquest.event.ServerRestartEvent;
 import eu.kingconquest.conquest.hook.Dynmap;
 import eu.kingconquest.conquest.hook.Hooks;
 import eu.kingconquest.conquest.hook.Vault;
+import eu.kingconquest.conquest.listener.CaptureProgressListener;
+import eu.kingconquest.conquest.listener.CaptureZoneListener;
+import eu.kingconquest.conquest.listener.ChestGuiListener;
+import eu.kingconquest.conquest.listener.PlayerDeathListener;
+import eu.kingconquest.conquest.listener.PlayerJoinListener;
+import eu.kingconquest.conquest.listener.PlayerRespawnListener;
+import eu.kingconquest.conquest.listener.ResetListener;
+import eu.kingconquest.conquest.listener.ServerRestartListener;
+import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Config;
+import eu.kingconquest.conquest.util.Validate;
 
 
 /**
@@ -55,6 +55,7 @@ public class Main extends JavaPlugin implements Listener{
 		ChatManager.Console("&6|=======================================|");
 		createNeutralKingdom();
 		ServerRestartListener srl = new ServerRestartListener();
+		
 		if (Bukkit.getOnlinePlayers().size() > 0){
 			//Bukkit.getServer().getPluginManager().callEvent(new ServerRestartEvent());
 			srl.onServerRestart(new ServerRestartEvent());
