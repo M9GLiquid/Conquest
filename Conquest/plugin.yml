@@ -9,9 +9,29 @@ website: www.kingconquest.eu
 description: World Domination, Done Right! 
 
 commands:
+  c:
+    description: Main Commmand
+    aliases: [c, kc, kingc, conquest, kingconquest]
+    permission: conquest.basic
+    permission-message: You do not have "conquest.basic"
+  kc:
+    description: Main Commmand
+    aliases: [c, kc, kingc, conquest, kingconquest]
+    permission: conquest.basic
+    permission-message: You do not have "conquest.basic"
+  kingc:
+    description: Main Commmand
+    aliases: [c, kc, kingc, conquest, kingconquest]
+    permission: conquest.basic
+    permission-message: You do not have "conquest.basic"
+  conquest:
+    description: Main Commmand
+    aliases: [c, kc, kingc, conquest, kingconquest]
+    permission: conquest.basic
+    permission-message: You do not have "conquest.basic"
   kingconquest:
     description: Main Commmand
-    aliases: [c, kc, kingc, conquest]
+    aliases: [c, kc, kingc, conquest, kingconquest]
     permission: conquest.basic
     permission-message: You do not have "conquest.basic"
     

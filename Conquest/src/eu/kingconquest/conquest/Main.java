@@ -102,6 +102,10 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
+		this.getCommand("c").setExecutor(new HomeCommand());
+		this.getCommand("kc").setExecutor(new HomeCommand());
+		this.getCommand("kingc").setExecutor(new HomeCommand());
+		this.getCommand("conquest").setExecutor(new HomeCommand());
 		this.getCommand("kingconquest").setExecutor(new HomeCommand());
 		return true;
 	}
