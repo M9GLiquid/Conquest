@@ -25,6 +25,7 @@ import eu.kingconquest.conquest.listener.PlayerRespawnListener;
 import eu.kingconquest.conquest.listener.ProximityZoneListener;
 import eu.kingconquest.conquest.listener.ResetListener;
 import eu.kingconquest.conquest.listener.ServerRestartListener;
+import eu.kingconquest.conquest.listener.TrapListener;
 import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -71,6 +72,7 @@ public class Main extends JavaPlugin implements Listener{
 		this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerMoveListener(), this);
+		this.getServer().getPluginManager().registerEvents(new TrapListener(), this);
 		this.getServer().getPluginManager().registerEvents(new ChestGuiListener(), this);
 		this.getServer().getPluginManager().registerEvents(new CaptureProgressListener(), this);
 		this.getServer().getPluginManager().registerEvents(new ProximityZoneListener(), this);

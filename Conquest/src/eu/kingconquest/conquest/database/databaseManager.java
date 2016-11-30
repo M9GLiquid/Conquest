@@ -3,79 +3,62 @@ package eu.kingconquest.conquest.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import eu.kingconquest.conquest.Main;
-import eu.kingconquest.conquest.util.Config;
+import eu.kingconquest.conquest.util.ChatManager;
 
-public class databaseManager {
-	public Config conf;
-	protected static MySQL mysql;
-	protected static SQLite sqlite;
-	
-	private static Main plugin;
+public class DatabaseManager {
 
-	@SuppressWarnings("unused")
-	private static String port;
-	private static String host;
-	private static String db;
-	private static String user;
-	private static String pass;
-	
-	private static Connection c;
-	
-	public databaseManager() {
-		conf = Config.getConfig("Config");
-	}
+	private static Connection connection;
 
-	@SuppressWarnings("unused")
-	public void Main(Main pl) {
-		plugin = pl;
-		if (conf.getString("general.backend").equalsIgnoreCase("none") 
-				|| conf.getString("general.backend").equalsIgnoreCase(null) 
-				|| conf.getString("general.backend").equalsIgnoreCase("")){
+	public DatabaseManager() {
+		Config config = Config.getConfig("Config");
+		if (config.getString("Database.Backend").equalsIgnoreCase("none")){
+			ChatManager.Console("-> Mysql, Succeeded.");
+			return;
+		}
+
+		if (config.getString("Database.Backend").equalsIgnoreCase("mysql")){
+
+			int port = (config.getInt("Database.MySql.Port") > 0 
+					? config.getInt("Database.MySql.Port") : 3306 );
+			String host = (config.getString("Database.MySql.Host") != null 
+					? config.getString("Database.MySql.Host") : "localhost" );
+			String database = (config.getString("Database.MySql.Database") != null 
+					? config.getString("Database.MySql.Database") : "Conquest" );
+			String user = (config.getString("Database.MySql.Username") != null 
+					? config.getString("Database.MySql.Username") : "root" );
+			String pass =  (config.getString("Database.MySql.Password") != null 
+					? config.getString("Database.MySql.Password") : "root" );
 			
-			plugin.getLogger().info("-> Mysql, Succeeded.");return;}
-		
-		if ((conf.getString("general.backend").equalsIgnoreCase("mysql")) 
-				&& (!(conf.getString("general.backend").equalsIgnoreCase("sqlite")))){
-			
-			port = (conf.getString("general.database.mysql.port") != null 
-						? conf.getString("general.database.mysql.port") : "3306" );
-			host = conf.getString("general.database.mysql.host");
-			db = conf.getString("general.database.mysql.database");
-			user = conf.getString("general.database.mysql.Usern");
-			pass = conf.getString("general.database.mysql.Password");
-			
-			if (host == null || 
-				db   == null || 
-				user == null || 
-				pass == null)
-					return;
+			MySQL mysql = new MySQL(host, port, database, user, pass);
 			try{
-				c = mysql.openConnection();
-				plugin.getLogger().info("-> Mysql, Succeeded.");
+				connection = mysql.connect();
+				ChatManager.Console("-> Mysql, Connected.");
 			}catch (ClassNotFoundException | SQLException e){
 				try {
-					c.close();
+					connection.close();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
+					ChatManager.Console("-> Mysql, Failed.");
 				}
-				plugin.getLogger().info("-> Mysql, Failed.");
+				ChatManager.Console("-> Mysql, Failed.");
 			}
-		}else{
-			plugin.getLogger().info("-> Mysql, Failed.");
-		}
-		if (!(conf.getString("general.database.backend").equalsIgnoreCase("mysql")) && ((conf.getString("general.database.backend").equalsIgnoreCase("sqlite")))){
-			SQLite sqlite = new SQLite(host);
-			Connection c;
+		}else if (config.getString("Database.Backend").equalsIgnoreCase("sqlite")){
+			SQLite sqlite = new SQLite();
 			try{
-				c = sqlite.openConnection();
-				plugin.getLogger().info("-> SQLite, Succeeded.");
+				connection = sqlite.connect();
+				ChatManager.Console("-> SQLite, Connected.");
 			}catch (ClassNotFoundException | SQLException e){
-				plugin.getLogger().info("-> SQLite, Failed.");
+				try {
+					connection.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+					ChatManager.Console("-> SQLite, Failed.");
+				}
+				ChatManager.Console("-> SQLite, Failed.");
 				e.printStackTrace();
 			}
-		}else{
-			plugin.getLogger().info("-> SQLite, Failed.");
+		}else if (config.getString("Database.Backend").equalsIgnoreCase("flatfile")){
+			//YAML database
 		}
 	}
 }

@@ -14,7 +14,7 @@ public class Validate{
 	 * @param loc
 	 * @return
 	 */
-	public static boolean isWithinArea(Location loc1, Location loc2, Double distance, Double maxY, Double minY){
+	public static boolean isWithinArea(Location loc1, Location loc2, double distance, int maxY, int minY){
 		if (loc1.distanceSquared(loc2) <= distance 
 				&& loc1.getY() <= loc2.getY() + maxY 
 				&& loc1.getY() >= loc2.getY() - minY){

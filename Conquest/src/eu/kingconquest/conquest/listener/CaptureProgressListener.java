@@ -1,6 +1,7 @@
 package eu.kingconquest.conquest.listener;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,7 @@ import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
+import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
 import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
@@ -96,7 +98,7 @@ public class CaptureProgressListener implements Listener{
 		Cach.StaticVillage = village;
 		ChatManager.Broadcast(Config.getChat("WarnNeutral"));
 		Config.saveVillages(village.getWorld());
-		
+		Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 50));
 		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 	}
 }

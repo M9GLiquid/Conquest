@@ -8,15 +8,19 @@ import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class TrapEvent extends Event{
+public class NeutralCaptureTrapEvent extends Event{
 	private UUID owner;
 	private String name;
 	private Location location;
+	private boolean oneTimeUse = false;
+	private double trapDistance;
 	
-	public TrapEvent(UUID owner, String name, Location location){
+	public NeutralCaptureTrapEvent(UUID owner, String name, Location location, boolean oneTimeUse, double trapDistance){
 		this.owner = owner;
 		this.name = name;
 		this.location = location;
+		this.oneTimeUse = oneTimeUse;
+		this.trapDistance = trapDistance;
 	}
 	
 	public boolean isPlayerOwner(){
@@ -33,6 +37,14 @@ public class TrapEvent extends Event{
 		return name;
 	}
 	
+	public boolean isOneTimeUse(){
+		return oneTimeUse;
+	}
+	
+	public double getTrapDistance(){
+		return trapDistance;
+	}
+	
 	public Location getLocation(){
 		return location;
 	}
@@ -40,11 +52,14 @@ public class TrapEvent extends Event{
 	public World getWorld(){
 		return location.getWorld();
 	}
-	
-	@Override
-	public HandlerList getHandlers(){
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+    private static final HandlerList handlers = new HandlerList();
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
 }

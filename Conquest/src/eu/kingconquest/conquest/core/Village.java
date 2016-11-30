@@ -231,7 +231,7 @@ public class Village extends Objective{
 			for (Objective objective : Objective.getObjectives(getWorld())){
 				if (objective.equals(this))
 					continue;
-				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
+				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20, 20)){
 					ChatManager.Chat(player, Config.getChat("ToClose"));
 					return false;
 				}
