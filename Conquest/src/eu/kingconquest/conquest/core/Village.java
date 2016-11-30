@@ -14,32 +14,36 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
+import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Marker;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Village extends Objective{
-	public Village(String name, Location loc, Location spawn, Kingdom owner, Kingdom preowner, Town parent) {
+	public Village(String name, Location loc, Location spawn, Kingdom owner, Kingdom preOwner, Town parent) {
 		this(name
 				, null
 				, loc
 				, spawn
 				, owner
-				, preowner
+				, preOwner
 				, parent);
 	}
-	public Village(String name, String uniqueID, Location loc, Location spawn, Kingdom owner, Kingdom preowner, Town parent) {
+	public Village(String name, String uniqueID, Location loc, Location spawn, Kingdom owner, Kingdom preOwner, Town parent) {
 		super(name, loc, spawn, uniqueID);
-		if (!Validate.isNull(owner)){
+		if (Validate.notNull(owner))
 			setOwner(owner);
-		}else{
-			setOwner(Kingdom.getKingdom("Neutral", loc.getWorld()));
-			setPreOwner(Kingdom.getKingdom("Neutral", loc.getWorld()));
-		}
+		else
+			setOwner(Kingdom.getNeutral(getWorld()));
+		if (Validate.notNull(preOwner))
+			setPreOwner(preOwner);
+		else
+			setPreOwner(Kingdom.getNeutral(getWorld()));
 		
-		if (!Validate.isNull(parent))
+		if (Validate.notNull(parent))
 			setParent(parent);
 		
 		addVillage(this);
@@ -54,7 +58,7 @@ public class Village extends Objective{
 	 * @return double
 	 */
 	private final static double SPEED = 1.5d;
-	private double progress = 100.0d;
+	private double progress = 0.0d;
 	public double getProgress(){
 		return progress;
 	}
@@ -72,7 +76,7 @@ public class Village extends Objective{
 	private Kingdom preOwner = null;
 	public Kingdom getPreOwner(){
 		if (Validate.isNull(preOwner))
-			preOwner = Kingdom.getKingdom("Neutral", getLocation().getWorld());
+			preOwner = Kingdom.getKingdom("Neutral", getWorld());
 		return preOwner;
 	}
 	
@@ -107,7 +111,7 @@ public class Village extends Objective{
 	 * @return void
 	 */
 	public void setNeutral(){
-		setOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
+		setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 		updateGlass();
 		Marker.update(this);
 	}
@@ -122,22 +126,7 @@ public class Village extends Objective{
 	 * @return boolean
 	 */
 	public boolean hasParent(){
-		if (!Validate.isNull(parent))
-			return true;
-		return false;
-	}
-
-	private ArrayList<UUID> isCapturing = new ArrayList<UUID>();
-	public void addCapturing(Player player){
-		isCapturing.add(player.getUniqueId());
-	}
-	public boolean isCapturing(Player player){
-		if (isCapturing.contains(player.getUniqueId()))
-			return true;
-		return false;
-	}
-	public boolean removeCapturing(Player player){
-		if (isCapturing.remove(player.getUniqueId()))
+		if (Validate.notNull(parent))
 			return true;
 		return false;
 	}
@@ -181,7 +170,7 @@ public class Village extends Objective{
 	public static ArrayList<Village> getVillages(World world){
 		ArrayList<Village> villages = new ArrayList<Village>();
 		Village.getVillages().stream()
-			.filter(village->village.getLocation().getWorld().equals(world))
+			.filter(village->village.getWorld().equals(world))
 			.forEach(village->{
 				villages.add(village);
 			});
@@ -190,7 +179,7 @@ public class Village extends Objective{
 	public static Village getVillage(UUID ID, World world) {
 		for (Village village : getVillages())
 			if (village.getUUID().equals(ID) 
-					&& village.getLocation().getWorld().equals(world))
+					&& village.getWorld().equals(world))
 				return village;
 		return null;
 	}
@@ -198,7 +187,7 @@ public class Village extends Objective{
 		ArrayList<Village> villages= new ArrayList<Village>();
 		for (Village village : getVillages())
 			if (village.getName().equals(name) 
-					&& village.getLocation().getWorld().equals(world))
+					&& village.getWorld().equals(world))
 				villages.add(village);
 		return villages;
 	}
@@ -219,7 +208,7 @@ public class Village extends Objective{
 		Village.getVillages().forEach(village->{
 			village.attackers.clear();
 			village.defenders.clear();
-			village.isCapturing.clear();
+			village.clearCapturing();
 			village.parent = null;
 			village.preOwner = null;			
 		});
@@ -236,25 +225,24 @@ public class Village extends Objective{
 		Bukkit.getServer().getScheduler().cancelTask(getTaskID());
 		setTaskID(0);
 	}
-	
 	@Override
-	public boolean create(Player p){
+	public boolean create(Player player){
 		try{
-			for (Objective objective : Objective.getObjectives(getLocation().getWorld())){
+			for (Objective objective : Objective.getObjectives(getWorld())){
 				if (objective.equals(this))
 					continue;
-				if (Validate.isWithinArea(p.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(p, Config.getChat("ToClose"));
+				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20, 20)){
+					ChatManager.Chat(player, Config.getChat("ToClose"));
 					return false;
 				}
 			}
-			if (getVillages(getName(), getLocation().getWorld()).size() > 1) 
-					ChatManager.Chat(p, Config.getChat("AlreadyExists"));
+			if (getVillages(getName(), getWorld()).size() > 1) 
+					ChatManager.Chat(player, Config.getChat("AlreadyExists"));
 			
-			setOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
-			setPreOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
+			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
+			setPreOwner(Kingdom.getKingdom("Neutral", getWorld()));
 
-			Location loc = p.getLocation().clone();
+			Location loc = player.getLocation().clone();
 			int rows = 3;
 
 			loc.setY(loc.getY() -3);
@@ -264,7 +252,7 @@ public class Village extends Objective{
 			//Set Iron Blocks! 3x3 area
 			setBeaconBase(rows, loc, IRON_BLOCK, null);
 
-			loc = p.getLocation().clone();
+			loc = player.getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
@@ -272,10 +260,11 @@ public class Village extends Objective{
 			//Set Upper Blocks! 3x3 area
 			setBeaconBase(rows, loc.clone(), STEP, 7);
 			updateGlass();
+			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 
-			Config.saveVillages(getLocation().getWorld());
+			Config.saveVillages(getWorld());
 			Cach.StaticVillage = this;
-			ChatManager.Chat(p, Config.getChat("VillageCreated"));
+			ChatManager.Chat(player, Config.getChat("VillageCreated"));
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -283,7 +272,7 @@ public class Village extends Objective{
 		}
 	}
 	@Override
-	public boolean delete(){
+	public boolean delete(Player player){
 		try{
 			Location loc = getLocation().clone();
 			for (int y = 0; y <= 2; y++){
@@ -308,11 +297,15 @@ public class Village extends Objective{
 			//Set Upper Blocks! 3x3 area
 			setBeaconBase(rows, loc, AIR, null);
 			
-			
+
+			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
+			ChatManager.Chat(player, Config.getChat("VillageDeleted"));
 			removeVillage(this);
-			Config.removeTowns(loc.getWorld());
+			Config.removeTowns(getWorld());
 			Marker.remove(this);
 			return true;
+			
+			
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
@@ -328,6 +321,7 @@ public class Village extends Objective{
 				setBlock(loc, Material.BEACON);
 		}
 	}
+	
 	private int taskID = 0;
 	public int getTaskID(){
 		return taskID;

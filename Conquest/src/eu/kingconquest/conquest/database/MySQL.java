@@ -1,8 +1,9 @@
 package eu.kingconquest.conquest.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 
 /**
@@ -12,11 +13,11 @@ import java.sql.SQLException;
  * @author tips48
  */
 public class MySQL extends Database {
-	private final String user;
 	private final String database;
 	private final String password;
-	private final String port;
-	private final String hostname;
+	private final String host;
+	private final String user;
+	private final int port;
 
 	/**
 	 * Creates a new MySQL instance
@@ -30,8 +31,7 @@ public class MySQL extends Database {
 	 * @param password
 	 *            Password
 	 */
-	public MySQL(String hostname, String port, String username,
-			String password) {
+	public MySQL(String hostname, int port, String username, String password) {
 		this(hostname, port, null, username, password);
 	}
 
@@ -49,9 +49,8 @@ public class MySQL extends Database {
 	 * @param password
 	 *            Password
 	 */
-	public MySQL(String hostname, String port, String database,
-			String username, String password) {
-		this.hostname = hostname;
+	public MySQL(String hostname, int port, String database, String username, String password) {
+		this.host = hostname;
 		this.port = port;
 		this.database = database;
 		this.user = username;
@@ -59,21 +58,17 @@ public class MySQL extends Database {
 	}
 
 	@Override
-	public Connection openConnection() throws SQLException,
-			ClassNotFoundException {
+	public Connection connect() throws SQLException, ClassNotFoundException {
 		if (checkConnection()) {
 			return connection;
 		}
+		MysqlDataSource dataSource = new MysqlDataSource();
+		dataSource.setServerName(host);
+		dataSource.setDatabaseName(database);
+		dataSource.setPort(port);
 		
-		String connectionURL = "jdbc:mysql://"
-				+ this.hostname + ":" + this.port;
-		if (database != null) {
-			connectionURL = connectionURL + "/" + this.database;
-		}
-		
-		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection(connectionURL,
-				this.user, this.password);
+		connection = dataSource.getConnection(user, password);
+
 		return connection;
 	}
 }

@@ -8,10 +8,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
+import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
+import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ColorManager;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Marker;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -20,29 +23,22 @@ public class Kingdom extends Objective{
 	private UUID king;
 	private int color;
 
-	public Kingdom(String name, String king, int color, Location location) {
-		super(name, location, location, null);
-		setColor(color);
-		if (king != null)
-			return;
+	public Kingdom(String name, String kingID, Location loc, int color) {
+		this(name, kingID, null, loc, loc, color);
+	}
+	public Kingdom(String name, String kingID, Location loc, Location spawn){
+		this(name, kingID, null, loc, spawn, getKingdoms().size());
 	}
 	public Kingdom(String name, String kingID, String uniqueID, Location loc, Location spawn, int color){
-		this(name, kingID, uniqueID, loc, spawn, null, null, color);
-	}
-	public Kingdom(String name, String kingID, Location loc, Location spawn, ArrayList<Town> townChildren, ArrayList<Village> villageChildren){
-		this(name, kingID, null, loc, spawn, townChildren, villageChildren, getKingdoms().size());
-	}
-	public Kingdom(String name, String kingID, String uniqueID, Location loc, Location spawn, ArrayList<Town> townChildren, ArrayList<Village> villageChildren, int color){
 		super(name, loc, spawn, uniqueID);
-		if (!Validate.isNull(kingID)) 
+		if (Validate.notNull(kingID)) 
 			setKing(UUID.fromString(kingID));
-			
-		if (!Validate.isNull(townChildren))
-			townChildren.forEach(child->child.setOwner(this));
-		if (!Validate.isNull(villageChildren))
-			villageChildren.forEach(child->child.setOwner(this));
 		setColor(color);
+		addKingdom(this);
+		Marker.create(this);
+		Marker.setDescription(this);
 	}
+	
 	/**
 	 * Kingdom Join
 	 * @param p - Player Instance
@@ -56,9 +52,9 @@ public class Kingdom extends Objective{
 		Cach.StaticKingdom = this;
 		ChatManager.Chat(p, Config.getChat("JoinSuccess"));
 		wrapper.setKingdom(this);
-		wrapper.getScoreboard().kingdomBoard(p);
+		wrapper.getScoreboard().KingdomBoard(p);
 		addMember(p.getUniqueId());
-		Config.saveUsers(getLocation().getWorld());
+		Config.saveUsers(getWorld());
 	}
 		
 	/**
@@ -77,9 +73,9 @@ public class Kingdom extends Objective{
 		Cach.StaticKingdom = this;
 		ChatManager.Chat(p, Config.getChat("LeaveSuccess"));
 		wrapper.setKingdom(null);
-		wrapper.getScoreboard().neutralBoard(p);
+		wrapper.getScoreboard().NeutralBoard(p);
 		removeMember(p.getUniqueId());
-		Config.saveUsers(getLocation().getWorld());
+		Config.saveUsers(getWorld());
 	}
 	
 //Getters
@@ -270,7 +266,7 @@ public class Kingdom extends Objective{
 	public static ArrayList<Kingdom> getKingdoms(World world){
 		ArrayList<Kingdom> kingdoms = new ArrayList<Kingdom>();
 		Kingdom.getKingdoms().stream()
-			.filter(kingdom->kingdom.getLocation().getWorld().equals(world))
+			.filter(kingdom->kingdom.getWorld().equals(world))
 			.forEach(kingdom->{
 				kingdoms.add(kingdom);
 			});
@@ -279,7 +275,7 @@ public class Kingdom extends Objective{
 	public static Kingdom getKingdom(UUID ID, World world){
 		for (Kingdom kingdom : getKingdoms()){
 			if (kingdom.getUUID().equals(ID)
-					&& kingdom.getLocation().getWorld().equals(world))
+					&& kingdom.getWorld().equals(world))
 			return kingdom;
 		}
 		return null;
@@ -287,12 +283,15 @@ public class Kingdom extends Objective{
 	public static Kingdom getKingdom(String name, World world){
 		for (Kingdom kingdom : getKingdoms(world)){
 			if (kingdom.getName().equals(name)
-					&& kingdom.getLocation().getWorld().equals(world))
+					&& kingdom.getWorld().equals(world))
 			return kingdom;
 		}
 		return null;
 	}
-
+	public static Kingdom getNeutral(World world){
+		return getKingdom("Neutral", world);
+	}
+	
 	public static void addKingdoms(ArrayList<Kingdom> kingdom){
 		kingdoms.addAll(kingdom);
 	}
@@ -320,8 +319,10 @@ public class Kingdom extends Objective{
 	}
 	
 	@Override
-	public boolean create(Player p){
-		addKingdom(this);
+	public boolean create(Player player){
+		Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
+
+		TNEApi.createAccount(getUUID());
 		if (Marker.update(this)){
 			Config.saveKingdoms(getLocation().getWorld());
 			return true;
@@ -329,7 +330,9 @@ public class Kingdom extends Objective{
 		return false;
 	}
 	@Override
-	public boolean delete(){
+	public boolean delete(Player player){
+		ChatManager.Chat(player, Config.getChat("KingdomDeleted"));
+		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 		removeKingdom(this);
 		if (Marker.remove(this))
 			return true;

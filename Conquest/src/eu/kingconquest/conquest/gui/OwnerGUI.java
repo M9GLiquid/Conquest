@@ -40,6 +40,7 @@ public class OwnerGUI extends ChestGui{
 		for(int i = 9; i < 54; i++) {
 			if (getCurrentItem() > (Village.getVillages().size() -1) || getItems() == 0)
 				break;
+			
 			Kingdom kingdom = Kingdom.getKingdoms().get(getCurrentItem());
 			if (!kingdom.getName().equals("Neutral"))
 				ownerButton(i, kingdom);

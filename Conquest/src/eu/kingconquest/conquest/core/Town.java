@@ -9,25 +9,21 @@ import static org.bukkit.Material.STEP;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
+import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Marker;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Town extends Objective{
-	public Town(String name, Location loc, Location spawn){
-		this(name
-				, null
-				, loc
-				, spawn
-				, null);
-	}
 	public Town(String name, Location loc, Location spawn, Kingdom owner){
 		this(name
 				,null
@@ -38,10 +34,10 @@ public class Town extends Objective{
 	public Town(String name, String uniqueID, Location loc, Location spawn, Kingdom owner){
 		super(name, loc, spawn, uniqueID);
 		
-		if (!Validate.isNull(owner))
+		if (Validate.notNull(owner))
 			setOwner(owner);
 		else
-			setOwner(Kingdom.getKingdom("Neutral", loc.getWorld()));
+			setOwner(Kingdom.getNeutral(getWorld()));
 
 		addTown(this);
 		Marker.create(this);
@@ -63,7 +59,7 @@ public class Town extends Objective{
 	 * @return void
 	 */
 	public void setNeutral(){
-			setOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
+			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 			updateGlass();
 			Marker.update(this);
 	}
@@ -112,7 +108,7 @@ public class Town extends Objective{
 	public static ArrayList<Town> getTowns(World world) {
 		ArrayList<Town> towns = new ArrayList<Town>();
 		Town.getTowns().stream()
-			.filter(town->town.getLocation().getWorld().equals(world))
+			.filter(town->town.getWorld().equals(world))
 			.forEach(town->{
 				towns.add(town);
 			});
@@ -121,14 +117,14 @@ public class Town extends Objective{
 	public static Town getTown(UUID ID, World world) {
 		for (Town town : getTowns())
 			if (town.getUUID().equals(ID)
-					&& town.getLocation().getWorld().equals(world))
+					&& town.getWorld().equals(world))
 				return town;
 		return null;
 	}
 	public static Town getTown(String name, World world) {
 		for (Town town : getTowns())
 			if (town.getUUID().equals(name)
-					&& town.getLocation().getWorld().equals(world))
+					&& town.getWorld().equals(world))
 				return town;
 		return null;
 	}
@@ -136,7 +132,7 @@ public class Town extends Objective{
 		ArrayList<Town> townect= new ArrayList<Town>();
 		for (Town town : getTowns())
 			if (town.getName().equals(name)
-					&& town.getLocation().getWorld().equals(world))
+					&& town.getWorld().equals(world))
 				townect.add(town);
 		return townect;
 	}
@@ -163,23 +159,24 @@ public class Town extends Objective{
 		});
 		towns.clear();
 	}
+	
 	@Override
-	public boolean create(Player p){
+	public boolean create(Player player){
 		try{
-			for (Objective objective : Objective.getObjectives(getLocation().getWorld())){
+			for (Objective objective : Objective.getObjectives(getWorld())){
 				if (objective.equals(this))
 					continue;
-				if (Validate.isWithinArea(p.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(p, Config.getChat("ToClose"));
+				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20, 20)){
+					ChatManager.Chat(player, Config.getChat("ToClose"));
 					return false;
 				}
 			}
-			if (getTowns(getName(), getLocation().getWorld()).size() > 1) 
-				ChatManager.Chat(p, Config.getChat("AlreadyExists"));
+			if (getTowns(getName(), getWorld()).size() > 1) 
+				ChatManager.Chat(player, Config.getChat("AlreadyExists"));
 			
-			setOwner(Kingdom.getKingdom("Neutral", getLocation().getWorld()));
+			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 
-			Location loc = p.getLocation().clone();
+			Location loc = player.getLocation().clone();
 			int rows = 5;
 
 			loc.setY(loc.getY() - 3);
@@ -188,7 +185,7 @@ public class Town extends Objective{
 			//Set Iron Blocks! 5x5 area
 			setBeaconBase(rows, loc.clone(), IRON_BLOCK, null);
 
-			loc = p.getLocation().clone();
+			loc = player.getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
@@ -196,11 +193,11 @@ public class Town extends Objective{
 			//Set Upper Blocks! 5x5 area
 			setBeaconBase(rows, loc.clone(), STEP, 7);
 			updateGlass();
-
+			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
+			
 			Cach.StaticTown = this;
-
-			Config.saveTowns(loc.getWorld());
-			ChatManager.Chat(p, Config.getChat("TownCreated"));
+			Config.saveTowns(getWorld());
+			ChatManager.Chat(player, Config.getChat("TownCreated"));
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -208,7 +205,7 @@ public class Town extends Objective{
 		}
 	}
 	@Override
-	public boolean delete(){
+	public boolean delete(Player player){
 		try{
 			Location loc = getLocation().clone();
 			for (int y = 0; y <= 1; y++){
@@ -247,31 +244,17 @@ public class Town extends Objective{
 
 			//Set Upper Blocks! 5x5 area
 			setBeaconBase(rows, loc, AIR, null);
-			
+
+			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
+			ChatManager.Chat(player, Config.getChat("TownDeleted"));
 			removeTown(this);
-			Config.removeTowns(loc.getWorld());
+			Config.removeTowns(getWorld());
 			Marker.remove(this);
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
 		}
-	}
-	private void setBase(Location loc, Material block){
-		loc.setY(loc.getY() - 1);
-		setBlock(loc, block);
-		loc.setX(loc.getX() - 1);
-		setBlock(loc, block);
-		loc.setX(loc.getX() + 1);
-		loc.setZ(loc.getZ() - 1);
-		setBlock(loc, block);
-		loc.setZ(loc.getZ() + 1);
-		loc.setZ(loc.getZ() + 1);
-		setBlock(loc, block);
-		loc.setZ(loc.getZ() - 1);
-		loc.setX(loc.getX() + 1);
-		setBlock(loc, block);
-		loc.setX(loc.getX() - 1);
 	}
 	@Override
 	public void updateGlass(){
@@ -291,5 +274,21 @@ public class Town extends Objective{
 			setBlock(loc, STAINED_GLASS);
 			loc.setX(loc.getX() - 1);
 		setBase(loc, BEACON);
+	}
+	private void setBase(Location loc, Material block){
+		loc.setY(loc.getY() - 1);
+		setBlock(loc, block);
+		loc.setX(loc.getX() - 1);
+		setBlock(loc, block);
+		loc.setX(loc.getX() + 1);
+		loc.setZ(loc.getZ() - 1);
+		setBlock(loc, block);
+		loc.setZ(loc.getZ() + 1);
+		loc.setZ(loc.getZ() + 1);
+		setBlock(loc, block);
+		loc.setZ(loc.getZ() - 1);
+		loc.setX(loc.getX() + 1);
+		setBlock(loc, block);
+		loc.setX(loc.getX() - 1);
 	}
 }

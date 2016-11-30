@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.ChestGui;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Validate;
 
 public class CreateGUI extends ChestGui{
@@ -30,8 +30,8 @@ public class CreateGUI extends ChestGui{
 
 	@Override
 	public void create(){
+		owner  = Kingdom.getNeutral(p.getWorld());
 		createGui(p, "&6Create Gui", 9);
-		owner = Kingdom.getKingdom("Neutral", p.getWorld()); //Owner
 		display();
 	}
 
@@ -88,8 +88,8 @@ public class CreateGUI extends ChestGui{
 	
 	private void discardButton(){
 		setItem(7, new ItemStack(Material.REDSTONE_BLOCK), player -> {
-			previous.create();
 			close(player);
+			previous.create();
 		}, "§4<< Home", "§1-----------------"
 				+ "\n§cGo back without Saving!\n");
 	}
@@ -101,8 +101,6 @@ public class CreateGUI extends ChestGui{
 							, null //UUID
 							, loc //Fixed location
 							, spawn //Spawn location
-							, null //Town Children (ArrayList)
-							, null //Village Children (ArrayList)
 							);
 					if (kingdom.create(player))
 						Config.saveKingdoms(loc.getWorld());
@@ -134,37 +132,35 @@ public class CreateGUI extends ChestGui{
 					else
 						Village.removeVillage(village);
 				}
-				previous.create();
 				close(player);
+				previous.create();
 			}, "§2Create new!", displayInfo());
 	}
 
 	private String displayInfo(){
 		String str = "&1-----------------";
-		
+
+		str += "\n&aName: &r" + name;
 		if (previous instanceof KingdomGUI)
-			str += "\n&aName: &r" + name
-			+ "\n&aKing: &r" + "None"
+		str += "\n&aKing: &r" + "None"
 			+ "\n&aMembers: &r0";
 		
 		if (previous instanceof TownGUI)
-			str += "\n&aName: &r" + name
-				+ "\n&aOwner: &r" + owner.getName();
+			str += "\n&aOwner: &r" + owner.getName();
 		
 		if (previous instanceof VillageGUI)
-			str += "\n&aName: &r" + name
-				+ "\n&aOwner: &r" + owner.getName()
+			str += "\n&aOwner: &r" + owner.getName()
 				+ "\n&aParent: &rNot Set";
 			
 		str += "\n&aLocation:";
-		if (!Validate.isNull(loc)) {
+		if (Validate.notNull(loc)) {
 			str += "\n- &cX: &r"+ Math.floor(loc.getX())
 					+"\n- &cY: &r"+ Math.floor(loc.getY())
 					+"\n- &cZ: &r"+ Math.floor(loc.getZ());
 		}else
 			str += "\n- Not Set";
 		str += "\n&aSpawn:";
-		if (!Validate.isNull(spawn)){
+		if (Validate.notNull(spawn)){
 			str += "\n- &cX: &r"+ Math.floor(spawn.getX())
 					+"\n- &cY: &r"+ Math.floor(spawn.getY())
 					+"\n- &cZ: &r"+ Math.floor(spawn.getZ());
@@ -207,7 +203,7 @@ public class CreateGUI extends ChestGui{
 	}
 
 	protected void setName(){
-		if (!Validate.isNull(alphabetGUI)){
+		if (Validate.notNull(alphabetGUI)){
 			name = alphabetGUI.getWord();
 			alphabetGUI.close(p);
 		}

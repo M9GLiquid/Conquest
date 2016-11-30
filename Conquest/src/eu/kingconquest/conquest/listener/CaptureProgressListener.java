@@ -1,43 +1,50 @@
 package eu.kingconquest.conquest.listener;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Rocket;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
-import eu.kingconquest.conquest.event.CaptureSemiEvent;
+import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
+import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
+import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Marker;
 
 public class CaptureProgressListener implements Listener{
-	private Player p;
-	private Rocket rocket;
+	private Player player;
 
 	@EventHandler
 	public void onCaptureStart(CaptureStartEvent e){
 		Village village = (Village) e.getObjective();
 		Cach.StaticVillage = village;
+		Cach.StaticKingdom = village.getOwner();
 		ChatManager.Broadcast(Config.getChat("WarnDistress"));
+		
+		//Run Mob Spawns as defence if objective owner isn't Neutral
 	}
 
 	@EventHandler
 	public void onCaptureSuccess(CaptureCompleteEvent e){
 		Village village = (Village) e.getObjective();
-		p = e.getPlayer();
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
+		player = e.getPlayer();
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 
-		village.removeCapturing(p);
-		village.setPreOwner(village.getOwner());
+		wrapper.getScoreboard().KingdomBoard(player);
+		village.removeCapturing(player);
 		village.setOwner(wrapper.getKingdom());
-		village.removeAttacker(p);
-		village.addDefender(p);
+		village.setPreOwner(wrapper.getKingdom());
+		village.removeAttacker(player);
+		village.removeDefender(player);
 		Cach.StaticKingdom = village.getOwner();
 		Cach.StaticVillage = village;
 		Marker.update(village);
@@ -45,54 +52,53 @@ public class CaptureProgressListener implements Listener{
 
 		boolean FullCapture = true;
 		if (village.hasParent()){
-			System.out.println(" 10 " + village.getParent().getChildren().size());
 			for (Village v : village.getParent().getChildren()){
-				System.out.println(" 20 ");
-				System.out.println(!v.getOwner().equals(village.getOwner()));
-				System.out.println(v.getOwner().getName());
-				System.out.println(village.getOwner().getName());
-				if (!v.getOwner().equals(village.getOwner())){ //If any child is not owned by parents kingdom
+				if (!v.getOwner().equals(village.getOwner())){ 
 					FullCapture = false;
 					break;
 				}
 			}
-			if (FullCapture){
+			if (FullCapture){ // Towns children all got the same Owner
 			Cach.StaticTown = village.getParent();
-			ChatManager.Chat(p, Config.getChat("CaptureTownSuccess"));
 			village.getParent().setOwner(village.getOwner());
 			village.getParent().updateGlass();
-			rocket = new Rocket(village.getParent().getLocation().clone(), false, true, 4, 30, village.getOwner().getColor()); //Rocket on Success
-			rocket.spawn();
+			new Rocket(village.getParent().getLocation(), false, true, 4, 30, village.getOwner().getColor()); // Rocket on Success
 			village.getParent().getChildren().forEach(child->{
-				rocket = new Rocket(child.getLocation().clone(), false, true, 1, 20, village.getOwner().getColor()); //Rocket on Success
-				rocket.spawn();
+				new Rocket(child.getLocation(), false, true, 1, 20, village.getOwner().getColor()); // Rocket on Success
+				TNEApi.addFunds(village.getOwner().getUUID(), Config.getDoubles("CapCash", village.getLocation())); // Add Funds for each 
 			});
+			ChatManager.Chat(player, Config.getChat("TownCaptured"));
+			ChatManager.Chat(player, Config.getChat("CaptureTownSuccess"));
+			TNEApi.addFunds(player.getUniqueId(), Config.getDoubles("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
-			ChatManager.Broadcast(Config.getChat("Captured"));
-			Rocket rocket = new Rocket(village.getLocation().clone(), false, true, 1, 20, village.getOwner().getColor()); //Rocket on Success
-			rocket.spawn();
+			ChatManager.Chat(player, Config.getChat("CaptureVillageSuccess"));
+			TNEApi.addFunds(village.getOwner().getUUID(), Config.getDoubles("CapCash", village.getLocation()));
+			TNEApi.addFunds(player.getUniqueId(), Config.getDoubles("CapCash", village.getLocation()));
+			new Rocket(village.getLocation(), false, true, 1, 20, village.getOwner().getColor()); // Rocket on Success
 		}
-		Config.saveVillages(village.getLocation().getWorld());
-		village.removeAttacker(p);
-		village.removeDefender(p);
-		if (village.getAttackers().size() < 1)
-			village.stop();
+		ChatManager.Broadcast(Config.getChat("Captured"));
+	Config.saveVillages(village.getWorld());
+	if (village.getAttackers().size() < 1)
+		village.stop();
+	village.addDefender(player);
 	}
 
-
 	@EventHandler
-	public void onCaptureNeutral(CaptureSemiEvent e){
+	public void onCaptureNeutral(CaptureNeutralEvent e){
 		Village village = (Village) e.getObjective();
-		p = e.getPlayer();
-
-		village.setPreOwner(PlayerWrapper.getWrapper(p).getKingdom());
+		player = e.getPlayer();
+		if (!village.getPreOwner().isNeutral()){
+			village.setPreOwner(Kingdom.getKingdom("Neutral", player.getWorld()));
+		}
 		village.setNeutral();
 		if (village.hasParent())
 			village.getParent().setNeutral();
 
 		Cach.StaticVillage = village;
 		ChatManager.Broadcast(Config.getChat("WarnNeutral"));
-		Config.saveVillages(village.getLocation().getWorld());
+		Config.saveVillages(village.getWorld());
+		Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 50));
+		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 	}
 }

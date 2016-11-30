@@ -4,9 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -27,11 +25,9 @@ public class VillageGUI extends ChestGui{
 		display();
 	}
 
-	private int slot;
 	@Override
 	public void display() {
 		clearSlots();
-		slot = 9;
 		//Slot 0
 		playerInfo(p);
 		//SLot 1
@@ -41,37 +37,36 @@ public class VillageGUI extends ChestGui{
 		//Slot 5
 		next(this);
 		//Slot 7
-		if (Vault.perms.has(p, Main.getInstance().getName() + ".admin.village.create"))
+		if (Validate.hasPerm(p, ".admin.create.village"))
 			createButton();
 		//Slot 8
 		backButton(previous);
 		
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (Village.getVillages().size() -1) || getItems() < 1)
+			if (getCurrentItem() > (Village.getVillages(p.getWorld()).size() -1) || getItems() < 1)
 				break;
 			
-			if (Validate.hasPerm(p, "admin.village.edit")) 
-				villages(i, Village.getVillages().get(getCurrentItem()));
+			if (Validate.hasPerm(p, "admin.edit.village")) 
+				villages(i, Village.getVillages(p.getWorld()).get(getCurrentItem()));
 			
 			setCurrentItem(getCurrentItem()+1);
 		}
 	}
 	
 	private void villages(int i, Village village){
-		setItem(slot, new ItemStack(Material.BEACON), player -> {
+		setItem(i, new ItemStack(Material.BEACON), player -> {
 			setCurrentItem(0);
 			new EditGUI(player, village, this);
 		},"&aEdit " + village.getOwner().getColorSymbol() + village.getName()
 		, displayInfo(village));
-		slot++;
 	}
 
 	private String displayInfo(Village village) {
 		String str = "&1-----------------";
 		
 		str += "\n&aName: &f" + village.getName();
-		if (!Validate.isNull(village.getParent()))
+		if (Validate.notNull(village.getParent()))
 			str += "\n&aParent: &f" + village.getParent().getName();
 		else
 			str += "\n&aParent: &fNone";
@@ -88,9 +83,10 @@ public class VillageGUI extends ChestGui{
 	
 	private void createButton(){
 		setItem(7, new ItemStack(Material.DIAMOND_PICKAXE), player -> {
+			setCurrentItem(0);
 			new CreateGUI(player, this);
 		}, "§4Create new Village!", "§1-----------------"
-				+ "\n§cClick to open Edit Manager!"
+				+ "\n§cClick to open the Create manager!"
 				);
 	}
 }

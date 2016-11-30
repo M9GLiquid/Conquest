@@ -3,12 +3,14 @@ package eu.kingconquest.conquest.hook;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import eu.kingconquest.conquest.Main;
+import eu.kingconquest.conquest.util.Validate;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 public class Vault {
-    public static Economy econ = null;
     public static Permission perms = null;
+    public static Economy econ = null;
+    
     //public static Chat chat = null;
 
 	/**
@@ -17,14 +19,15 @@ public class Vault {
 	 */
 	public Vault() {
 		if (setupPermissions())
-			Hooks.put("&6| --&3 Permissions [&6Vault&3]", true);
+			Hooks.put("&6| --&3 Permissions [&6Vault API&3]", true);
 		else
-			Hooks.put("&6| --&3 Permissions [&6Vault&3]", false);
+			Hooks.put("&6| --&3 Permissions [&6Vault API&3]", false);
 		
-		if (setupEconomy())
-			Hooks.put("&6| --&3 Economy [&6Vault&3]", true);
+		if (setupEcoonomy() && Validate.isNull(TNEApi.econ))
+			Hooks.put("&6| --&3 Economy [&6Vault API&3]", true);
 		else
-			Hooks.put("&6| --&3 Economy [&6Vault&3]", false);
+			Hooks.put("&6| --&3 Economy [&6Vault API&3]", false);
+		
 	}
 
 	/**
@@ -33,21 +36,21 @@ public class Vault {
 	 */
     private boolean setupPermissions(){
         RegisteredServiceProvider<Permission> rsp = Main.getInstance().getServer().getServicesManager().getRegistration(Permission.class);
-        if (rsp == null)
+        if (Validate.isNull(rsp))
         	return false;
         perms = rsp.getProvider();
-        return perms != null;
+        return Validate.notNull(perms);
     }
 
 	/**
-	 * @info Access economy
+	 * @info Access permissions
 	 * @return boolean
 	 */
-    private boolean setupEconomy(){
+    private boolean setupEcoonomy(){
         RegisteredServiceProvider<Economy> rsp = Main.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null)
+        if (Validate.isNull(rsp))
         	return false;
         econ = rsp.getProvider();
-        return econ != null;
+        return Validate.notNull(econ);
     }
 }

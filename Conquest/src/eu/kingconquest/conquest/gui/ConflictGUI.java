@@ -12,10 +12,10 @@ import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ChestGui;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Validate;
 
 
@@ -39,8 +39,8 @@ public class ConflictGUI extends ChestGui{
 		targets.clear();
 		if (Validate.isNull(PlayerWrapper.getWrapper(p).getKingdom()))
 			return;
-		Config.getWorlds().forEach(world->{
-			Village.getVillages(world)
+		Config.getWorlds().forEach(uniqueID->{
+			Village.getVillages(Bukkit.getWorld(uniqueID))
 			.forEach(village->{
 				if (PlayerWrapper.getWrapper(p).getKingdom().equals(village.getOwner()))
 					return;
@@ -56,6 +56,7 @@ public class ConflictGUI extends ChestGui{
 		createGui(p, "&6Teleport Gui", targets.size());
 		display();
 	}
+	
 	@Override
 	public void display(){
 		clearSlots();
@@ -92,7 +93,7 @@ public class ConflictGUI extends ChestGui{
 	}
 
 	private void teleport(Location loc){
-		Cach.tpDelay = Config.TeleportDelay.get(p.getWorld())/20;
+		Cach.tpDelay = Config.getLongs("TeleportDelay", loc);
 		ChatManager.Chat(p, Config.getChat("startTP"));
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable(){
 			@Override
@@ -103,7 +104,7 @@ public class ConflictGUI extends ChestGui{
 				startFall();
 				ChatManager.Chat(p, Config.getChat("Teleported"));
 			}
-		}, Config.TeleportDelay.get(p.getWorld()));
+		}, Config.getLongs("TeleportDelay", loc));
 	}
 
 	/**

@@ -10,10 +10,10 @@ import eu.kingconquest.conquest.util.SimpleScoreboard;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerWrapper{
-	private static HashMap<UUID, PlayerWrapper> map = new HashMap<UUID, PlayerWrapper>();
+	private static HashMap<UUID, PlayerWrapper> wrapper = new HashMap<UUID, PlayerWrapper>();
 
 	public PlayerWrapper(Player player){
-		map.put(player.getUniqueId(), this);
+		wrapper.put(player.getUniqueId(), this);
 	}
 
 	private ArrayList<UUID> friends = new ArrayList<UUID>();
@@ -38,9 +38,9 @@ public class PlayerWrapper{
 		return kingdom;
 	}
 	public boolean isInKingdom(){
-		if (Validate.isNull(kingdom))
-			return false;
-		return true;
+		if (Validate.notNull(kingdom))
+			return true;
+		return false;
 	}
 	
 	private SimpleScoreboard scoreboard;
@@ -52,8 +52,8 @@ public class PlayerWrapper{
 	}
 
 	public static PlayerWrapper getWrapper(Player player){
-		if (!Validate.isNull(map.get(player.getUniqueId()))){
-			return map.get(player.getUniqueId());
+		if (Validate.notNull(wrapper.get(player.getUniqueId()))){
+			return wrapper.get(player.getUniqueId());
 		}
 		return new PlayerWrapper(player);
 	}
