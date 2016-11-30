@@ -1,7 +1,9 @@
 name: Conquest
 main: eu.kingconquest.conquest.Main
-softdepend: []
-version: 0.6a_SNAPSHOT
+load: POSTWORLD
+depend: [Vault, dynmap]
+softdepend: [TNE]
+version: 0.6b_SNAPSHOT
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 
@@ -9,7 +11,187 @@ description: World Domination, Done Right!
 commands:
   kingconquest:
     description: Main Commmand
-  kc:
-    description: Main Commmand
-  kingc:
-    description: Main Commmand
+    aliases: [c, kc, kingc, conquest]
+    permission: conquest.basic
+    permission-message: You do not have "conquest.basic"
+    
+permissions:
+   conquest.*:
+     default: op
+     description: Gives access to all the Commands.
+     children:
+       conquest.basic: true
+       conquest.basic.leave: true
+       conquest.basic.join: true
+       conquest.basic.teleport: true
+       conquest.admin: true
+       conquest.admin.create: true
+       conquest.admin.remove: true
+       conquest.admin.edit: true
+       conquest.admin.edit.kingdom: true
+       conquest.admin.edit.kingdom.player: true
+       conquest.admin.edit.town: true
+       conquest.admin.edit.village: true
+       conquest.admin.edit.player: true
+       conquest.admin.reset: true
+       conquest.admin.reload: true
+       conquest.admin.reset.server: true
+       conquest.admin.reset.world: true
+       conquest.admin.create.kingdom: true
+       conquest.admin.remove.kingdom: true
+       conquest.admin.edit.kingdom.name: true
+       conquest.admin.edit.kingdom.player.king: true
+       conquest.admin.edit.kingdom.player.remove: true
+       conquest.admin.edit.kingdom.player.promote: true
+       conquest.admin.edit.kingdom.player.demote: true
+       conquest.admin.edit.kingdom.player.move: true
+       conquest.admin.edit.kingdom.location: true
+       conquest.admin.edit.kingdom.spawn: true
+       conquest.admin.create.town: true
+       conquest.admin.remove.town: true
+       conquest.admin.edit.town.owner: true
+       conquest.admin.edit.town.name: true
+       conquest.admin.edit.town.location: true
+       conquest.admin.edit.town.spawn: true
+       conquest.admin.create.village: true
+       conquest.admin.remove.village: true
+       conquest.admin.edit.village.name: true
+       conquest.admin.edit.village.owner: true
+       conquest.admin.edit.village.parent: true
+       conquest.admin.edit.village.location: true
+       conquest.admin.edit.village.spawn: true
+       conquest.admin.edit.player.friends: true
+   conquest.admin:
+     default: op
+     description: Gives access to all the Admin Commands.
+     children:
+       conquest.admin.reload: true
+       conquest.admin.create.kingdom: true
+       conquest.admin.remove.kingdom: true
+       conquest.admin.edit.kingdom: true
+       conquest.admin.edit.kingdom.name: true
+       conquest.admin.edit.kingdom.location: true
+       conquest.admin.edit.kingdom.spawn: true
+       conquest.admin.edit.kingdom.player: true
+       conquest.admin.edit.kingdom.player.king: true
+       conquest.admin.edit.kingdom.player.remove: true
+       conquest.admin.edit.kingdom.player.promote: true
+       conquest.admin.edit.kingdom.player.demote: true
+       conquest.admin.edit.kingdom.player.move: true
+       conquest.admin.create.town: true
+       conquest.admin.remove.town: true
+       conquest.admin.edit.town: true
+       conquest.admin.edit.town.owner: true
+       conquest.admin.edit.town.name: true
+       conquest.admin.edit.town.location: true
+       conquest.admin.edit.town.spawn: true
+       conquest.admin.create.village: true
+       conquest.admin.remove.village: true
+       conquest.admin.edit.village: true
+       conquest.admin.edit.village.name: true
+       conquest.admin.edit.village.owner: true
+       conquest.admin.edit.village.parent: true
+       conquest.admin.edit.village.location: true
+       conquest.admin.edit.village.spawn: true
+       conquest.admin.edit.player: true
+       conquest.admin.edit.player.friends: true
+   conquest.admin.remove.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.remove.kingdom: true
+       conquest.admin.remove.town: true
+       conquest.admin.remove.village: true
+   conquest.admin.reset.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.reset.server: true
+       conquest.admin.reset.world: true
+   conquest.admin.edit.player.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.edit.kingdom.player.promote: true
+       conquest.admin.edit.kingdom.player.demote: true
+       conquest.admin.edit.kingdom.player.remove: true
+       conquest.admin.edit.kingdom.player.move: true
+       conquest.admin.edit.player.friends: true
+   conquest.admin.edit.village.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.edit.village.name: true
+       conquest.admin.edit.village.owner: true
+       conquest.admin.edit.village.parent: true
+       conquest.admin.edit.village.location: true
+       conquest.admin.edit.village.spawn: true
+       conquest.admin.edit.village.teleport: true
+       conquest.admin.edit.village.remove: true
+   conquest.admin.edit.town.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.edit.town.parent: true
+       conquest.admin.edit.town.owner: true
+       conquest.admin.edit.town.name: true
+       conquest.admin.edit.town.location: true
+       conquest.admin.edit.town.spawn: true
+       conquest.admin.edit.town.teleport: true
+       conquest.admin.edit.town.remove: true
+   conquest.admin.edit.kingdom.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.edit.kingdom.name: true
+       conquest.admin.edit.kingdom.parent: true
+       conquest.admin.edit.kingdom.owner: true
+       conquest.admin.edit.kingdom.location: true
+       conquest.admin.edit.kingdom.spawn: true
+       conquest.admin.edit.kingdom.teleport: true
+       conquest.admin.edit.kingdom.remove: true
+   conquest.admin.create.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.create.kingdom: true
+       conquest.admin.create.town: true
+       conquest.admin.create.village: true
+   conquest.admin.edit.*:
+     default: op
+     description: Gives admin access to edit commands
+     children:
+       conquest.admin.edit.kingdom: true
+       conquest.admin.edit.kingdom.name: true
+       conquest.admin.edit.kingdom.parent: true
+       conquest.admin.edit.kingdom.owner: true
+       conquest.admin.edit.kingdom.location: true
+       conquest.admin.edit.kingdom.spawn: true
+       conquest.admin.edit.kingdom.teleport: true
+       conquest.admin.edit.kingdom.remove: true
+       conquest.admin.edit.town: true
+       conquest.admin.edit.town.parent: true
+       conquest.admin.edit.town.owner: true
+       conquest.admin.edit.town.name: true
+       conquest.admin.edit.town.location: true
+       conquest.admin.edit.town.spawn: true
+       conquest.admin.edit.town.teleport: true
+       conquest.admin.edit.town.remove: true
+       conquest.admin.edit.village: true
+       conquest.admin.edit.village.name: true
+       conquest.admin.edit.village.owner: true
+       conquest.admin.edit.village.parent: true
+       conquest.admin.edit.village.location: true
+       conquest.admin.edit.village.spawn: true
+       conquest.admin.edit.village.teleport: true
+       conquest.admin.edit.village.remove: true
+       conquest.admin.edit.player: true
+       conquest.admin.edit.player.friends: true
+   conquest.basic:
+     default: true
+     description: Gives access to basic commands
+     children:
+       conquest.basic.join: true
+       conquest.basic.leave: true
+       conquest.basic.teleport: true
+    

@@ -38,12 +38,12 @@ public class SimpleScoreboard {
     private Scoreboard scoreboard;
     private String title;
     private Map<String, Integer> scores;
-    private Objective obj;
+    private Objective objective;
     private List<Team> teams;
     private List<Integer> removed;
     private Set<String> updated;
 
-    public SimpleScoreboard(String title) {
+     public SimpleScoreboard(String title) {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         setTitle(title);
         this.scores = new ConcurrentHashMap<>();
@@ -53,8 +53,7 @@ public class SimpleScoreboard {
     }
 
     public void add(Integer score, String text) {
-
-        text = ChatColor.translateAlternateColorCodes('&', text);
+    	text = ChatManager.Format(text);
         if (text.length() > 30) 
             text = text.substring(0, 29); // cut off suffix, done if text is over 30 characters
 
@@ -152,20 +151,19 @@ public class SimpleScoreboard {
 
     @SuppressWarnings("deprecation")
 	public void update() {
-    	ChatManager.Format(title);
         if (updated.isEmpty()) {
             return;
         }
 
-        if (obj == null) {
-            obj = scoreboard.registerNewObjective((title.length() > 16 ? title.substring(0, 15) : title), "dummy");
-            obj.setDisplayName((title.length() > 32 ? title.substring(0, 31) : title));
-            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+        if (objective == null) {
+            objective = scoreboard.registerNewObjective((title.length() > 16 ? title.substring(0, 15) : title), "dummy");
+            objective.setDisplayName((title.length() > 32 ? title.substring(0, 31) : title));
+            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
 
         removed.stream().forEach((remove) -> {
             for (String s : scoreboard.getEntries()) {
-                Score score = obj.getScore(s);
+                Score score = objective.getScore(s);
 
                 if (score == null)
                     continue;
@@ -184,7 +182,6 @@ public class SimpleScoreboard {
         for (Map.Entry<String, Integer> text : scores.entrySet()) {
             Team t = scoreboard.getTeam(ChatColor.values()[text.getValue()].toString());
             Map.Entry<Team, OfflinePlayer> team;
-
             if(!updated.contains(text.getKey())) {
                 continue;
             }
@@ -207,7 +204,7 @@ public class SimpleScoreboard {
 
             Integer score = text.getValue() != null ? text.getValue() : index;
 
-            obj.getScore(team.getValue()).setScore(score);
+            objective.getScore(team.getValue()).setScore(score);
             index -= 1;
         }
 
@@ -218,8 +215,8 @@ public class SimpleScoreboard {
     	title = ChatManager.Format(title);
         this.title = (title.length() > 32 ? title.substring(0, 31) : title);
 
-        if(obj != null)
-            obj.setDisplayName(this.title);
+        if(objective != null)
+            objective.setDisplayName(this.title);
     }
 
     public void reset() {
@@ -273,62 +270,87 @@ public class SimpleScoreboard {
         }
     }
 
-    private int i;
     private int x;
-	public void kingdomBoard(Player p){
+	public void KingdomBoard(Player p){
+		x = 0;
 		setTitle("&6[&eKingdom Information&6]");
 		Kingdom kingdom = PlayerWrapper.getWrapper(p).getKingdom();
 		Village.getVillages().stream().filter(village->village.getOwner().equals(kingdom)).forEach(village->{
-			i++;
+			if (!village.hasParent())
+				x++;
 		});
 		Town.getTowns().stream().filter(town->town.getOwner().equals(kingdom)).forEach(town->{
 			x++;
 		});
-		add(12, ChatManager.Format("&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName()));
-		add(11, ChatManager.Format("&6&lKing: &r&7*Coming Soon*" /*+kingdom.getKingName()*/));	
-		add(10, ChatManager.Format("&6&lRank: &r&7*Coming Soon*"));	
-		add(9, ChatManager.Format("&6&lMoney: &r&7" /*+ Vault.econ.getBalance(p)*/));	
-		add(8, ChatManager.Format("       "));	
-		add(7, ChatManager.Format("&a&lKingdom Specific"));	
-		add(6, ChatManager.Format("                           "));	
-		add(5, ChatManager.Format("&6Villages Captured: &e" + i));	
-		add(4, ChatManager.Format("&6Towns Captured: &e" + x));	
-		add(3, ChatManager.Format("                    "));	
-		add(2, ChatManager.Format("          "));		
-		add(1, ChatManager.Format("           "));
+		add(12, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
+		add(11, "&6&lKing:" /*+kingdom.getKingName()*/);	
+		add(10, "&7*Coming Soon*");	
+		add(9, "&6&lMoney: &r&7");	
+		add(8, "&7*Coming Soon* " /*+ TNEApi.getBalance(kingdom.getUUID())*/);	
+		add(7, "&a&lKingdom Specific");	
+		add(6, "&6Objectives Captured:");	
+		add(5, "&7" + x);	
+		add(4, "&6Traps Deployed:");	
+		add(3, "&7*Coming Soon*  ");		
+		add(2, " ");		
+		add(1, "  ");		
+		add(0, "   ");		
 		send(p);
 	}
 
-	public void captureBoard(Player p, Village op){
-		add(12, ChatManager.Format("&a&lName: "));	
-		add(11, ChatManager.Format(op.getOwner().getColorSymbol() + op.getName()));	
-		add(10, ChatManager.Format("       "));	
-		add(9, ChatManager.Format("&a&lOwner:"));
-		add(8, ChatManager.Format(op.getOwner().getColorSymbol() + op.getOwner().getName()));	
-		add(7, ChatManager.Format("  "));	
-		add(6, ChatManager.Format("&a&lCapture Progress:"));	
-		add(5, ChatManager.Format("&e" + op.getProgress() + "%"));	
-		add(4, ChatManager.Format("        "));	
-		add(3, ChatManager.Format("         "));	
-		add(2, ChatManager.Format("          "));		
-		add(1, ChatManager.Format("           "));
-		send(p);
+	public void CaptureBoard(Player player, Village village){
+		setTitle("&6[&eCapture Information&6]");
+		add(12, "&a&lName: ");	
+		add(11, village.getOwner().getColorSymbol() + village.getName());	
+		add(10, "       ");	
+		add(9, "&a&lOwner:");
+		add(8, village.getOwner().getColorSymbol() + village.getOwner().getName());	
+		add(7, "  ");	
+		add(6, "&a&lCapture Progress:");	
+		add(5, "&e" + village.getProgress() + "%");	
+		add(4, "        ");	
+		add(3, "         ");	
+		add(2, "          ");		
+		add(1, "           ");
+		add(0, "            ");
+		send(player);
 	}
 	
-	public void neutralBoard(Player p){
-		add(12, ChatManager.Format("&1Welcome: &r" + p.getName()));
-		add(11, ChatManager.Format("           "));
-		add(10, ChatManager.Format("&6&lNetwork: &rKingConquest"));	
-		add(9, ChatManager.Format("&6&lServer: &rConquest"));	
-		add(8, ChatManager.Format("   "));	
-		add(7, ChatManager.Format("&1&lTo Join a capital:"));	
-		add(6, ChatManager.Format("&6Steps:"));	
-		add(5, ChatManager.Format("&61: &f/kc"));	
-		add(4, ChatManager.Format("&62: &eInteract! "));		
-		add(3, ChatManager.Format("&1For Help:"));	
-		add(2, ChatManager.Format("&61: /kc"));	
-		add(1, ChatManager.Format("&62: &eInteract!"));		
-		send(p);
+	public void PlayerBoard(Player player){
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+		Kingdom kingdom = (wrapper.isInKingdom() ? wrapper.getKingdom() : Kingdom.getNeutral(player.getWorld()));
+		setTitle("&6[&ePlayer Information&6]");
+		add(12, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
+		add(11, "&6&lMoney:");	
+		add(10, "&7*Coming Soon*");	
+		add(9, "&6&lFriends Online:");
+		add(8, "&7*Coming Soon* ");
+		add(7, "&6&lRank:");
+		add(6, "&7*Coming Soon* ");
+		add(5, "&6Level:");
+		add(4, "&7*Coming Soon* ");
+		add(3, "&6&lxp for next lvl:");
+		add(2, "&7*Coming Soon* ");
+		add(1, "");
+		add(0, "&7*Coming Soon* ");
+		send(player);
+	}
+	
+	public void NeutralBoard(Player player){
+		add(12, "&1Welcome: &r" + player.getName());
+		add(11, "           ");
+		add(10, "&6&lNetwork: &rKingConquest");	
+		add(9, "&6&lServer: &rConquest");	
+		add(8, "   ");	
+		add(7, "&1&lTo Join a capital:");	
+		add(6, "&6Steps:");	
+		add(5, "&61: &f/kc");	
+		add(4, "&62: &eInteract! ");		
+		add(3, "&61For Help: ");	
+		add(2, "&61: &f/kc ");	
+		add(1, "&62: &eInteract!");		
+		add(0, "");
+		send(player);
 		
 	}
 }

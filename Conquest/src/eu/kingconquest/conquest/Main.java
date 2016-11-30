@@ -1,28 +1,31 @@
 package eu.kingconquest.conquest;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import eu.kingconquest.conquest.command.Commands;
+import eu.kingconquest.conquest.commands.HomeCommand;
 import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.VillageProximity;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.ServerRestartEvent;
 import eu.kingconquest.conquest.hook.Dynmap;
 import eu.kingconquest.conquest.hook.Hooks;
+import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.listener.CaptureProgressListener;
-import eu.kingconquest.conquest.listener.CaptureZoneListener;
 import eu.kingconquest.conquest.listener.ChestGuiListener;
+import eu.kingconquest.conquest.listener.CreateListener;
 import eu.kingconquest.conquest.listener.PlayerDeathListener;
 import eu.kingconquest.conquest.listener.PlayerJoinListener;
+import eu.kingconquest.conquest.listener.PlayerMoveListener;
 import eu.kingconquest.conquest.listener.PlayerRespawnListener;
+import eu.kingconquest.conquest.listener.ProximityZoneListener;
 import eu.kingconquest.conquest.listener.ResetListener;
 import eu.kingconquest.conquest.listener.ServerRestartListener;
 import eu.kingconquest.conquest.util.ChatManager;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Validate;
 
 
@@ -40,7 +43,8 @@ public class Main extends JavaPlugin implements Listener{
 	@Override
 	public void onEnable(){
 		instance = this;
-		
+
+		new TNEApi();
 		new Vault();
 		new Dynmap();
 
@@ -54,8 +58,8 @@ public class Main extends JavaPlugin implements Listener{
 		Config.output();
 		ChatManager.Console("&6|=======================================|");
 		createNeutralKingdom();
-		ServerRestartListener srl = new ServerRestartListener();
 		
+		ServerRestartListener srl = new ServerRestartListener();
 		if (Bukkit.getOnlinePlayers().size() > 0){
 			//Bukkit.getServer().getPluginManager().callEvent(new ServerRestartEvent());
 			srl.onServerRestart(new ServerRestartEvent());
@@ -66,12 +70,13 @@ public class Main extends JavaPlugin implements Listener{
 	private void setListeners(){
 		this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-		this.getServer().getPluginManager().registerEvents(new VillageProximity(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerMoveListener(), this);
 		this.getServer().getPluginManager().registerEvents(new ChestGuiListener(), this);
 		this.getServer().getPluginManager().registerEvents(new CaptureProgressListener(), this);
-		this.getServer().getPluginManager().registerEvents(new CaptureZoneListener(), this);
+		this.getServer().getPluginManager().registerEvents(new ProximityZoneListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerRespawnListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
+		this.getServer().getPluginManager().registerEvents(new CreateListener(), this);
 		this.getServer().getPluginManager().registerEvents(new ResetListener(), this);
 	}
 
@@ -80,9 +85,10 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	private static void createNeutralKingdom(){
 		Config.getWorlds().stream()
-		.filter(world->Validate.isNull(Kingdom.getKingdom("Neutral", world)))
-		.forEach(world->{
-			Kingdom kingdom = new Kingdom("Neutral", null, -1, Bukkit.getWorld(world.getName()).getSpawnLocation().clone());
+		.filter(uniqueID->Validate.isNull(Kingdom.getNeutral(Bukkit.getWorld(uniqueID))))
+		.forEach(uniqueID->{
+			World world = Config.getWorld(uniqueID);
+			Kingdom kingdom = new Kingdom("Neutral", null, world.getSpawnLocation().clone(), -1);
 			kingdom.create(null);
 			Config.saveKingdoms(world);
 		});
@@ -94,15 +100,8 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-		if (command.getName().equalsIgnoreCase("c") 
-				|| command.getName().equalsIgnoreCase("kc") 
-				|| command.getName().equalsIgnoreCase("kingc") 
-				|| command.getName().equalsIgnoreCase("conquest")
-				|| command.getName().equalsIgnoreCase("kingconquest")){
-			Commands.Main(sender, args);
-			return true;
-		}
-		return false;
+		this.getCommand("kingconquest").setExecutor(new HomeCommand());
+		return true;
 	}
 	
 	/**
@@ -124,11 +123,8 @@ public class Main extends JavaPlugin implements Listener{
 		Config.removeOnDisable();
 		Config.saveOnDisable();
 		ChatManager.Console("&6|========================================|");
-		Config.clearAll();
+		Config.clear();
 		getServer().getServicesManager().unregisterAll(this);
-		Bukkit.getScheduler().cancelAllTasks();
 		Bukkit.getScheduler().cancelTasks(this);
-
-
 	}
 }

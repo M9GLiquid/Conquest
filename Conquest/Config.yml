@@ -3,110 +3,90 @@
 # | Server IP: play.kingconquest.eu
 # | Website: www.kingconquest.eu
 #========================================================
-# | General Settings:
-# |  <AutoReloadUpdate>:		Toggle the console message update for config AutoReload.
-# |  <AutoReload>:				The time before the plugin will auto save/load to config (minutes).
+# |                                                      Information
 # | ActiveWorlds:
-# |  <World>: 					What worlds you want the plugin to be running on (name of World).
+# |  <World>: 								What worlds you want the plugin to be running on (name of World).
 # |    General:
-# |     <RespawnDelay>: 		Delay before you are respawned (seconds).
-# |     <TeleportDelay>: 		Delay before you are teleported (seconds).
+# |     <RespawnDelay>: 			Delay before you are respawned (seconds).
+# |     <TeleportDelay>: 				Delay before you are teleported (seconds).
 # |   Income:
-# |     <CapCash>: 				Cash you are rewarded for capturing (instant and directly to the player).
-# |    <IncomeDelay>: 			Time before Capital Rewards are devided out (minutes).
-# |     <ObjectiveBaseValue>: 	Base value of Capturing a complete Objective.
-# |     <OutpostBaseValue>: 	Base value of Capturing a Beacon.
+# |     <CapCash>: 						Cash you are rewarded for capturing (instant and directly to the player).
+# |    <IncomeDelay>: 				Time before Capital Rewards are devided out (minutes).
+# |     <TownBaseValue>: 			Base value of Capturing a complete Objective.
+# |     <VillageBaseValue>: 		Base value of Capturing a Beacon.
 # |    Combat:
-# |     <CaptureRate>:			Rate of which a player captures an objective (seconds)
-# |     <CaptureDistance>:		Amount of Blocks away from the outpost you can be to capture it (X|Z).
+# |     <CaptureRate>:					Rate of which a player captures an objective (seconds)
+# |     <CaptureDistance>:			Amount of Blocks away from the outpost you can be to capture it (X|Z).
 # |     <CaptureAboveHeight>:	Amount of Blocks above the outpost you can be to capture it (Y).
 # |     <CaptureBelowHeight>:	Amount of Blocks below the outpost you can be to capture it (Y).
-# |    Build:
-# |     <DistanceBetween>:		Amount of Blocks away from other outposts you need to be to create a new Outpost (X|Z).
-# |    Debug:
-# |      <DynmapMarkers>: true	Allow debug messages for dynmap markers.
 # ========================================================
-General:
-  AutoReloadUpdate: true
-  AutoReload: 30
+# |                                                        Example
+# | Database:
+# |   Backend: SqlLite
+# |   MySql:
+# |     Host: localhost
+# |     User: root
+# |     Password: root
+# |     Database: Conquest
+# |     Port: 21
+# |   SqlLite:
+# |   FlatFile
+# | ActiveWorlds:
+# |   world:
+# |     General:
+# |       Debug: false
+# |       RespawnDelay: 10
+# |       TeleportDelay: 10
+# |     Income:
+# |       CapCash: 120
+# |       IncomeDelay: 20000
+# |       TownBaseValue: 0.2
+# |       VillageBaseValue: 0.3
+# |     Combat:
+# |       CaptureRate: 0.3
+# |       CaptureDistance: 10.0
+# |       CaptureMaxY: 5.0
+# |       CaptureMinY: 1.0
+# ========================================================
+#
 Database:
-  MYSQL:
+  Backend: FlatFile
+  MySql:
     Host: localhost
     User: root
     Password: root
     Database: Conquest
     Port: 21
-  SQL: false
+  SqlLite:
+  FlatFile:
 ActiveWorlds:
   world:
     General:
+      Debug: true
       RespawnDelay: 10
       TeleportDelay: 10
     Income:
       CapCash: 100
       IncomeDelay: 60000
-      ObjectiveBaseValue: 0.2
-      OutpostBaseValue: 0.5
+      TownBaseValue: 0.2
+      VillageBaseValue: 0.5
     Combat:
       CaptureRate: 0.3
       CaptureDistance: 17.0
       CaptureMaxY: 5.0
       CaptureMinY: 1.0
-    Build:
-      DistanceBetween: 25
-    Debug:
-      DynmapMarkers: true
   Sezty:
     General:
+      Debug: true
       RespawnDelay: 10
       TeleportDelay: 10
     Income:
       CapCash: 100
       IncomeDelay: 60000
-      ObjectiveBaseValue: 0.2
-      OutpostBaseValue: 0.5
+      TownBaseValue: 0.2
+      VillageBaseValue: 0.5
     Combat:
       CaptureRate: 0.3
       CaptureDistance: 17.0
       CaptureMaxY: 5.0
       CaptureMinY: 1.0
-    Build:
-      DistanceBetween: 25
-    Debug:
-      DynmapMarkers: true
-  Testing_World:
-    General:
-      RespawnDelay: 10
-      TeleportDelay: 10
-    Income:
-      CapCash: 100
-      IncomeDelay: 60000
-      ObjectiveBaseValue: 0.2
-      OutpostBaseValue: 0.5
-    Combat:
-      CaptureRate: 0.3
-      CaptureDistance: 17.0
-      CaptureMaxY: 5.0
-      CaptureMinY: 1.0
-    Build:
-      DistanceBetween: 25
-    Debug:
-      DynmapMarkers: true
-  Building_World:
-    General:
-      RespawnDelay: 10
-      TeleportDelay: 10
-    Income:
-      CapCash: 100
-      IncomeDelay: 60000
-      ObjectiveBaseValue: 0.2
-      OutpostBaseValue: 0.5
-    Combat:
-      CaptureRate: 0.3
-      CaptureDistance: 17.0
-      CaptureMaxY: 5.0
-      CaptureMinY: 1.0
-    Build:
-      DistanceBetween: 25
-    Debug:
-      DynmapMarkers: true

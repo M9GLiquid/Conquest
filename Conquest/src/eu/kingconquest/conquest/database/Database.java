@@ -33,7 +33,7 @@ public abstract class Database {
 	 * @throws ClassNotFoundException
 	 *             if the driver cannot be found
 	 */
-	public abstract Connection openConnection() throws SQLException,
+	public abstract Connection connect() throws SQLException,
 			ClassNotFoundException;
 
 	/**
@@ -83,12 +83,12 @@ public abstract class Database {
 	 * @throws SQLException
 	 *             If the query cannot be executed
 	 * @throws ClassNotFoundException
-	 *             If the driver cannot be found; see {@link #openConnection()}
+	 *             If the driver cannot be found; see {@link #connect()}
 	 */
 	public ResultSet querySQL(String query) throws SQLException,
 			ClassNotFoundException {
 		if (!checkConnection()) {
-			openConnection();
+			connect();
 		}
 
 		Statement statement = connection.createStatement();
@@ -109,12 +109,12 @@ public abstract class Database {
 	 * @throws SQLException
 	 *             If the query cannot be executed
 	 * @throws ClassNotFoundException
-	 *             If the driver cannot be found; see {@link #openConnection()}
+	 *             If the driver cannot be found; see {@link #connect()}
 	 */
 	public int updateSQL(String query) throws SQLException,
 			ClassNotFoundException {
 		if (!checkConnection()) {
-			openConnection();
+			connect();
 		}
 
 		Statement statement = connection.createStatement();

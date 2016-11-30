@@ -6,55 +6,52 @@
 Language:
   General:
     PluginPrefix: '&6[&eConquest&6]'
-    JoinSuccess: You have joined {color}{kingdom}.
-    LeaveSuccess: You have left {color}{kingdom}.
-    MoveSuccess: '&6Admin has moved you to kingdom: {color}{kingdom}'
-    RemoveSuccess: '&6Admin has removed you from kingdom: {color}{kingdom}'
-    Teleported: You have been successfully teleported
-    startTP: You will be teleported in {tpDelay} seconds
-    Reloaded: Config {config} Reloaded!
-    unBindSuccess: You have Successfully unbound &a{village} &6from &a{town}
+    JoinSuccess: 'You have joined {color}{kingdom}.'
+    LeaveSuccess: 'You have left {color}{kingdom}.'
+    MoveSuccess: '&7Admin has moved you to kingdom: {color}{kingdom}'
+    RemoveSuccess: '&7Admin has removed you from kingdom: {color}{kingdom}'
+    Teleported: 'You have been successfully teleported'
+    StartTP: 'You will be teleported in {tpDelay} seconds'
+    UnBindSuccess: 'You have Successfully unbound &a{village} &7from &a{town}'
+    CannotCapture: '&7Defender is on Point!'
     Admin:
-      MoveSuccess: '&6You have successfully moved &f{user} &6to &f{kingdom}'
+      MoveSuccess: '&7You have successfully moved &f{user} &7to &f{kingdom}'
   Kingdoms:
-    Belonging: You already belong to {color}{kingdom}
-    KingdomCreated: Kingdom {color}{kingdom} &6 was successfully &aCreated!
-    KingdomDeleted: Kingdom {color}{kingdom} &6 was successfully &cDeleted!
-    KingdomExist: Kingdom {color}{kingdom} &6 Allready &cExists!
-    NoKingdom: Kingdom {kingdom} does not exist
+    Belonging: '&4Obs&7, You already belong to {color}{kingdom}'
+    KingdomCreated: 'Kingdom {color}{kingdom} &7 was successfully &aCreated!'
+    KingdomDeleted: 'Kingdom {color}{kingdom} &7 was successfully &cDeleted!'
+    KingdomExist: 'Kingdom {color}{kingdom} &7 Allready &cExists!'
     Admin:
-      EditName: '&6Kingdom Name Changed to {color}{kingdom}'
-      EditKing: '&6Kingdom King Changed to {king}'
-      EditSpawn: '{kingdom}s &6Spawn Location Changed'
-      EditLocation: '{kingdom}s &6Dynmap Location Changed'
+      EditName: '&7Kingdom Name Changed to {color}{kingdom}'
+      EditKing: '&{kingdom}s King Changed to {king}'
+      EditSpawn: '{kingdom}s &7Spawn Location Changed'
+      EditLocation: '{kingdom}s &7Dynmap Location Changed'
   Towns:
-    CaptureSuccess: '&6You have successfully captured entire Town &a{town}&6!'
-    KingdomFail: '&6You have not yet captured {town}!'
-    TownCreated: '&6Town &f{town} &awas successfully created!'
-    TownDeleted: '&6Town &f{town} &cwas successfully deleted!'
-    CannotCapture: '&6Defender is on Point!'
-    CapturingTown: '&6Someone is attacking {town}'
+    CaptureSuccess: '&7You have successfully captured the entire Town &a{town}&7!'
+    KingdomFail: '&7You have not yet captured {town}!'
+    TownCreated: '&7Town &f{town} &awas successfully created!'
+    TownDeleted: '&7Town &f{town} &cwas successfully deleted!'
     Admin:
-      EditName: '&6Towns Name Changed to {town}'
+      EditName: '&7Towns Name Changed to {town}'
       EditOwner: '&f{town}s Owner Changed to {color}{kingdom}'
-      EditChildren: '&f{town}s &6children successfully Changed'
-      EditSpawn: '&f{town}s &6Spawn Location Changed'
-      EditLocation: '&f{town}s &6Dynmap Location Changed'
+      EditChildren: '&f{town}s &7children successfully Changed'
+      EditSpawn: '&f{town}s &7Spawn Location Changed'
+      EditLocation: '&f{town}s &7Dynmap Location Changed'
   Villages:
-    CaptureSuccess: '&6You have successfully captured Village {color}{village}!'
-    CaptureFail: '&6You have not yet captured &f{village}!'
-    VillageCreated: Village &f{village} &6was successfully &aCreated!
-    VillageDeleted: Village &f{village} &6was successfully &cDeleted!
+    CaptureSuccess: '&7You have successfully captured Village {color}{village}!'
+    VillageCreated: 'Village &f{village} &7was successfully &aCreated!'
+    VillageDeleted: 'Village &f{village} &7was successfully &cDeleted!'
     Admin:
-      EditName: '&6Villages Name Changed to &f{village}'
-      EditOwner: '&f{village}s &6Owner Changed to {color}{kingdom}'
-      EditParent: '&f{village}s &6Parent Changed to &f{town}'
-      EditSpawn: '&f{village}s &6Spawn Location Changed'
-      EditLocation: '&f{village}s &6Dynmap Location Changed'
+      EditName: '&7Village Name Changed to &f{village}'
+      EditOwner: '&f{village}s &7Owner Changed to {color}{kingdom}'
+      EditParent: '&f{village}s &7Parent Changed to &f{town}'
+      EditSpawn: '&f{village}s &7Spawn Location Changed'
+      EditLocation: '&f{village}s &7Dynmap Location Changed'
   Errors:
-    AlreadyExists: '&cOBS!, Name exist, perhaps choose another?!'
-    ToClose: '&cError, To close to another Objective!'
+    AlreadyExists: '&4OBS!&c, Name exist, perhaps choose another?!'
+    ToClose: '&4Error&c, To close to another Objective!'
   Broadcast:
-    WarnDistress: '&7{village} &cis currently under attack!'
+    WarnDistress: '{color}{village} &cis currently under attack!'
     WarnNeutral: '&f{village} &7is now &fNeutral!'
-    Captured: Village &f{village} &6is now under controle of {color}{kingdom}!
+    Captured: 'Village &f{village} &7is now under controle of {color}{kingdom}!'
+    TownCaptured: 'Town &f{town} &7is now under controle of {color}{kingdom}!'

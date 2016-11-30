@@ -7,6 +7,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.PlayerWrapper;
+import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -47,7 +49,7 @@ public class HomeGUI extends ChestGui{
 		helpButton();
 		
 
-		if (Validate.hasPerm(player, ".admin"))
+		if (Validate.hasPerm(player, ".admin.edit.player"))
 			playerButton();
 		
 		//Friends Gui
@@ -55,6 +57,7 @@ public class HomeGUI extends ChestGui{
 		
 		if (PlayerWrapper.getWrapper(player).isInKingdom()){
 			spawnButton();
+			if (Validate.hasPerm(player, ".basic.teleport"))
 			conflictButton();
 		}
 		
@@ -63,9 +66,26 @@ public class HomeGUI extends ChestGui{
 		if (Validate.hasPerm(player, ".admin")){
 			townButton();
 			villageButton();
+			if (Validate.hasPerm(player, ".admin.reset"))
 			resetButton();
+			reloadButton();
 		}
 		
+	}
+
+	private void reloadButton(){
+		setItem(2, new ItemStack(Material.REDSTONE_LAMP_OFF), player -> {
+			if (Config.loadDefault() && Config.loadLanguage()){
+				ChatManager.Chat(player, "{plugin_prefix} &7Config.yml & Language.yml &aSuccessfully reloaded!");
+				return;
+			}
+			ChatManager.Chat(player, "{plugin_prefix} &7Config.yml & Language.yml &cFailed to reload!");
+		}, "&3Reload Config","§1-----------------"
+				+ "\n&6Affected Files: "
+				+ "\n&7 - Language.yml"
+				+ "\n&7 - Config.yml"
+        		+ "\n"
+				);
 	}
 
 	private void playerButton(){
@@ -75,13 +95,14 @@ public class HomeGUI extends ChestGui{
 		head.setItemMeta(skull);
         setSkullItem(slot, head, player ->{
         	new PlayerGUI(player ,this, null);
-        }, "&4Player Management Menu:","§1-----------------"
-        		+ "\n&6- &aManage Player"
+        }, "&3Player Management Menu:","§1-----------------"
+        		+ "\n&7Manage Player Attributes:"
+        		+ "\n&6- &eExperience"
+        		+ "\n&6- &aFriends"
         		+ "\n&6- &aMoney"
         		+ "\n&6- &aRank"
-        		+ "\n&6- &eExperience"
         		+ "\n&6- &cMute"
-        		+ "\n&6- &4Kick"
+        		+ "\n&6- &cKick"
         		+ "\n&6- &4Ban"
         		+ "\n"
         		);

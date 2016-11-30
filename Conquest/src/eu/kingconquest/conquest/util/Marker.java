@@ -91,7 +91,6 @@ public class Marker{
 	}
 
 	public static boolean update(Objective objective){
-
 		if (remove(objective)){
 			if (create(objective))
 				return true;
@@ -104,7 +103,7 @@ public class Marker{
 
 	public static boolean remove(Objective objective){
 		try{
-			if (!Validate.isNull(Dynmap.dynmapAPI.getMarkerAPI().getMarkerSet("Conquest").findMarker(objective.getUUID().toString())))
+			if (Validate.notNull(Dynmap.dynmapAPI.getMarkerAPI().getMarkerSet("Conquest").findMarker(objective.getUUID().toString())))
 				Dynmap.dynmapAPI.getMarkerAPI().getMarkerSet("Conquest").findMarker(objective.getUUID().toString()).deleteMarker();
 			return true;
 		}catch (Exception e){
@@ -149,7 +148,7 @@ public class Marker{
 			if (objective instanceof Kingdom){
 				if (((Kingdom) objective).isNeutral())
 					return false;
-				if (!Validate.isNull(((Kingdom) objective).getKing()))
+				if (Validate.notNull(((Kingdom) objective).getKing()))
 					 king  = ((Kingdom) objective).getKing().getName();
 				Dynmap.dynmapAPI
 				.getMarkerAPI()
@@ -163,7 +162,7 @@ public class Marker{
 			}
 			if (objective instanceof Town){
 				Integer children = 0;
-				if (!Validate.isNull( ((Town) objective).getChildren()))
+				if (Validate.notNull( ((Town) objective).getChildren()))
 					children =  ((Town) objective).getChildren().size();
 				Dynmap.dynmapAPI
 				.getMarkerAPI()

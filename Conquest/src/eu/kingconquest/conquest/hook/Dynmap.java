@@ -14,8 +14,8 @@ import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.ChatManager;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Marker;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -38,16 +38,16 @@ public class Dynmap{
 
 	public Dynmap(){
 		if (setupDynmap()){
-			Hooks.put("&6| --&3 Dynmap [&6Dynmap&3]", true);
+			Hooks.put("&6| --&3 Dynmap [&6Dynmap &3]", true);
 		}else{
-			Hooks.put("&6| -&3 Dynmap [&6Dynmap&3]", false);
+			Hooks.put("&6| --&3 Dynmap [&6Dynmap&3]", false);
 			return;
 		}
 		if (setupDynmapAPI()){
-			Hooks.put("&6| --&3 API [&6Dynmap&3]", true);
+			Hooks.put("&6| --&3 API [&6Dynmap API&3]", true);
 			initMarkers();
 		}else{
-			Hooks.put("&6| --&3 API [&6Dynmap&3]", false);
+			Hooks.put("&6| --&3 API [&6Dynmap API&3]", false);
 			return;
 		}
 		
@@ -90,14 +90,6 @@ public class Dynmap{
 				MarkerIcon icon = dynmapAPI.getMarkerAPI().getMarkerIcon(image);
 				if (Validate.isNull(icon)){
 					stream = Main.class.getResourceAsStream(path + image + ".png");
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("/img/AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("img/AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("conquest/img/AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("/conquest/img/AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("kingconquest/conquest/img/AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("/kingconquest/conquest/img/AQUA_KINGDOM.png"));
-					System.out.println(Main.class.getClassLoader().getResourceAsStream("/eu/kingconquest/conquest/img/AQUA_KINGDOM.png"));
 					icon = dynmapAPI.getMarkerAPI().createMarkerIcon(image, image, stream);
 				}
 				icons.add(icon);
@@ -107,7 +99,7 @@ public class Dynmap{
 			setAllowedIcons(icons);
 			setDynmapMarker(icons);
 		}catch (Exception e){
-			//e.printStackTrace();
+			e.printStackTrace();
 			ChatManager.Console("&4Cannot load image!");
 		}
 		createKingdom();
@@ -119,7 +111,7 @@ public class Dynmap{
 		try{
 			for (Kingdom kingdom : Kingdom.getKingdoms()){
 				if (Marker.create(kingdom)){
-					if (!Config.getBooleans("DebugDynmapMarkers"))
+					if (!Config.getBooleans("DebugDynmapMarkers", kingdom.getLocation()))
 					ChatManager.Console("&6Marker for " + kingdom.getName()
 							+ " &cWas not Added");
 				}
@@ -134,7 +126,7 @@ public class Dynmap{
 		try{
 			for (Town town : Town.getTowns()){
 				if (Marker.create(town)){
-					if (!Config.getBooleans("DebugDynmapMarkers"))
+					if (!Config.getBooleans("DebugDynmapMarkers", town.getLocation()))
 					ChatManager.Console("&6Marker for " + town.getName()
 							+ " &cWas not Added");
 				}
@@ -148,7 +140,7 @@ public class Dynmap{
 		try{
 			for (Village village : Village.getVillages()){
 				if (Marker.create(village)){
-					if (!Config.getBooleans("DebugDynmapMarkers"))
+					if (!Config.getBooleans("DebugDynmapMarkers", village.getLocation()))
 					ChatManager.Console("&6Marker for " + village.getName()
 							+ " &cWas not Added");
 				}

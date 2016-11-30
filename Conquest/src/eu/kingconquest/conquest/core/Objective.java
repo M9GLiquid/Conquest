@@ -25,7 +25,7 @@ public abstract class Objective{
 			this.spawn = location;
 		else
 			this.spawn = spawn;
-		if (!Validate.isNull(uniqueID))
+		if (Validate.notNull(uniqueID))
 			setUUID(uniqueID);
 		else
 			newUUID();
@@ -42,6 +42,9 @@ public abstract class Objective{
 	}
 	public Location getLocation(){
 		return this.location;
+	}
+	public World getWorld(){
+		return this.location.getWorld();
 	}
 	public void setSpawn(Location spawn){
 		this.spawn = spawn;
@@ -110,7 +113,25 @@ public abstract class Objective{
 			loc.setZ(loc.getZ() - rows);
 		}
 	}
-	public abstract boolean create(Player p);
-	public abstract boolean delete();
+	public abstract boolean create(Player player);
+	public abstract boolean delete(Player player);
 	public abstract void updateGlass();
+
+	private ArrayList<UUID> isCapturing = new ArrayList<UUID>();
+	public void addCapturing(Player player){
+		isCapturing.add(player.getUniqueId());
+	}
+	public boolean isCapturing(Player player){
+		if (isCapturing.contains(player.getUniqueId()))
+			return true;
+		return false;
+	}
+	public boolean removeCapturing(Player player){
+		if (isCapturing.remove(player.getUniqueId()))
+			return true;
+		return false;
+	}
+	public void clearCapturing(){
+		isCapturing.clear();
+	}
 }

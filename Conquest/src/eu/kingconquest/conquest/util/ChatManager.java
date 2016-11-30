@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import eu.kingconquest.conquest.Main;
+import eu.kingconquest.conquest.database.Config;
 import net.md_5.bungee.api.ChatColor;
 
 public class ChatManager {
@@ -15,8 +16,7 @@ public class ChatManager {
 	 * @return void
 	 */
 	public static void Chat(Player p, String str){
-		String text = "{plugin_prefix} ";
-		text += str;
+		String text = "{plugin_prefix} " + str;
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', 
 				ColorManager.extendColorCodes(p, text)).replace("_", " "));
 	}
@@ -28,9 +28,7 @@ public class ChatManager {
 	 * @return String
 	 */
 	public static String placeholders(Player p, String text){
-		String tpDelay = String.valueOf((Integer.parseInt(Config.TeleportDelay.get(p.getWorld()).toString())) / 20);
-		//text = text.contains("{player}") 				? text.replace("{player}", p.getName()) : text;
-		//text = text.contains("{player_prefix}") 	? text.replace("{player_prefix}", Vault.chat.getPlayerPrefix(p.getWorld().getName(), p)) : text;
+		String tpDelay = String.valueOf(Config.getLongs("TeleportDelay", p.getLocation()) / 20);
 		text = text.contains("{tpDelay}") 			? text.replace("{tpDelay}", tpDelay)  : text.replace("{tpDelay}", "");
 		text = placeholders(text);
 		return text;
@@ -74,6 +72,18 @@ public class ChatManager {
 		String text = "&2" + string;
 		Main.getInstance().getServer().getConsoleSender().sendMessage(Format(text));
 	}
+	
+	/**
+	 * Broadcast Colored messages to Server
+	 * @param str
+	 */
+	public static void Broadcast(String str){
+		String text = "{plugin_prefix} ";
+		text += str;
+		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', 
+				ColorManager.extendColorCodes(text)).replace("_", " "));
+	}
+	
 /*
 	*//**
 	 * Chat with Double Hovertext and Actions (Does currently not work on the main server, conflict)
@@ -166,15 +176,5 @@ public class ChatManager {
 		msg.send(p);
 	}
 */
-	/**
-	 * Broadcast message to the server
-	 * @param text - String
-	 * @return void
-	 */
-	public static void Broadcast(String str){
-		String text = "{plugin_prefix} ";
-		text += str;
-		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', 
-				ColorManager.extendColorCodes(text)).replace("_", " "));
-	}
+
 }

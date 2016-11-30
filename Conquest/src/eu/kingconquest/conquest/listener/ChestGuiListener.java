@@ -20,12 +20,12 @@ public class ChestGuiListener implements Listener{
             return;
         Player p = (Player) e.getWhoClicked();
         UUID inventoryUUID = ChestGui.openInventories.get(p.getUniqueId());
-        if (!Validate.isNull(inventoryUUID)){
+        if (Validate.notNull(inventoryUUID)){
             e.setCancelled(true);
             ChestGui GUI = ChestGui.getInventoriesByUUID().get(inventoryUUID);
             GUI.setClickType(e.getClick());
             ChestGui.onGuiAction action = GUI.getActions().get(e.getSlot());
-    		if (!Validate.isNull(action))
+    		if (Validate.notNull(action))
                 action.onClick(p);
         }
     }

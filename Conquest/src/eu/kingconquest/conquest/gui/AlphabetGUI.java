@@ -62,13 +62,13 @@ public class AlphabetGUI extends ChestGui{
 		//Slot 8
 		backButton(previous);
 	}
-	
-		@Override
-	public void display(){
-		slot = 9;
-		for (int i = 0; i < alphabet.length; i++) 
-			add(alphabet[i]);
-	}
+
+	@Override
+public void display(){
+	slot = 9;
+	for (int i = 0; i < alphabet.length; i++) 
+		add(alphabet[i]);
+}
 
 	private void displayWord(){
 		setItem(1, new ItemStack(Material.PAPER), player -> {
@@ -78,7 +78,6 @@ public class AlphabetGUI extends ChestGui{
 	private void clearButton(){
 		setItem(5, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			word.clear();
-			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, 1.0F);
 			clearSlots();
 			slot = 9;
 			display();
@@ -92,7 +91,6 @@ public class AlphabetGUI extends ChestGui{
 			previous.create();
 		},"&aSave Word" , "&1-----------------");
 	}
-
 
 	private void removeButton(){
 		setItem(3, new ItemStack(Material.BOOK), player -> {
@@ -131,7 +129,6 @@ public class AlphabetGUI extends ChestGui{
 				clearSlots();
 				slot = 9;
 				lowerCase();
-				Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 1.0F);
 				display();
 				displayItems();
 			}, "&aLower Case" , "&1-----------------\n");
@@ -160,8 +157,6 @@ public class AlphabetGUI extends ChestGui{
 	private boolean symbolsToggled = false;
 	private void symbolsButton(){
 		setItem(4, new ItemStack(Material.ENCHANTED_BOOK), player -> {
-			Bukkit.getWorld(player.getWorld().getUID())
-				.playSound(player.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 1.0F);
 			clearSlots();
 			if (symbolsToggled){
 				symbolsToggled = false;
@@ -182,7 +177,6 @@ public class AlphabetGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			word.add(str);
 			slot = 9;
-			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ITEM_HOE_TILL, 3.0F, 1.0F);
 			displayWord();
 		}, str.replace(" ", "[SPACE]") , "&1-----------------");
 		slot++;
@@ -191,9 +185,7 @@ public class AlphabetGUI extends ChestGui{
 	private void add(String str){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			clearSlots();
-			slot = 9;
 			word.add(str);
-			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ITEM_HOE_TILL, 3.0F, 1.0F);
 			displayWord();
 			displayItems();
 			display();

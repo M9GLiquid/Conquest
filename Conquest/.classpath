@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.10.2/spigot.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.10.2/plugins/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.10.2/plugins/dynmap-2.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.10.2/plugins/TNE.jar"/>
 	<classpathentry kind="output" path="eu"/>
 </classpath>

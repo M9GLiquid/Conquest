@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import eu.kingconquest.conquest.Main;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.hook.Vault;
 
 public class Validate{
@@ -31,36 +32,40 @@ public class Validate{
 	public static boolean isWithinCaptureArea(Location loc1, Location loc2){
 		if (!loc1.getWorld().equals(loc2.getWorld()))
 			return false;
-		if (loc1.distanceSquared(loc2) <= Config.CapDistance
-				.get(loc1.getWorld())
+		if (loc1.distanceSquared(loc2) <= Config.getDoubles("CaptureDistance", loc1)
 				&& (loc1.getY() <= loc2.getY()
-				+ Config.CaptureMaxY.get(loc1.getWorld()) && (loc1.getY() >= loc2.getY()
-						- Config.CaptureMinY.get(loc1.getWorld())))){
+				+ Config.getDoubles("CaptureMaxY", loc1) && (loc1.getY() >= loc2.getY()
+						- Config.getDoubles("CaptureMinY", loc1)))){
 			return true;
 		}
 		return false;
 	}
-	
-	public static boolean isNull(Object object) {
-		if (object == null)
-			return true;
-		return false;
-	}
-	
-    public static void isNull(Object object, String error) {
-        if (object == null) 
-            throw new NullPointerException(error);
-    }
-    
-    public static boolean notZero(int i) {
-    	if (i > 0)
-    		return true;
-    	return false;
-    }
 
     public static boolean hasPerm(Player p, String path){
     	if (Vault.perms.has(p, Main.getInstance().getName() + path))
 			return true;
 		return false; 
     }
+    
+	public static boolean notNull(Object object) {
+		if (object != null)
+			return true;
+		return false;
+	}
+	
+    public static void notNull(Object object, String error) {
+		if (object != null)
+            throw new NullPointerException(ChatManager.Format(error));
+    }
+
+	 public static boolean isNull(Object object){
+		if (object == null)
+			return  true;
+		return false;
+	}
+	 
+	 public static void isNull(Object object, String error){
+			if (object == null)
+	            throw new NullPointerException(ChatManager.Format(error));
+	}
 }

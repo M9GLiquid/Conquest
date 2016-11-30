@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.Main;
 
 
 /**
@@ -15,43 +15,26 @@ import eu.kingconquest.conquest.util.ChatManager;
  * @author tips48
  */
 public class SQLite extends Database {
-    private String dbLocation;
-
-    /**
-     * Creates a new SQLite instance
-     *
-     * @param dbLocation Location of the Database (Must end in .db)
-     */
-    public SQLite(String dbLocation) {
-        this.dbLocation = dbLocation;
-    }
 
     @Override
-    public Connection openConnection() throws SQLException,
+    public Connection connect() throws SQLException,
             ClassNotFoundException {
         if (checkConnection()) {
             return connection;
         }
 
-        File dataFolder = new File("db\\");
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
-        }
-
-        dbLocation += (!dbLocation.contains(".db")) ? ".db" : "";
-        File file = new File(dataFolder, dbLocation);
-        if (!(file.exists())) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                ChatManager.Console("Unable to create database!");
-            }
-        }
+		String pathway = Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "database.ql";
+		File file = new File(pathway);
+		if (!file.exists()) {
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			}catch (IOException exception){
+				Main.getInstance().getLogger().severe("Error while creating file " + file.getName());
+			}
+		}
         Class.forName("org.sqlite.JDBC");
-        connection = DriverManager
-                .getConnection("jdbc:sqlite:"
-                        + dataFolder + "/"
-                        + dbLocation);
+        connection = DriverManager.getConnection("jdbc:sqlite:" + pathway);
         return connection;
     }
 }

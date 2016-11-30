@@ -30,6 +30,7 @@ public class Rocket{
 		this.lifetime = lifetime;
 		this.power = power;
 		setColor(ColorManager.int2Color(color));
+		spawn();
 	}
 
 	public void setColor(Color color){
@@ -45,7 +46,7 @@ public class Rocket{
 	}
 
 	public void detonate(){
-		if(!Validate.isNull(firework)){
+		if(Validate.notNull(firework)){
 			firework.detonate();
 		}
 	}

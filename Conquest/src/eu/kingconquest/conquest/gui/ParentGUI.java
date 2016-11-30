@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ChestGui;
-import eu.kingconquest.conquest.util.Config;
 
 public class ParentGUI extends ChestGui{
 	private ArrayList<Town> targets= new ArrayList<Town>();
@@ -61,8 +61,6 @@ public class ParentGUI extends ChestGui{
 			Town town = targets.get(getCurrentItem());
 			ParentButton(i, town);
 			setCurrentItem(getCurrentItem() + 1);
-			if (getCurrentItem() >= targets.size())
-				break;
 		}
 	}
 

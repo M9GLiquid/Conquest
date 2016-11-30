@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -7,10 +8,10 @@ import org.bukkit.event.Listener;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.ServerResetEvent;
 import eu.kingconquest.conquest.event.WorldResetEvent;
 import eu.kingconquest.conquest.util.ChatManager;
-import eu.kingconquest.conquest.util.Config;
 
 public class ResetListener implements Listener{
 	
@@ -19,13 +20,13 @@ public class ResetListener implements Listener{
 		ChatManager.Chat(player, "{plugin_prefix} &aServer Reset Started!");
 		ChatManager.Console("{plugin_prefix}&4 &aServer Reset Started!");
 		
-		Config.getWorlds().forEach(world->{
+		Config.getWorlds().forEach(uniqueID->{
 			if (e.getKingdomSave())
 				Kingdom.removeKingdoms(Kingdom.getKingdoms());
 			if (e.getMemberSave())
-				players(world);
-			villages(world);
-			towns(world);
+				players(Bukkit.getWorld(uniqueID));
+			villages(Bukkit.getWorld(uniqueID));
+			towns(Bukkit.getWorld(uniqueID));
 		});
 	}
 

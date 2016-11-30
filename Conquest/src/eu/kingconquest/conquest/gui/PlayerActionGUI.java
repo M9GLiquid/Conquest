@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
+import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ChestGui;
-import eu.kingconquest.conquest.util.Config;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerActionGUI extends ChestGui{

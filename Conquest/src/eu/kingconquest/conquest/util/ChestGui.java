@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -27,14 +28,14 @@ public abstract class ChestGui extends Pagination{
     private Map<Integer, onGuiAction> actions;
     public static Map<UUID, ChestGui> inventoriesByUUID = new HashMap<>();
     public static Map<UUID, UUID> openInventories = new HashMap<>();
+	private static Map<UUID, Integer> taskID = new HashMap<>();
 	private String ToolTip;
 	
-	/*if (getClickType().equals(ClickType.LEFT)){
+	/*
+	 * ClickTypes
+	 * Place in setItem->{ }
+	 * if (getClickType().equals(ClickType.LEFT))
 		player.sendMessage("LEFT");
-	}else if (getClickType().equals(ClickType.RIGHT)){
-		player.sendMessage("RIGHT");
-	}else if (getClickType().equals(ClickType.MIDDLE)){
-		player.sendMessage("MIDDLE");
 	}*/
 	
     /**
@@ -68,17 +69,23 @@ public abstract class ChestGui extends Pagination{
         void onClick(Player p);
     }
 
+	private static int oldTaskID = 0;
 	public void createGui(Player p, String str, Integer items ){
-		if (!Validate.isNull(items))
+		if (Validate.notNull(items))
 			setItems(items);
-		if (!Validate.isNull(str))
+		if (Validate.notNull(str))
 			setTitle(str);
-        new BukkitRunnable() {
+		
+		if (Validate.notNull(taskID.get(p.getUniqueId())))
+				oldTaskID = taskID.get(p.getUniqueId()); // Close any old Tasks of the player (Previous ChestGui)
+		
+		taskID.put(p.getUniqueId(), new BukkitRunnable() {
             @Override
             public void run() {
             	open(p);
+        		Bukkit.getScheduler().cancelTask(oldTaskID);
             }
-        }.runTaskLater(Main.getInstance(), 1);
+        }.runTaskLater(Main.getInstance(), 1).getTaskId());
 		create(getItems());
 		clearSlots();
 	}
@@ -118,7 +125,6 @@ public abstract class ChestGui extends Pagination{
 	public void backButton(Object object){
 		ChestGui chestGui = (ChestGui) object;
 		setItem(8, new ItemStack(Material.ARROW), player -> {
-			close(player);
 			chestGui.create();
 		}, "§4<< Back","§1-----------------\n"
 				+ "§cClick to go Home");
@@ -131,8 +137,9 @@ public abstract class ChestGui extends Pagination{
         		);
 	}
 	public void clearSlots(){
-		for(int i = 0; i < this.invSize; i++) 
-			setItem(i, new ItemStack(Material.AIR), player -> {},null, null);
+		getInventory().clear();
+		//for(int i = 0; i < this.invSize; i++) 
+			//setItem(i, new ItemStack(Material.AIR), player -> {},null, null);
 	}
 	
 //Getters
@@ -151,8 +158,8 @@ public abstract class ChestGui extends Pagination{
     public Map<Integer, onGuiAction> getActions() {
         return actions;
     }
-    public String getClickType(){
-		return clickType.name();
+    public ClickType getClickType(){
+		return clickType;
     }
     public int getSlotSize(){
 		return invSize;
@@ -184,34 +191,40 @@ public abstract class ChestGui extends Pagination{
 		ToolTip = toolTip;
         ItemMeta meta = stack.getItemMeta();
 		
-		if (!Validate.isNull(itemName))
+		if (Validate.notNull(itemName)){
+			itemName = new StringBuilder(itemName).insert(2, "&l").toString(); // Make every title bold
 			meta.setDisplayName(ChatManager.Format(itemName));
-		if (!Validate.isNull(ToolTip)) {
+		}
+		if (Validate.notNull(ToolTip)) {
 			String[] temp = ChatManager.Format(ToolTip).split("\n");
 			for (int i = 0; i < temp.length; i++) {
 				temp[i] = temp[i].replace("\n", "");
 			}
 			meta.setLore(Arrays.asList(temp));
+			meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			stack.setItemMeta(meta);
 		}
-		stack.setItemMeta(meta);
 		inventory.setItem(slot, stack);
-        if (!Validate.isNull(action))
+        if (Validate.notNull(action))
             actions.put(slot, action);
     }
 	public void setSkullItem(int slot, ItemStack stack, onGuiAction action, String itemName, String toolTip){
 		ToolTip = toolTip;
 		SkullMeta meta = (SkullMeta) stack.getItemMeta();
-		if (!Validate.isNull(itemName))
+		if (Validate.notNull(itemName)){
+			itemName = new StringBuilder(itemName).insert(2, "&l").toString(); // Make every title bold
 			meta.setDisplayName(ChatManager.Format(itemName));
-		if (!Validate.isNull(meta.getDisplayName()))
+		}
+		if (Validate.notNull(meta.getDisplayName()))
 		if (ToolTip != null)  {
 			String[] temp = ChatManager.Format(ToolTip).split("\n");
 			for (int i = 0; i < temp.length; i++) {
 				temp[i] = temp[i].replace("\n", "");
 			}
 			meta.setLore(Arrays.asList(temp));
+			meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			stack.setItemMeta(meta);
 		}
-		stack.setItemMeta(meta);
 		inventory.setItem(slot, stack);
         if (action != null)
             actions.put(slot, action);

@@ -4,9 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Town;
-import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -27,11 +25,9 @@ public class TownGUI extends ChestGui{
 		display();
 	}
 	
-	private int slot;
 	@Override
 	public void display() {
 		clearSlots();
-		slot = 9;
 		//Slot 0
 		playerInfo(p);
 		//Slot 1
@@ -41,37 +37,35 @@ public class TownGUI extends ChestGui{
 		//Slot 5
 		next(this);
 		//Slot 7
-		if (Vault.perms.has(p, Main.getInstance().getName() + ".admin.kingdoms.create"))
+		if (Validate.hasPerm(p, ".admin.create.town"))
 			createButton();
 		//Slot 8
 		backButton(previous);
 
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (Town.getTowns().size() -1) || getItems() < 1)
+			if (getCurrentItem() > (Town.getTowns(p.getWorld()).size() -1) || getItems() < 1)
 				break;
 
 			if (Validate.hasPerm(p, "admin.village.edit")) 
-				towns(i, Town.getTowns().get(getCurrentItem()));
+				towns(i, Town.getTowns(p.getWorld()).get(getCurrentItem()));
 			
 			setCurrentItem(getCurrentItem()+1);
 		}
 	}
 	
 	private void towns(int i, Town town){
-		setItem(slot, new ItemStack(Material.BEACON), player -> {
+		setItem(i, new ItemStack(Material.BEACON), player -> {
 			setCurrentItem(0);
-			clearSlots();
 			new EditGUI(player, town, this);
 		},"&aEdit " + town.getOwner().getColorSymbol() + town.getName()
 		, displayInfo(town));
-		slot++;
 	}
 
 	private String displayInfo(Town town) {
 		String str = "&1-----------------";
 		str += "\n&aName: &f" + town.getName();
-		if (!Validate.isNull(town.getChildren()))
+		if (Validate.notNull(town.getChildren()))
 			str += "\n&aChildren: &f" + town.getChildren().size();
 		else
 			str += "\n&aChildren: &fNone";
@@ -88,10 +82,11 @@ public class TownGUI extends ChestGui{
 	
 	private void createButton(){
 		setItem(7, new ItemStack(Material.DIAMOND_PICKAXE), player -> {
+			setCurrentItem(0);
 			new CreateGUI(player, this);
 			close(player);
 		}, "§4Create new Town!", "§1-----------------"
-				+ "\n§cClick to open Edit Manager!"
+				+ "\n§cClick to open the Create manager!"
 				);
 	}
 }
