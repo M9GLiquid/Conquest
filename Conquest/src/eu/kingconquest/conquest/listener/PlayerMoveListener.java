@@ -19,10 +19,9 @@ public class PlayerMoveListener implements Listener{
 	public void onPlayerMove(PlayerMoveEvent e){
 		if (e.getFrom().getPitch() == e.getTo().getPitch() && e.getFrom().getYaw() == e.getTo().getYaw()) {
 			Player player = e.getPlayer();
-			Proximity proximity = new Proximity();
 			
 			//Village Zone Proximity
-			proximity.villageZoneProximity(player);
+			Proximity.villageZoneProximity(player);
 
 			//Village Area Proximity
 			//proximity.villageAreaProximity(player);

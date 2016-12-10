@@ -44,7 +44,7 @@
 # |       VillageBaseValue: 0.3
 # |     Combat:
 # |       CaptureRate: 0.3
-# |       CaptureDistance: 10.0
+# |       CaptureDistance: 5.0
 # |       CaptureMaxY: 5.0
 # |       CaptureMinY: 1.0
 # ========================================================

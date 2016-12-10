@@ -9,7 +9,6 @@ import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
-import eu.kingconquest.conquest.util.ChatManager;
 
 public class CaptureProcess{
 	private PluginManager pm = Bukkit.getServer().getPluginManager();
@@ -42,8 +41,7 @@ public class CaptureProcess{
 				.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable(){
 					@Override
 					public void run(){
-						wrapper.getScoreboard().add(5, ChatManager.Format("&e" + village.getProgress() + "%"));	
-						wrapper.getScoreboard().send(player);
+						wrapper.getScoreboard().CaptureBoard(player, village);	
 						
 						// On successfull capture call event
 						if (village.getProgress() >= 100.0d
@@ -55,14 +53,14 @@ public class CaptureProcess{
 
 						// Defending
 						if (village.getDefenders().containsKey(player.getUniqueId())
-								&& wrapper.getKingdom().equals(village.getOwner())
+								&& wrapper.getKingdom(player.getWorld()).equals(village.getOwner())
 								&& (village.getProgress() < 100.0d)) {
 							village.setProgress(village.getProgress() + (Village.getCapSpeed() * village.getDefenders().size()));
 						}
 
 						// Attacking
 						if (village.getAttackers().containsKey(player.getUniqueId())
-								&& !(wrapper.getKingdom().equals(village.getOwner()))
+								&& !(wrapper.getKingdom(player.getWorld()).equals(village.getOwner()))
 								&& !(village.getOwner().isNeutral())){
 							village.setProgress(village.getProgress() - (Village.getCapSpeed() * village.getAttackers().size()));
 						}

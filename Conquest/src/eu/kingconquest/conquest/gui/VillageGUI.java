@@ -27,6 +27,7 @@ public class VillageGUI extends ChestGui{
 
 	@Override
 	public void display() {
+		setCurrentItem(0);
 		clearSlots();
 		//Slot 0
 		playerInfo(p);
@@ -44,6 +45,9 @@ public class VillageGUI extends ChestGui{
 		
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
+			System.out.println("Item ID: " + getCurrentItem());
+			System.out.println("Size: " + Village.getVillages(p.getWorld()).size());
+			System.out.println("Items: " + getItems());
 			if (getCurrentItem() > (Village.getVillages(p.getWorld()).size() -1) || getItems() < 1)
 				break;
 			
@@ -56,7 +60,6 @@ public class VillageGUI extends ChestGui{
 	
 	private void villages(int i, Village village){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
-			setCurrentItem(0);
 			new EditGUI(player, village, this);
 		},"&aEdit " + village.getOwner().getColorSymbol() + village.getName()
 		, displayInfo(village));

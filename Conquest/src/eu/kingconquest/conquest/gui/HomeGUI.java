@@ -55,7 +55,7 @@ public class HomeGUI extends ChestGui{
 		//Friends Gui
 		//friendsButton();
 		
-		if (PlayerWrapper.getWrapper(player).isInKingdom()){
+		if (PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld())){
 			spawnButton();
 			if (Validate.hasPerm(player, ".basic.teleport"))
 			conflictButton();
@@ -66,11 +66,11 @@ public class HomeGUI extends ChestGui{
 		if (Validate.hasPerm(player, ".admin")){
 			townButton();
 			villageButton();
+			kitButton();
 			if (Validate.hasPerm(player, ".admin.reset"))
 			resetButton();
 			reloadButton();
 		}
-		
 	}
 
 	private void reloadButton(){
@@ -88,6 +88,32 @@ public class HomeGUI extends ChestGui{
 				);
 	}
 
+	public String displayInfo(){
+		String str = "";
+		if (Validate.hasPerm(player, "admin.*")){
+			str = "§1-----------------"
+        		+ "\n&7Manage Player Attributes:"
+        		+ "\n&6- &cExperience"
+        		+ "\n&6- &cDemote"
+        		+ "\n&6- &cPromote"
+        		+ "\n&6- &cMoney"
+        		+ "\n&6- &cRank"
+        		+ "\n&6- &cMute"
+        		+ "\n&6- &cKick"
+        		+ "\n&6- &cBan"
+        		+ "\n";
+		}else{
+			str = "§1-----------------"
+	        		+ "\n&7Manage Player Attributes:"
+	        		+ "\n&6- &aScoreBoard"
+	        		+ "\n&6- &cFriends"
+	        		+ "\n&6- &cMoney"
+	        		+ "\n";
+		}
+		
+		return str;
+	}
+	
 	private void playerButton(){
 		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 		SkullMeta skull = (SkullMeta) head.getItemMeta();
@@ -95,16 +121,7 @@ public class HomeGUI extends ChestGui{
 		head.setItemMeta(skull);
         setSkullItem(slot, head, player ->{
         	new PlayerGUI(player ,this, null);
-        }, "&3Player Management Menu:","§1-----------------"
-        		+ "\n&7Manage Player Attributes:"
-        		+ "\n&6- &eExperience"
-        		+ "\n&6- &aFriends"
-        		+ "\n&6- &aMoney"
-        		+ "\n&6- &aRank"
-        		+ "\n&6- &cMute"
-        		+ "\n&6- &cKick"
-        		+ "\n&6- &4Ban"
-        		+ "\n"
+        }, "&3Player Management Menu:", displayInfo()
         		);
 		slot++;
 	}
@@ -141,7 +158,7 @@ public class HomeGUI extends ChestGui{
 
 	private void spawnButton(){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
-			player.teleport(PlayerWrapper.getWrapper(player).getKingdom().getSpawn());
+			player.teleport(PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getSpawn());
 		}, "&2Kingdom Spawn", "&1-----------------"
 				+ "\n&6Teleport to Kingdom spawn"
 				+ "\n&6Alias: &7/kc home"
@@ -190,7 +207,7 @@ public class HomeGUI extends ChestGui{
 	private void conflictButton(){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			new ConflictGUI(player, this);
-		}, "&6Conflict Menu", "&1-----------------"
+		}, "&6Conflict Gui", "&1-----------------"
 				+ "\n&6Teleport to a Town/Village under"
 				+ "\n&6your kingdoms controle"
 				+ "Alias: /kc tp" 
@@ -206,4 +223,14 @@ public class HomeGUI extends ChestGui{
 				+ "\n");
 		slot++;
 	}
+
+	private void kitButton(){
+		setItem(slot, new ItemStack(Material.CHEST), player -> {
+			new KitGUI(player, this);
+		}, "&6Kit Menu", "&1-----------------"
+				+ "\n&6"
+				+ "\n");
+		slot++;
+	}
+	
 }

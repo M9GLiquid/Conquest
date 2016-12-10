@@ -45,6 +45,7 @@ public class PlayerGUI extends ChestGui{
 
 	@Override
 	public void display(){
+		setCurrentItem(0);
 		clearSlots();
 		
 		//Slot 0

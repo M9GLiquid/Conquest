@@ -52,6 +52,6 @@ Language:
     ToClose: '&4Error&c, To close to another Objective!'
   Broadcast:
     WarnDistress: '{color}{village} &cis currently under attack!'
-    WarnNeutral: '&f{village} &7is now &fNeutral!'
-    Captured: 'Village &f{village} &7is now under controle of {color}{kingdom}!'
-    TownCaptured: 'Town &f{town} &7is now under controle of {color}{kingdom}!'
+    WarnNeutral: '{color}{village} &7is now &fNeutral!'
+    Captured: '{color}{village} &7is now under controle of {color}{kingdom}!'
+    TownCaptured: '{color}{town} &7is now under controle of {color}{kingdom}!'

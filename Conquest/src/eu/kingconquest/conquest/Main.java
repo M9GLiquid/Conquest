@@ -87,7 +87,8 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	private static void createNeutralKingdom(){
 		Config.getWorlds().stream()
-		.filter(uniqueID->Validate.isNull(Kingdom.getNeutral(Bukkit.getWorld(uniqueID))))
+		.filter(uniqueID-> Validate.notNull(Bukkit.getWorld(uniqueID)))
+		.filter(uniqueID->Validate.isNull(Kingdom.getNeutral(Config.getWorld(uniqueID))))
 		.forEach(uniqueID->{
 			World world = Config.getWorld(uniqueID);
 			Kingdom kingdom = new Kingdom("Neutral", null, world.getSpawnLocation().clone(), -1);

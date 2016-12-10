@@ -58,12 +58,6 @@ public abstract class Objective{
 	public Kingdom getOwner() {
 		return this.owner;
 	}
-	public static ArrayList<Objective> getObjectives(World world){
-		ArrayList<Objective> objectives = new ArrayList<Objective>();
-		objectives.addAll(Town.getTowns(world));
-		objectives.addAll(Village.getVillages(world));
-		return objectives;
-	}
 	
 	public void newUUID() {
 		this.uniqueID = UUID.randomUUID();
@@ -133,5 +127,12 @@ public abstract class Objective{
 	}
 	public void clearCapturing(){
 		isCapturing.clear();
+	}
+	
+	public static ArrayList<Objective> getObjectives(World world){
+		ArrayList<Objective> objectives = new ArrayList<Objective>();
+		objectives.addAll(Town.getTowns(world));
+		objectives.addAll(Village.getVillages(world));
+		return objectives;
 	}
 }

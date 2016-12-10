@@ -49,7 +49,7 @@ public class PlayerActionGUI extends ChestGui{
 		slot = 9;
 		
 		//Slot 0
-		playerInfo(p);
+		playerInfo(target);
 		//Slot 1
 		homeButton();
 		//Slot 3

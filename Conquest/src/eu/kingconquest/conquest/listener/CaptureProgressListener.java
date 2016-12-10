@@ -4,6 +4,7 @@ package eu.kingconquest.conquest.listener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import eu.kingconquest.conquest.core.Kingdom;
@@ -23,7 +24,7 @@ import eu.kingconquest.conquest.util.Marker;
 public class CaptureProgressListener implements Listener{
 	private Player player;
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureStart(CaptureStartEvent e){
 		Village village = (Village) e.getObjective();
 		Cach.StaticVillage = village;
@@ -33,7 +34,7 @@ public class CaptureProgressListener implements Listener{
 		//Run Mob Spawns as defence if objective owner isn't Neutral
 	}
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureSuccess(CaptureCompleteEvent e){
 		Village village = (Village) e.getObjective();
 		player = e.getPlayer();
@@ -41,8 +42,8 @@ public class CaptureProgressListener implements Listener{
 
 		wrapper.getScoreboard().KingdomBoard(player);
 		village.removeCapturing(player);
-		village.setOwner(wrapper.getKingdom());
-		village.setPreOwner(wrapper.getKingdom());
+		village.setOwner(wrapper.getKingdom(player.getWorld()));
+		village.setPreOwner(wrapper.getKingdom(player.getWorld()));
 		village.removeAttacker(player);
 		village.removeDefender(player);
 		Cach.StaticKingdom = village.getOwner();
@@ -62,20 +63,20 @@ public class CaptureProgressListener implements Listener{
 			Cach.StaticTown = village.getParent();
 			village.getParent().setOwner(village.getOwner());
 			village.getParent().updateGlass();
-			new Rocket(village.getParent().getLocation(), false, true, 4, 30, village.getOwner().getColor()); // Rocket on Success
+			new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
 			village.getParent().getChildren().forEach(child->{
-				new Rocket(child.getLocation(), false, true, 1, 20, village.getOwner().getColor()); // Rocket on Success
+				new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 				TNEApi.addFunds(village.getOwner().getUUID(), Config.getDoubles("CapCash", village.getLocation())); // Add Funds for each 
 			});
 			ChatManager.Chat(player, Config.getChat("TownCaptured"));
 			ChatManager.Chat(player, Config.getChat("CaptureTownSuccess"));
-			TNEApi.addFunds(player.getUniqueId(), Config.getDoubles("CapCash", village.getLocation()));
+			TNEApi.addFunds(player, Config.getDoubles("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
 			ChatManager.Chat(player, Config.getChat("CaptureVillageSuccess"));
 			TNEApi.addFunds(village.getOwner().getUUID(), Config.getDoubles("CapCash", village.getLocation()));
-			TNEApi.addFunds(player.getUniqueId(), Config.getDoubles("CapCash", village.getLocation()));
-			new Rocket(village.getLocation(), false, true, 1, 20, village.getOwner().getColor()); // Rocket on Success
+			TNEApi.addFunds(player, Config.getDoubles("CapCash", village.getLocation()));
+			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
 		ChatManager.Broadcast(Config.getChat("Captured"));
 	Config.saveVillages(village.getWorld());
@@ -84,7 +85,7 @@ public class CaptureProgressListener implements Listener{
 	village.addDefender(player);
 	}
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureNeutral(CaptureNeutralEvent e){
 		Village village = (Village) e.getObjective();
 		player = e.getPlayer();
@@ -96,6 +97,7 @@ public class CaptureProgressListener implements Listener{
 			village.getParent().setNeutral();
 
 		Cach.StaticVillage = village;
+		Cach.StaticKingdom = village.getPreOwner();
 		ChatManager.Broadcast(Config.getChat("WarnNeutral"));
 		Config.saveVillages(village.getWorld());
 		Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 50));

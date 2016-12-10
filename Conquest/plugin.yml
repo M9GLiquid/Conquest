@@ -2,8 +2,8 @@ name: Conquest
 main: eu.kingconquest.conquest.Main
 load: POSTWORLD
 depend: [Vault, dynmap]
-softdepend: [TNE]
-version: 0.7a_SNAPSHOT
+softdepend: [TheNewEconomy]
+version: 0.7b_SNAPSHOT
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 

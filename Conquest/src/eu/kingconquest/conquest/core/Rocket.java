@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -25,10 +24,10 @@ public class Rocket{
 		if (lifetime < 1)
 			return;
 		this.location = location;
-		setFlicker(flicker);
-		setTrail(trail);
 		this.lifetime = lifetime;
 		this.power = power;
+		setFlicker(flicker);
+		setTrail(trail);
 		setColor(ColorManager.int2Color(color));
 		spawn();
 	}
@@ -52,8 +51,12 @@ public class Rocket{
 	}
 
 	public void spawn(){
-		firework = (Firework)location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-		fwm = (FireworkMeta)firework.getFireworkMeta();
+		/*System.out.println("Firework 1: " + firework);
+		System.out.println("Location: " + location);
+		System.out.println("Locations World: " + location.getWorld());*/
+		firework = location.getWorld().spawn(location, Firework.class);
+		//System.out.println("Firework 2:" + firework);
+		fwm = (FireworkMeta) firework.getFireworkMeta();
 		
 		fwm.addEffect(builder.build());
 		fwm.setPower(power);

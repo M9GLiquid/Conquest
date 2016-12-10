@@ -51,9 +51,10 @@ public class Kingdom extends Objective{
 		//Player joins this Kingdom
 		Cach.StaticKingdom = this;
 		ChatManager.Chat(p, Config.getChat("JoinSuccess"));
-		wrapper.setKingdom(this);
+		wrapper.setKingdom(getUUID());
 		wrapper.getScoreboard().KingdomBoard(p);
 		addMember(p.getUniqueId());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + p.getName() + " parent add " + getName());
 		Config.saveUsers(getWorld());
 	}
 		
@@ -65,7 +66,7 @@ public class Kingdom extends Objective{
 	 */
 	public  void leave(Player p){
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
-		if (!wrapper.getKingdom().equals(this))
+		if (!wrapper.getKingdom(p.getWorld()).equals(this))
 			return;
 		if(!getMembers().contains(p.getUniqueId()))
 			return;
@@ -75,6 +76,7 @@ public class Kingdom extends Objective{
 		wrapper.setKingdom(null);
 		wrapper.getScoreboard().NeutralBoard(p);
 		removeMember(p.getUniqueId());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + p.getName() + " parent remove " + getName());
 		Config.saveUsers(getWorld());
 	}
 	
@@ -273,19 +275,17 @@ public class Kingdom extends Objective{
 		return kingdoms;
 	}
 	public static Kingdom getKingdom(UUID ID, World world){
-		for (Kingdom kingdom : getKingdoms()){
+		for (Kingdom kingdom : getKingdoms())
 			if (kingdom.getUUID().equals(ID)
 					&& kingdom.getWorld().equals(world))
-			return kingdom;
-		}
+				return kingdom;
 		return null;
 	}
 	public static Kingdom getKingdom(String name, World world){
-		for (Kingdom kingdom : getKingdoms(world)){
+		for (Kingdom kingdom : getKingdoms(world))
 			if (kingdom.getName().equals(name)
 					&& kingdom.getWorld().equals(world))
-			return kingdom;
-		}
+				return kingdom;
 		return null;
 	}
 	public static Kingdom getNeutral(World world){
@@ -321,7 +321,8 @@ public class Kingdom extends Objective{
 	@Override
 	public boolean create(Player player){
 		Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
-
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions creategroup " + getName());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions group " + getName() + " meta addsuffix  100 " + "\"&6{" + getColorSymbol() + getName() + "}&r &7\"");
 		TNEApi.createAccount(getUUID());
 		if (Marker.update(this)){
 			Config.saveKingdoms(getLocation().getWorld());
@@ -333,6 +334,7 @@ public class Kingdom extends Objective{
 	public boolean delete(Player player){
 		ChatManager.Chat(player, Config.getChat("KingdomDeleted"));
 		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions removegroup " + getName());
 		removeKingdom(this);
 		if (Marker.remove(this))
 			return true;
