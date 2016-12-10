@@ -61,7 +61,7 @@ public class EditGUI extends ChestGui{
 					nameButton();
 				if (Validate.hasPerm(p, ".admin.edit.kingdom.player"))
 					playerButton();
-				//childrenButton();
+					//childrenButton();
 				if (Validate.hasPerm(p, ".admin.edit.kingdom.spawn"))
 					spawnButton();
 				if (Validate.hasPerm(p, ".admin.edit.kingdom.location"))
@@ -196,7 +196,7 @@ public class EditGUI extends ChestGui{
 				str += "\n&aParent: &f" + ((Village)objective).getParent().getName();
 			else
 				str += "\n&aParent: &fNone";			
-			str += "Pre-Owner: &f" + ((Village)objective).getPreOwner().getName()
+			str += "\n&aPre-Owner: &f" + ((Village)objective).getPreOwner().getName()
 					+ "\n&aLocation:"
 					+ "\n- &cX: &f"+ Math.floor(objective.getLocation().getX())
 					+ "\n- &cY: &f"+ Math.floor(objective.getLocation().getY())

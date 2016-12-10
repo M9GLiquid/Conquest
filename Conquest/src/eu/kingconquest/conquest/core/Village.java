@@ -57,7 +57,7 @@ public class Village extends Objective{
 	 * 
 	 * @return double
 	 */
-	private final static double SPEED = 1.5d;
+	private final static double SPEED = 1.2d;
 	private double progress = 0.0d;
 	public double getProgress(){
 		return progress;
@@ -143,7 +143,7 @@ public class Village extends Objective{
 		return attackers;
 	}
 	public void addAttacker(Player p){
-		attackers.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom().getUUID());
+		attackers.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getUUID());
 	}
 	public void removeAttacker(Player p){
 		attackers.remove(p.getUniqueId());
@@ -157,7 +157,7 @@ public class Village extends Objective{
 		return defenders;
 	}
 	public  void addDefender(Player p){
-		defenders.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom().getUUID());
+		defenders.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getUUID());
 	}
 	public  void removeDefender(Player p){
 		defenders.remove(p.getUniqueId());

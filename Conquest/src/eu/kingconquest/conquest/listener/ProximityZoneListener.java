@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.listener;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,19 +19,22 @@ public class ProximityZoneListener implements Listener{
 	public void onZoneEnter(CaptureZoneEnterEvent e){
 		Village village = (Village) e.getObjective();
 		this.player = e.getPlayer();
+		
+		if (!player.getGameMode().equals(GameMode.SURVIVAL))
+			return;
 		wrapper = PlayerWrapper.getWrapper(player);
 		// If Player already is Capturing
 		if (village.isCapturing(player))
 			return;
 		/* If Defendings Players Kingdom is owner of Objective*/
-		if (village.getOwner().equals(wrapper.getKingdom())){
+		if (village.getOwner().equals(wrapper.getKingdom(player.getWorld()))){
 			village.addCapturing(player);
 			village.removeAttacker(player);
 			village.addDefender(player);
 
 			/** Incase of equal defenders and attackers or if players kingdom is already owner and capture progress is over or equal to 100*/
 			if (!(village.getAttackers().size() == village.getDefenders().size()) 
-					|| (wrapper.getKingdom().equals(village.getOwner()) 
+					|| (wrapper.getKingdom(player.getWorld()).equals(village.getOwner()) 
 							&& village.getProgress() >= 100.0d))
 				return;
 		}else{
@@ -52,7 +56,7 @@ public class ProximityZoneListener implements Listener{
 		if (village.getAttackers().size() < 1)
 			village.stop();
 		
-		if (wrapper.isInKingdom())
+		if (wrapper.isInKingdom(player.getWorld()))
 			wrapper.getScoreboard().KingdomBoard(player);
 		else
 			wrapper.getScoreboard().NeutralBoard(player);

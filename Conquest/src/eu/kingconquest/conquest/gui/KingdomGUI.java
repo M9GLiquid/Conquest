@@ -25,7 +25,7 @@ public class KingdomGUI extends ChestGui{
 	@Override
 	public void create(){
 		wrapper = PlayerWrapper.getWrapper(p);
-		if (wrapper.isInKingdom())
+		if (wrapper.isInKingdom(p.getWorld()))
 			createGui(p, "&6Kingdom Gui", 18);
 		else
 			createGui(p, "&6Kingdom Gui", Kingdom.getKingdoms().size() -1);
@@ -34,6 +34,7 @@ public class KingdomGUI extends ChestGui{
 	
 	@Override
 	public void display() {
+		setCurrentItem(0);
 		clearSlots();
 		//Slot 0
 		playerInfo(p);
@@ -63,8 +64,8 @@ public class KingdomGUI extends ChestGui{
 			if (Validate.hasPerm(p, ".admin.edit.kingdom")) 
 				kingdoms(i, kingdom);
 			else if  (Validate.hasPerm(p, ".basic")){
-				if (wrapper.isInKingdom()){
-					if (wrapper.getKingdom().equals(kingdom))
+				if (wrapper.isInKingdom(p.getWorld())){
+					if (wrapper.getKingdom(p.getWorld()).equals(kingdom))
 						if (Validate.hasPerm(p, ".basic.leave"))
 						leave(kingdom);
 				}else 
@@ -77,7 +78,6 @@ public class KingdomGUI extends ChestGui{
 
 	private void kingdoms(int i, Kingdom kingdom){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
-			setCurrentItem(0);
 			new EditGUI(player, kingdom, this);
 		},"&aEdit " + kingdom.getColorSymbol() + kingdom.getName()
 		,displayInfo(kingdom));

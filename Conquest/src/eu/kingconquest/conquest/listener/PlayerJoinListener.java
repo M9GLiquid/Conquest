@@ -9,10 +9,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.SimpleScoreboard;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerJoinListener implements Listener{
+	private SimpleScoreboard board = null;
 
 	/**
 	 * Player Join Event (First Time + Every Time)
@@ -22,17 +24,26 @@ public class PlayerJoinListener implements Listener{
 	@EventHandler 
 	public void onPlayerJoin(PlayerJoinEvent e){
 		Player player = e.getPlayer();
+		if (!Validate.hasPerm(player, "conquest.basic.*"))
+			Vault.perms.playerAdd(player, "conquest.basic.*");
 		if (!TNEApi.accountExist(player.getUniqueId()))
 			TNEApi.createAccount(player.getUniqueId());
+		
 		Config.getWorlds().forEach(uniqueID->{
 			if (player.getWorld().equals(Bukkit.getWorld(uniqueID))){
-				PlayerWrapper wrapper = new PlayerWrapper(player);
-				SimpleScoreboard board = new SimpleScoreboard("&6===={plugin_prefix}&6====");
-				wrapper.setScoreboard(board);
-				if (!player.hasPlayedBefore() || Validate.isNull(wrapper.getKingdom())){
-					board.NeutralBoard(player);
+				PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+				if (Validate.isNull(wrapper.getScoreboard())){
+					board = new SimpleScoreboard("&6------{plugin_prefix}&6------");
+					wrapper.setScoreboard(board);
 				}else{
+					board = wrapper.getScoreboard();
+				}
+				if (wrapper.isInKingdom(player.getWorld())){
 					board.KingdomBoard(player);
+				}/*else if (player.hasPlayedBefore()){
+					board.PlayerBoard(player);
+				}*/else{
+					board.NeutralBoard(player);
 				}
 			}
 		});

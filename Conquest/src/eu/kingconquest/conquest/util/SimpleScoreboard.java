@@ -271,10 +271,11 @@ public class SimpleScoreboard {
     }
 
     private int x;
-	public void KingdomBoard(Player p){
+	public void KingdomBoard(Player player){
+		int i = 13;
 		x = 0;
 		setTitle("&6[&eKingdom Information&6]");
-		Kingdom kingdom = PlayerWrapper.getWrapper(p).getKingdom();
+		Kingdom kingdom = PlayerWrapper.getWrapper(player).getKingdom(player.getWorld());
 		Village.getVillages().stream().filter(village->village.getOwner().equals(kingdom)).forEach(village->{
 			if (!village.hasParent())
 				x++;
@@ -282,74 +283,78 @@ public class SimpleScoreboard {
 		Town.getTowns().stream().filter(town->town.getOwner().equals(kingdom)).forEach(town->{
 			x++;
 		});
-		add(12, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
-		add(11, "&6&lKing:" /*+kingdom.getKingName()*/);	
-		add(10, "&7*Coming Soon*");	
-		add(9, "&6&lMoney: &r&7");	
-		add(8, "&7*Coming Soon* " /*+ TNEApi.getBalance(kingdom.getUUID())*/);	
-		add(7, "&a&lKingdom Specific");	
-		add(6, "&6Objectives Captured:");	
-		add(5, "&7" + x);	
-		add(4, "&6Traps Deployed:");	
-		add(3, "&7*Coming Soon*  ");		
-		add(2, " ");		
-		add(1, "  ");		
-		add(0, "   ");		
-		send(p);
+		add(i--, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
+		add(i--, "&6&lKing:" /*+kingdom.getKingName()*/);	
+		add(i--, "&7*Coming Soon*");	
+		add(i--, "&6&lMoney: &r&7");	
+		add(i--, "&7*Coming Soon* " /*+ TNEApi.getBalance(kingdom.getUUID())*/);	
+		add(i--, "&a&lKingdom Specific");	
+		add(i--, "&6Objectives Captured:");	
+		add(i--, "&7" + x);	
+		add(i--, "&6Traps Deployed:");	
+		add(i--, "&7*Coming Soon*  ");		
+		add(i--, " ");		
+		add(i--, "  ");		
+		add(i--, "   ");		
+		send(player);
 	}
 
 	public void CaptureBoard(Player player, Village village){
+		int i = 13;
 		setTitle("&6[&eCapture Information&6]");
-		add(12, "&a&lName: ");	
-		add(11, village.getOwner().getColorSymbol() + village.getName());	
-		add(10, "       ");	
-		add(9, "&a&lOwner:");
-		add(8, village.getOwner().getColorSymbol() + village.getOwner().getName());	
-		add(7, "  ");	
-		add(6, "&a&lCapture Progress:");	
-		add(5, "&e" + village.getProgress() + "%");	
-		add(4, "        ");	
-		add(3, "         ");	
-		add(2, "          ");		
-		add(1, "           ");
-		add(0, "            ");
+		add(i--, "&a&lName: ");	
+		add(i--, village.getOwner().getColorSymbol() + village.getName());	
+		add(i--, "       ");	
+		add(i--, "&a&lOwner:");
+		add(i--, village.getOwner().getColorSymbol() + village.getOwner().getName());	
+		add(i--, "&a&lParent:");	
+		add(i--, "&e" + (village.hasParent() ? village.getParent().getName() : "&fNone"));	
+		add(i--, "         ");	
+		add(i--, "&a&lCapture Progress:");	
+		add(i--, "&e" + village.getProgress() + "%");	
+		add(i--, "          ");		
+		add(i--, "           ");
+		add(i--, "            ");
 		send(player);
 	}
 	
 	public void PlayerBoard(Player player){
+		int i = 13;
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		Kingdom kingdom = (wrapper.isInKingdom() ? wrapper.getKingdom() : Kingdom.getNeutral(player.getWorld()));
+		Kingdom kingdom = (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()) : Kingdom.getNeutral(player.getWorld()));
 		setTitle("&6[&ePlayer Information&6]");
-		add(12, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
-		add(11, "&6&lMoney:");	
-		add(10, "&7*Coming Soon*");	
-		add(9, "&6&lFriends Online:");
-		add(8, "&7*Coming Soon* ");
-		add(7, "&6&lRank:");
-		add(6, "&7*Coming Soon* ");
-		add(5, "&6Level:");
-		add(4, "&7*Coming Soon* ");
-		add(3, "&6&lxp for next lvl:");
-		add(2, "&7*Coming Soon* ");
-		add(1, "");
-		add(0, "&7*Coming Soon* ");
+		add(i--, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
+		add(i--, "&6&lMoney:");	
+		add(i--, "&7*Coming Soon*");	
+		add(i--, "&6&lFriends Online:");
+		add(i--, "&7*Coming Soon* ");
+		add(i--, "&6&lRank:");
+		add(i--, "&7*Coming Soon* ");
+		add(i--, "&6Level:");
+		add(i--, "&7*Coming Soon* ");
+		add(i--, "&6&lxp for next lvl:");
+		add(i--, "&7*Coming Soon* ");
+		add(i--, "");
+		add(i--, "&7*Coming Soon* ");
 		send(player);
 	}
 	
 	public void NeutralBoard(Player player){
-		add(12, "&1Welcome: &r" + player.getName());
-		add(11, "           ");
-		add(10, "&6&lNetwork: &rKingConquest");	
-		add(9, "&6&lServer: &rConquest");	
-		add(8, "   ");	
-		add(7, "&1&lTo Join a capital:");	
-		add(6, "&6Steps:");	
-		add(5, "&61: &f/kc");	
-		add(4, "&62: &eInteract! ");		
-		add(3, "&61For Help: ");	
-		add(2, "&61: &f/kc ");	
-		add(1, "&62: &eInteract!");		
-		add(0, "");
+		int i = 13;
+		
+		add(i--, "&1Welcome: &r" + player.getName());
+		add(i--, "           ");
+		add(i--, "&6&lNetwork: &rKingConquest");	
+		add(i--, "&6&lServer: &rConquest");	
+		add(i--, "   ");	
+		add(i--, "&1&lTo Join a capital:");	
+		add(i--, "&6Steps:");	
+		add(i--, "&61: &f/kc");	
+		add(i--, "&62: &eInteract! ");		
+		add(i--, "&6For Help: ");	
+		add(i--, "&61: &f/kc ");	
+		add(i--, "&62: &eInteract!");		
+		add(i--, "");
 		send(player);
 		
 	}

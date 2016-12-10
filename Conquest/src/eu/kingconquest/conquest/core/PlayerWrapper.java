@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import eu.kingconquest.conquest.util.SimpleScoreboard;
@@ -12,8 +14,8 @@ import eu.kingconquest.conquest.util.Validate;
 public class PlayerWrapper{
 	private static HashMap<UUID, PlayerWrapper> wrapper = new HashMap<UUID, PlayerWrapper>();
 
-	public PlayerWrapper(Player player){
-		wrapper.put(player.getUniqueId(), this);
+	public PlayerWrapper(UUID uuid){
+		wrapper.put(uuid, this);
 	}
 
 	private ArrayList<UUID> friends = new ArrayList<UUID>();
@@ -30,17 +32,21 @@ public class PlayerWrapper{
 		this.friends.addAll(friends);
 	}
 	
-	private Kingdom kingdom;
-	public void setKingdom(Kingdom kingdom){
-		this.kingdom= kingdom;
+	private UUID kingdom;
+	public void setKingdom(UUID uuid){
+		this.kingdom = uuid;
 	}
-	public Kingdom getKingdom(){
-		return kingdom;
+	public Kingdom getKingdom(World world){
+		return Kingdom.getKingdom(kingdom, world);
 	}
-	public boolean isInKingdom(){
-		if (Validate.notNull(kingdom))
+	public boolean isInKingdom(World world){
+		if (Validate.notNull(Kingdom.getKingdom(kingdom, world)))
 			return true;
 		return false;
+	}
+	
+	public Player getPlayer(UUID uuid){
+		return Bukkit.getPlayer(uuid);
 	}
 	
 	private SimpleScoreboard scoreboard;
@@ -55,6 +61,6 @@ public class PlayerWrapper{
 		if (Validate.notNull(wrapper.get(player.getUniqueId()))){
 			return wrapper.get(player.getUniqueId());
 		}
-		return new PlayerWrapper(player);
+		return new PlayerWrapper(player.getUniqueId());
 	}
 }

@@ -22,21 +22,21 @@ public class PlayerRespawnListener implements Listener{
 	 */
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent e){
-		Player p = e.getPlayer();
+		Player player = e.getPlayer();
 		e.setRespawnLocation(deathLocation);
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
-		p.setGameMode(GameMode.SPECTATOR);
-		p.getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable(){
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+		player.setGameMode(GameMode.SPECTATOR);
+		player.getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){
-				p.setGameMode(GameMode.SURVIVAL);
-				if (!wrapper.isInKingdom()){
-					p.teleport(wrapper.getKingdom().getSpawn());
+				if (wrapper.isInKingdom(player.getWorld())){
+					player.teleport(wrapper.getKingdom(player.getWorld()).getSpawn());
 				}else{
-					p.teleport(p.getWorld().getSpawnLocation());
+					player.teleport(player.getWorld().getSpawnLocation());
 				}
+				player.setGameMode(GameMode.SURVIVAL);
 			}
-		}, Config.getLongs("RespawnDelay", p.getLocation()));
+		}, Config.getLongs("RespawnDelay", player.getLocation()));
 	}
 	
 	public static Location getDeathLocation(){

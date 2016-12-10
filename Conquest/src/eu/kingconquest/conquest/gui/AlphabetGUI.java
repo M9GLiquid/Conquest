@@ -19,6 +19,7 @@ public class AlphabetGUI extends ChestGui{
 	private String[] symbols = 
 		{" ", "!", "@", "#", "£", "¤", "$", "%", "&", "/", "{", "(", "[", ")", "]"
 			, "=", "}", "?", "+", "^", "~", "*", "-", "_", ".", ":", ",", ";" ,"<", ">"
+			, "í", "'"
 			, "|", "1", "2", "3", "4", "5" ,"6", "7", "8", "9", "0"};
 	private ArrayList<String> word = new ArrayList<String>();
 	private int slot = 9;
@@ -38,11 +39,13 @@ public class AlphabetGUI extends ChestGui{
 	@Override
 	 public void create(){
 			createGui(p, "&6Alphabet Gui", symbols.length);
-			displayItems();
 			display();
 	}
-
-	private void displayItems(){
+	
+	@Override
+	public void display(){
+		clearSlots();
+		slot = 9;
 		//Slot 0
 		playerInfo(p);
 		//Slot 1
@@ -56,18 +59,24 @@ public class AlphabetGUI extends ChestGui{
 		symbolsButton();
 		//Slot 5
 		clearButton();
-		//Slot 6
-		//Slot 7
-		saveButton();
 		//Slot 8
-		backButton(previous);
-	}
+		saveButton();
 
-	@Override
-public void display(){
-	slot = 9;
-	for (int i = 0; i < alphabet.length; i++) 
-		add(alphabet[i]);
+		if (!removeToggled){
+			if (!symbolsToggled)
+				for (int i = 0; i < alphabet.length; i++) 
+					addLetters(alphabet[i]);
+			else if (symbolsToggled)
+				for (int i = 0; i < symbols.length; i++) 
+					addSymbols(symbols[i]);
+		}else{
+			for (int i = 0; i < word.size(); i++) 
+				remove(i, word.get(i));
+			if (word.size() == 0){
+				removeToggled = false;
+				display();
+			}
+		}
 }
 
 	private void displayWord(){
@@ -81,44 +90,29 @@ public void display(){
 			clearSlots();
 			slot = 9;
 			display();
-			displayItems();
 		},"&cClear Word" , "&1-----------------");
 	}
 
 	private void saveButton(){
-		setItem(7, new ItemStack(Material.EMERALD_BLOCK), player -> {
+		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
 			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, 1.0F);
 			previous.create();
 		},"&aSave Word" , "&1-----------------");
 	}
 
+	private boolean removeToggled = false;
 	private void removeButton(){
 		setItem(3, new ItemStack(Material.BOOK), player -> {
-			Bukkit.getWorld(player.getWorld().getUID())
-				.playSound(player.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 1.0F);
-			clearSlots();
-			slot = 9;
-			displayRemove();
-			displayItems();
-		},"&cRemove Letter" , "&1-----------------");
-	}
-	
-	private void displayRemove(){
-		for (int i = 0; i < word.size(); i++) 
-			remove(i, word.get(i));
-		if (word.size() == 0)
+			removeToggled = !removeToggled;
 			display();
+		},"&cRemove Letter" , "&1-----------------");
 	}
 
 	private void remove(int i, String str){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			Bukkit.getWorld(player.getWorld().getUID())
-				.playSound(player.getLocation(), Sound.ITEM_HOE_TILL, 3.0F, 1.0F);
+			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ITEM_HOE_TILL, 3.0F, 1.0F);
 			word.remove(i);
-			clearSlots();
-			slot = 9;
-			displayRemove();
-			displayItems();
+			display();
 		},"&6" + str , "&1-----------------");
 		slot++;
 	}
@@ -126,20 +120,13 @@ public void display(){
 	private void CaseButton(){
 		if (alphabet[0].equals(alphabet[0].toUpperCase())){
 			setItem(2, new ItemStack(Material.BOOK), player -> {
-				clearSlots();
-				slot = 9;
 				lowerCase();
 				display();
-				displayItems();
 			}, "&aLower Case" , "&1-----------------\n");
 		}else{
 			setItem(2, new ItemStack(Material.ENCHANTED_BOOK), player -> {
-				clearSlots();
-				slot = 9;
 				upperCase();
-				Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 3.0F, 1.0F);
 				display();
-				displayItems();
 			}, "&aUpper Case" , "&1-----------------\n");
 		}
 	}
@@ -157,37 +144,23 @@ public void display(){
 	private boolean symbolsToggled = false;
 	private void symbolsButton(){
 		setItem(4, new ItemStack(Material.ENCHANTED_BOOK), player -> {
-			clearSlots();
-			if (symbolsToggled){
-				symbolsToggled = false;
-				slot = 9;
-				display();
-				displayItems();
-			}else{
-				symbolsToggled = true;
-				slot = 9;
-				for (int i = 0; i < symbols.length; i++) 
-					displaySymbols(symbols[i]);
-				displayItems();
-			}
+			symbolsToggled = !symbolsToggled;
+			display();
 		},"Symbols" , "&1-----------------\n");
 	}
 
-	private void displaySymbols(String str){
+	private void addSymbols(String str){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			word.add(str);
-			slot = 9;
 			displayWord();
-		}, str.replace(" ", "[SPACE]") , "&1-----------------");
+			display();
+		}, "&6" + str.replace(" ", "[SPACE]") , "&1-----------------");
 		slot++;
 	}
 
-	private void add(String str){
+	private void addLetters(String str){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			clearSlots();
 			word.add(str);
-			displayWord();
-			displayItems();
 			display();
 		},"&6" + str , "&1-----------------");
 		slot++;

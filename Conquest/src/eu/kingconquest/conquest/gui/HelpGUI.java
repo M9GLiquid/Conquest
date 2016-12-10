@@ -24,12 +24,9 @@ public class HelpGUI extends ChestGui{
 		display();
 	}
 	
-	@SuppressWarnings("unused")
-	private int slot;
 	@Override
 	public void display(){
 		clearSlots();
-		slot = 9;
 		
 		//Slot 0
 		playerInfo(p);
@@ -51,7 +48,7 @@ public class HelpGUI extends ChestGui{
 
 		//Second row
 		desc2Button();
-		sslot9Button();
+		slot9Button();
 		slot10Button();
 		slot11Button();
 	}
@@ -62,34 +59,35 @@ public class HelpGUI extends ChestGui{
 		setItem(9, new ItemStack(Material.BOOK), player -> {
 		}, "&6Conquest Plugin Help:", "&1-----------------"
 				+ "\n");
-		slot++;
 	}
 
 	private void slot1Button(){
 		setItem(10, new ItemStack(Material.PAPER), player -> {
 		}, "&6Step 1: &3Join the movement!", "&1-----------------"
 				+ "\n&6# &2Join &6a Kingdom"
+				+ "\n&6# &2Any kingdom is a &3good &7kingdom"
 				+ "\n");
-		slot++;
 	}
 
 	private void slot2Button(){
 		setItem(11, new ItemStack(Material.PAPER), player -> {
 		}, "&6Step 2: &3Dominate!", "&1-----------------"
-				+ "\n&6# &eCapture &3'Beacons' &6spread across the map"
+				+ "\n&6# &eCapture(&7Stand next to&e) "
+				+ "\n&6  - &3'Beacons' &6spread across the map"
+				+ "\n&6# &7Capture by standing next to smaller &3'beacons'"
+				+ "\n&6# &7Capture Bigger beacons by capturing all "
+				+ "\n&6  - &7surrounding smaller &3'beacons'"
 				+ "\n&6# &2Get rewards"
 				+ "\n");
-		slot++;
 	}
 
 	private void slot3Button(){
 		setItem(12, new ItemStack(Material.PAPER), player -> {
 		}, "&6Step 3: &3Rewards!", "&1-----------------"
 				+ "\n&6# &2Collect your rewards"
-				+ "\n&6# &3Rent/&2Buy &6an apartment/house"
+				+ "\n&6#  &4*Coming Very Soon* &3Rent/&2Buy &6an apartment/house"
 				+ "\n&6#  &4*Coming Soon* &2Buy &6a 'Building Zone'"
 				+ "\n");
-		slot++;
 	}
 
 	//Second row
@@ -99,17 +97,15 @@ public class HelpGUI extends ChestGui{
 		}, "&6Conquest Plugin Description:", "&1-----------------"
 				+ "\n&6"
 				+ "\n");
-		slot++;
 	}
 
-	private void sslot9Button(){
+	private void slot9Button(){
 		setItem(19, new ItemStack(Material.PAPER), player -> {
 		}, "&bConquest Plugin Description:", "&1-----------------"
 				+ "\n&6The &eConquest &6Plugin is a &eunique &6plugin,"
 				+ "\n&6Developed for the KingConquest Network,"
 				+ "\n&6By the Network Developer!"
 				+ "\n");
-		slot++;
 	}
 
 	private void slot10Button(){
@@ -119,7 +115,6 @@ public class HelpGUI extends ChestGui{
 				+ "\n&6Game mode &eCapture the Flag (ctf),"
 				+ "\n&6But on a &emuch &6larget scale."
 				+ "\n");
-		slot++;
 	}
 
 	private void slot11Button(){
@@ -128,6 +123,5 @@ public class HelpGUI extends ChestGui{
 				+ "\n&6The Basic of this plugin is:"
 				+ "\n&cWorld Domination&6, &aDone Right!"
 				+ "\n");
-		slot++;
 	}
 }

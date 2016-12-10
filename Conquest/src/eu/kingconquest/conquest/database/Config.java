@@ -407,12 +407,11 @@ public class Config extends YamlConfiguration{
 					if (!config.isSet(world.getName() + "." + kUUID))
 						return;
 					getPathSection(config, world.getName() + "." + kUUID).forEach(uUUID->{
-
-						if (Validate.notNull(Bukkit.getPlayer(UUID.fromString(uUUID)))){
-							PlayerWrapper wrapper = new PlayerWrapper(Bukkit.getPlayer(UUID.fromString(uUUID)));
-							wrapper.setKingdom(kingdom);
+						if (Validate.notNull(Bukkit.getOfflinePlayer(UUID.fromString(uUUID)))){
+							PlayerWrapper wrapper = new PlayerWrapper(UUID.fromString(uUUID));
+							wrapper.setKingdom(kingdom.getUUID());
+							kingdom.addMember(UUID.fromString(uUUID));
 						}
-						kingdom.addMember(UUID.fromString(uUUID));
 					});
 				}
 			});
@@ -472,9 +471,10 @@ public class Config extends YamlConfiguration{
 	//SAVE
 	public static boolean saveKingdoms(World world){
 		Config config = getConfig("Kingdoms");
-
 		try {
 			Kingdom.getKingdoms().forEach(kingdom->{
+				if (!kingdom.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+					return;
 				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Name", kingdom.getName());
 				if (Validate.notNull(kingdom.getKing()))
 					config.set(world.getName() + "." + kingdom.getUUID().toString() + ".King", kingdom.getKing().getUniqueId().toString());
@@ -509,6 +509,8 @@ public class Config extends YamlConfiguration{
 		Config config = getConfig("Towns");
 		try {
 			Town.getTowns(world).forEach(town->{
+				if (!town.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+					return;
 				config.set(world.getName() + "." + town.getUUID().toString() + ".Name", town.getName());
 				config.set(world.getName() + "." + town.getUUID().toString() + ".Owner", town.getOwner().getUUID().toString());
 				if (town.hasChildren()){
@@ -530,6 +532,8 @@ public class Config extends YamlConfiguration{
 		Config config = getConfig("Villages");
 		try {
 			Village.getVillages(world).forEach(village->{
+				if (!village.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+					return;
 				config.set(world.getName() 
 						+ "." + village.getUUID().toString() 
 						+ ".Name", village.getName());
@@ -558,7 +562,7 @@ public class Config extends YamlConfiguration{
 			//Remove Kingdom from config if removed from game
 			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))){
 				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Kingdom&3] " + Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).getName()
+				removeMsg.put("&6| --&3 [&6Kingdom&3] " + kingdomUUID
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
@@ -572,7 +576,7 @@ public class Config extends YamlConfiguration{
 			//Remove Town from config if removed from game
 			if (Validate.isNull(Town.getTown(UUID.fromString(townUniqueID), world))){
 				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Town&3] " +  Town.getTown(UUID.fromString(townUniqueID), world).getName() 
+				removeMsg.put("&6| --&3 [&6Town&3] " +  townUniqueID 
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
@@ -586,7 +590,7 @@ public class Config extends YamlConfiguration{
 			//Remove Village from config if removed from game
 			if (Validate.isNull(Village.getVillage(UUID.fromString(villageUniqueID), world))){
 				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Village&3] " + Village.getVillage(UUID.fromString(villageUniqueID), world).getName()  
+				removeMsg.put("&6| --&3 [&6Village&3] " + villageUniqueID  
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
@@ -598,9 +602,9 @@ public class Config extends YamlConfiguration{
 			return;
 		getPathSection(config, world.getName()).forEach(kingdomUniqueID ->{
 			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUniqueID), world))) {
-				config.set(world.getName() + "." + kingdomUniqueID, null);;
+				config.set(world.getName() + "." + kingdomUniqueID, null);
 				config.save();
-				removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + Kingdom.getKingdom(kingdomUniqueID, world).getName() 
+				removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + kingdomUniqueID 
 						+ " [&6" + world.getName() + "&3]", true);
 				return;
 			}

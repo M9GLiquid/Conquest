@@ -27,6 +27,7 @@ public class TownGUI extends ChestGui{
 	
 	@Override
 	public void display() {
+		setCurrentItem(0);
 		clearSlots();
 		//Slot 0
 		playerInfo(p);
@@ -56,7 +57,6 @@ public class TownGUI extends ChestGui{
 	
 	private void towns(int i, Town town){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
-			setCurrentItem(0);
 			new EditGUI(player, town, this);
 		},"&aEdit " + town.getOwner().getColorSymbol() + town.getName()
 		, displayInfo(town));

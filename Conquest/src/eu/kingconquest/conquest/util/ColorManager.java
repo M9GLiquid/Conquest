@@ -104,15 +104,15 @@ public class ColorManager{
 	public static ChatColor int2ChatColor(int color){
 		switch(color){
 			case 0:  return ChatColor.DARK_BLUE; 		// Dark Blue
-			case 1:  return ChatColor.DARK_GREEN; 		// Dark Green
+			case 1:  return ChatColor.DARK_GREEN; 	// Dark Green
 			case 2:  return ChatColor.DARK_AQUA; 		// Dark Aqua
-			case 3:  return ChatColor.DARK_RED; 		// Dark Red
-			case 4:  return ChatColor.DARK_PURPLE; 		// Dark Purple
-			case 5:  return ChatColor.BLUE; 			// Blue
-			case 6:  return ChatColor.GREEN; 			// Green
+			case 3:  return ChatColor.DARK_RED; 			// Dark Red
+			case 4:  return ChatColor.DARK_PURPLE; 	// Dark Purple
+			case 5:  return ChatColor.BLUE; 					// Blue
+			case 6:  return ChatColor.GREEN; 				// Green
 			case 7:  return ChatColor.LIGHT_PURPLE; 	// Pink
-			case 8:  return ChatColor.YELLOW; 			// Yellow
-			default: return ChatColor.WHITE; 			// White
+			case 8:  return ChatColor.YELLOW; 				// Yellow
+			default: return ChatColor.WHITE; 				// White
 		}
 	}
 

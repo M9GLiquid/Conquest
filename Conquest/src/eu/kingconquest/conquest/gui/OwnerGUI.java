@@ -5,15 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.util.ChestGui;
 
 public class OwnerGUI extends ChestGui{
-	private Player p;
+	private Player player;
 
 	public OwnerGUI(Player player, ChestGui previousGui){
 		super();
-		this.p = player;
+		this.player = player;
 		previous = (ChestGui) previousGui;
 
 		create();
@@ -21,15 +20,16 @@ public class OwnerGUI extends ChestGui{
 
 	@Override
 	public void create(){
-		owner = Kingdom.getKingdom("Neutral", p.getWorld());
-		createGui(p, "OwnerShip GUI", Kingdom.getKingdoms().size());
+		owner = Kingdom.getKingdom("Neutral", player.getWorld());
+		createGui(player, "OwnerShip GUI", Kingdom.getKingdoms().size());
 		display();
 	}
 
 	@Override
 	public void display(){
+		setCurrentItem(0);
 		//Slot 0
-		playerInfo(p);
+		playerInfo(player);
 		//Slot 3
 		previous(this);
 		//Slot 5
@@ -38,7 +38,7 @@ public class OwnerGUI extends ChestGui{
 		closeButton();
 
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (Village.getVillages().size() -1) || getItems() == 0)
+			if (getCurrentItem() > (Kingdom.getKingdoms().size() -1) || getItems() == 0)
 				break;
 			
 			Kingdom kingdom = Kingdom.getKingdoms().get(getCurrentItem());

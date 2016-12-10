@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -14,8 +15,8 @@ import eu.kingconquest.conquest.util.Validate;
 
 public class ChestGuiListener implements Listener{
 	
-    @EventHandler
-    public void onClick(InventoryClickEvent e){
+	@EventHandler (priority = EventPriority.HIGHEST)
+	public void onClick(InventoryClickEvent e){
         if (!(e.getWhoClicked() instanceof Player))
             return;
         Player p = (Player) e.getWhoClicked();
@@ -24,9 +25,11 @@ public class ChestGuiListener implements Listener{
             e.setCancelled(true);
             ChestGui GUI = ChestGui.getInventoriesByUUID().get(inventoryUUID);
             GUI.setClickType(e.getClick());
+            if (Validate.notNull(GUI.getActions().get(e.getSlot()))){
             ChestGui.onGuiAction action = GUI.getActions().get(e.getSlot());
     		if (Validate.notNull(action))
                 action.onClick(p);
+            }
         }
     }
     

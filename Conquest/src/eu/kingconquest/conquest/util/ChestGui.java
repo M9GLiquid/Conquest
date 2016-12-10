@@ -17,7 +17,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.kingconquest.conquest.Main;
+import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.gui.HomeGUI;
+import eu.kingconquest.conquest.hook.TNEApi;
 
 public abstract class ChestGui extends Pagination{
 	private int invSize = 9;
@@ -71,10 +73,8 @@ public abstract class ChestGui extends Pagination{
 
 	private static int oldTaskID = 0;
 	public void createGui(Player p, String str, Integer items ){
-		if (Validate.notNull(items))
-			setItems(items);
-		if (Validate.notNull(str))
-			setTitle(str);
+		setItems(items);
+		setTitle(str);
 		
 		if (Validate.notNull(taskID.get(p.getUniqueId())))
 				oldTaskID = taskID.get(p.getUniqueId()); // Close any old Tasks of the player (Previous ChestGui)
@@ -103,15 +103,14 @@ public abstract class ChestGui extends Pagination{
     }
 	
 	public void playerInfo(Player p){
-		
 		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 		SkullMeta skull = (SkullMeta) head.getItemMeta();
 		skull.setOwner(p.getName());
 		head.setItemMeta(skull);
         setSkullItem(0, head, player ->{
-        	p.sendMessage(p.getDisplayName());
-        }, "§4" + p.getName() + " Information","§1-----------------"
-        		+ "\n§4\n"
+        }, "&4" + p.getName() + " Information","&1-----------------"
+        		+ "\n&4Kingdom: " + (PlayerWrapper.getWrapper(p).isInKingdom(p.getWorld()) ? PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getName() : "None")
+        		+ "\n&4Money: " + TNEApi.getBalance(p)
         		);
 	}
 	public void homeButton(){
@@ -119,21 +118,23 @@ public abstract class ChestGui extends Pagination{
 			close(player);
 			HomeGUI homeGui = new HomeGUI(player);
 			homeGui.create();
-		}, "§4Home","§1-----------------\n"
-				+ "§cClick to goto Home Gui");
+		}, "&4Home","&1-----------------\n"
+				+ "&cClick to goto Home Gui");
 	}
-	public void backButton(Object object){
-		ChestGui chestGui = (ChestGui) object;
+	public void backButton(ChestGui chestGui){
+		if (Validate.isNull(chestGui))
+			return;
 		setItem(8, new ItemStack(Material.ARROW), player -> {
 			chestGui.create();
-		}, "§4<< Back","§1-----------------\n"
-				+ "§cClick to go Home");
+			openInventories.remove(player.getUniqueId());
+		}, "&4<< Back","&1-----------------\n"
+				+ "&cClick to go Home");
 	}
 	public void closeButton(){
         setItem(8, new ItemStack(Material.BARRIER), player -> {
             close(player);
-        }, "§4Close!","§1-----------------"
-        		+ "\n§cClick to close!\n"
+        }, "&4Close!","&1-----------------"
+        		+ "\n&cClick to close!\n"
         		);
 	}
 	public void clearSlots(){
@@ -187,6 +188,11 @@ public abstract class ChestGui extends Pagination{
     public void setChestSlots(int i){
 		this.invSize = getCorrectSlots(i);
 	}
+	public void setItem(int slot, ItemStack stack, onGuiAction action){
+		inventory.setItem(slot, stack);
+        if (Validate.notNull(action))
+            actions.put(slot, action);
+	}    
 	public void setItem(int slot, ItemStack stack, onGuiAction action, String itemName, String toolTip){
 		ToolTip = toolTip;
         ItemMeta meta = stack.getItemMeta();

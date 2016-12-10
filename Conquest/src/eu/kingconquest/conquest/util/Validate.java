@@ -14,9 +14,13 @@ public class Validate{
 	 * @param loc
 	 * @return
 	 */
-	public static boolean isWithinArea(Location loc1, Location loc2, double distance, int maxY, int minY){
-		if (loc1.distanceSquared(loc2) <= distance 
-				&& loc1.getY() <= loc2.getY() + maxY 
+	public static boolean isWithinArea(Location loc1, Location loc2, double radius, int maxY, int minY){
+		if (!loc1.getWorld().equals(loc2.getWorld()))
+			return false;
+		double dx = Math.abs(loc1.getX() - loc2.getX());
+		double dz = Math.abs(loc1.getZ() - loc2.getZ());
+		if (dx + dz <= radius 
+				&& loc1.getY() <= loc2.getY() + maxY
 				&& loc1.getY() >= loc2.getY() - minY){
 			return true;
 		}
@@ -30,12 +34,14 @@ public class Validate{
 	 * @return
 	 */
 	public static boolean isWithinCaptureArea(Location loc1, Location loc2){
-		if (!loc1.getWorld().equals(loc2.getWorld()))
-			return false;
-		if (loc1.distanceSquared(loc2) <= Config.getDoubles("CaptureDistance", loc1)
-				&& (loc1.getY() <= loc2.getY()
-				+ Config.getDoubles("CaptureMaxY", loc1) && (loc1.getY() >= loc2.getY()
-						- Config.getDoubles("CaptureMinY", loc1)))){
+		double dx = Math.abs(loc1.getX() - loc2.getX());
+		double dy = Math.abs(loc1.getY() - loc2.getY());
+		double radius = Config.getDoubles("CaptureDistance", loc1);
+		double maxY = Config.getDoubles("CaptureMaxY", loc1);
+		double MinY = Config.getDoubles("CaptureMinY", loc1);
+		if (dx + dy <= radius 
+				&& loc1.getY() <= loc2.getY() + maxY
+				&& loc1.getY() >= loc2.getY() - MinY){
 			return true;
 		}
 		return false;
