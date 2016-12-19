@@ -1,2 +1,2 @@
 # Conquest
-KingConqquest Plugin
+KingConquest Plugin
