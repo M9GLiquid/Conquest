@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.Validate;
 
 public class KitEditGUI extends ChestGui{
 	private ChestGui previous;
@@ -59,9 +60,14 @@ public class KitEditGUI extends ChestGui{
 	}
 
 	private void editButton(int slot, ItemStack item){
+		String name = "";
+		if (Validate.notNull(item))
+			if (item.hasItemMeta())
+				if (item.getItemMeta().hasDisplayName())
+				name = item.getItemMeta().getDisplayName();
 		setItem(slot, item, player -> {
 			new KitItemEditGui(player, item);
-		}, (item.hasItemMeta() ? (item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "") : ""),  
-				"&3Click to Edit");
+		}, name,  
+				"\n&3Click to Edit");
 	}
 }

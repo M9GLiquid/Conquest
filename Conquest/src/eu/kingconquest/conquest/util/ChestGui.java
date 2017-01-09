@@ -189,6 +189,9 @@ public abstract class ChestGui extends Pagination{
 		this.invSize = getCorrectSlots(i);
 	}
 	public void setItem(int slot, ItemStack item, onGuiAction action, String itemName, String toolTip){
+		if (Validate.isNull(item))
+			return;
+		
 		ItemStack stack = item.clone();
 		ToolTip = toolTip;
 		ItemMeta meta = stack.getItemMeta();

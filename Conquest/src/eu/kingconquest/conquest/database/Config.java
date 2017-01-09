@@ -562,7 +562,8 @@ public class Config extends YamlConfiguration{
 				if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 					return;
 				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
-				config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwner().toString());
+				if (Validate.notNull(kit.getOwner()))
+					config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwner().toString());
 				config.set(world.getName() + "." + kit.getUUID() + ".Cost", kit.getCost());
 				config.set(world.getName() + "." + kit.getUUID() + ".Cooldown", kit.getCooldown());
 				if (kit.getItems().size() < 1)

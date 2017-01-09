@@ -20,10 +20,12 @@ public class ChestGuiListener implements Listener{
 	public void onClick(InventoryClickEvent e){
 		if (!(e.getWhoClicked() instanceof Player))
 			return;
-		if (Validate.notNull(e.getCurrentItem().getData().getItemType())){
-			if (e.getCurrentItem().getData().getItemType().equals(Material.AIR.name())){ // if item is air, return
-				e.setCancelled(true);
-				return;
+		if (Validate.notNull(e.getCurrentItem())){
+			if (Validate.notNull(e.getCurrentItem().getData().getItemType())){
+				if (e.getCurrentItem().getData().getItemType().equals(Material.AIR.name())){ // if item is air, return
+					e.setCancelled(true);
+					return;
+				}
 			}
 		}
 		Player p = (Player) e.getWhoClicked();
