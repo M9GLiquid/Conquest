@@ -14,7 +14,7 @@ public class Validate{
 	 * @param loc
 	 * @return
 	 */
-	public static boolean isWithinArea(Location loc1, Location loc2, double radius, int maxY, int minY){
+	public static boolean isWithinArea(Location loc1, Location loc2, double radius, double maxY, double minY){
 		if (!loc1.getWorld().equals(loc2.getWorld()))
 			return false;
 		double dx = Math.abs(loc1.getX() - loc2.getX());
@@ -36,9 +36,9 @@ public class Validate{
 	public static boolean isWithinCaptureArea(Location loc1, Location loc2){
 		double dx = Math.abs(loc1.getX() - loc2.getX());
 		double dy = Math.abs(loc1.getY() - loc2.getY());
-		double radius = Config.getDoubles("CaptureDistance", loc1);
-		double maxY = Config.getDoubles("CaptureMaxY", loc1);
-		double MinY = Config.getDoubles("CaptureMinY", loc1);
+		double radius = Config.getDouble("CaptureDistance", loc1);
+		double maxY = Config.getDouble("CaptureMaxY", loc1);
+		double MinY = Config.getDouble("CaptureMinY", loc1);
 		if (dx + dy <= radius 
 				&& loc1.getY() <= loc2.getY() + maxY
 				&& loc1.getY() >= loc2.getY() - MinY){

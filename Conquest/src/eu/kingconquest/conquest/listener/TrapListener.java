@@ -17,7 +17,7 @@ public class TrapListener implements Listener{
 	public void onZombieSpawnTrap(NeutralCaptureTrapEvent e){
 		Location location = e.getLocation();
 		Bukkit.getOnlinePlayers().stream()
-		.filter(player->Validate.isWithinArea(location, player.getLocation(), e.getTrapDistance(), 20, 10))// If Player within area
+		.filter(player->Validate.isWithinArea(location, player.getLocation(), e.getTrapDistance(), 20.0d, 10.0d))// If Player within area
 		.filter(player->PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()))
 		.filter(player->Validate.notNull(Kingdom.getKingdom(e.getOwner(), e.getWorld())))
 		.filter(player ->!PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).equals(Kingdom.getKingdom(e.getOwner(), e.getWorld())))// If player don't belong to the trapp's owner

@@ -3,7 +3,6 @@ package eu.kingconquest.conquest.gui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
@@ -56,15 +55,13 @@ public class KitEditGUI extends ChestGui{
 	private void addButton(){
 		setItem(1, new ItemStack(Material.ARMOR_STAND), player -> {
 			kit.addItem(kit.getItems().size(), player.getInventory().getItemInMainHand());
-		});
+		}, "", "");
 	}
 
 	private void editButton(int slot, ItemStack item){
-		ItemMeta meta = item.getItemMeta();
 		setItem(slot, item, player -> {
 			new KitItemEditGui(player, item);
-		},"&dEdit:  &r" + meta.getDisplayName() , "&1-----------------"
-				+ "\n&dLore:"
-				+ meta.getLore());
+		}, (item.hasItemMeta() ? (item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : "") : ""),  
+				"&3Click to Edit");
 	}
 }

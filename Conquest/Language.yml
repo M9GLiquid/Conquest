@@ -5,12 +5,12 @@
 # ========================================================
 Language:
   General:
-    PluginPrefix: '&6[&eConquest&6]'
+    Prefix: ' &6[&eConquest&6] &7'
     JoinSuccess: 'You have joined {color}{kingdom}.'
     LeaveSuccess: 'You have left {color}{kingdom}.'
     MoveSuccess: '&7Admin has moved you to kingdom: {color}{kingdom}'
     RemoveSuccess: '&7Admin has removed you from kingdom: {color}{kingdom}'
-    Teleported: 'You have been successfully teleported'
+    Teleported: '&aYou have been successfully teleported!'
     StartTP: 'You will be teleported in {tpDelay} seconds'
     UnBindSuccess: 'You have Successfully unbound &a{village} &7from &a{town}'
     CannotCapture: '&7Defender is on Point!'

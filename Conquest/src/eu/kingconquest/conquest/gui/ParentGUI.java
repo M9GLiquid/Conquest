@@ -74,7 +74,7 @@ public class ParentGUI extends ChestGui{
 			ChatManager.Chat(player, Config.getChat("editVillageParent"));
 			previous.create();
 			close(player);
-		}, "§6Set §f" + town.getName() + " §6as Parent","§f----------------- "
-				+ "\n§cClick to Select!");
+		}, "&6Set &f" + town.getName() + " &6as Parent",
+				"&cClick to Select!");
 	}
 }

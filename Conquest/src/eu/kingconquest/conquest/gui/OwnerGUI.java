@@ -9,6 +9,8 @@ import eu.kingconquest.conquest.util.ChestGui;
 
 public class OwnerGUI extends ChestGui{
 	private Player player;
+	private ChestGui previous;
+	private Kingdom owner;
 
 	public OwnerGUI(Player player, ChestGui previousGui){
 		super();
@@ -48,14 +50,12 @@ public class OwnerGUI extends ChestGui{
 		}
 	}
 
-	private ChestGui previous;
-	private Kingdom owner;
 	private void ownerButton(int slot, Kingdom kingdom){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			this.owner = kingdom;
 			previous.create();
-		}, "§6Set " + kingdom.getName() + " as Owner","§1-----------------"
-				+ "\n§cClick to Select!!");
+		}, "&6Set " + kingdom.getName() + " as Owner",
+				"&cClick to Select!!");
 	}
 
 

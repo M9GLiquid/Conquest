@@ -28,7 +28,7 @@ public class ChatManager {
 	 * @return String
 	 */
 	public static String placeholders(Player p, String text){
-		String tpDelay = String.valueOf(Config.getLongs("TeleportDelay", p.getLocation()) / 20);
+		String tpDelay = String.valueOf(Config.getLong("TeleportDelay", p.getLocation()) / 20);
 		text = text.contains("{tpDelay}") 			? text.replace("{tpDelay}", tpDelay)  : text.replace("{tpDelay}", "");
 		text = placeholders(text);
 		return text;

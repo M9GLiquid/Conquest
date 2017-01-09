@@ -231,7 +231,7 @@ public class Village extends Objective{
 			for (Objective objective : Objective.getObjectives(getWorld())){
 				if (objective.equals(this))
 					continue;
-				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20, 20)){
+				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
 					ChatManager.Chat(player, Config.getChat("ToClose"));
 					return false;
 				}
@@ -262,7 +262,6 @@ public class Village extends Objective{
 			updateGlass();
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 
-			Config.saveVillages(getWorld());
 			Cach.StaticVillage = this;
 			ChatManager.Chat(player, Config.getChat("VillageCreated"));
 			return true;
@@ -301,7 +300,6 @@ public class Village extends Objective{
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 			ChatManager.Chat(player, Config.getChat("VillageDeleted"));
 			removeVillage(this);
-			Config.removeTowns(getWorld());
 			Marker.remove(this);
 			return true;
 			

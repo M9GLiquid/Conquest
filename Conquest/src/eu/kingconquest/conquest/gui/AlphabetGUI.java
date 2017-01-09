@@ -81,7 +81,7 @@ public class AlphabetGUI extends ChestGui{
 
 	private void displayWord(){
 		setItem(1, new ItemStack(Material.PAPER), player -> {
-		},"&6" + getWord() , "&1-----------------");
+		},"&6" + getWord() , "");
 	}
 
 	private void clearButton(){
@@ -90,14 +90,14 @@ public class AlphabetGUI extends ChestGui{
 			clearSlots();
 			slot = 9;
 			display();
-		},"&cClear Word" , "&1-----------------");
+		},"&cClear Word" , "");
 	}
 
 	private void saveButton(){
 		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
 			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, 1.0F);
 			previous.create();
-		},"&aSave Word" , "&1-----------------");
+		},"&aSave Word" , "");
 	}
 
 	private boolean removeToggled = false;
@@ -105,7 +105,7 @@ public class AlphabetGUI extends ChestGui{
 		setItem(3, new ItemStack(Material.BOOK), player -> {
 			removeToggled = !removeToggled;
 			display();
-		},"&cRemove Letter" , "&1-----------------");
+		},"&cRemove Letter" , "");
 	}
 
 	private void remove(int i, String str){
@@ -113,7 +113,7 @@ public class AlphabetGUI extends ChestGui{
 			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ITEM_HOE_TILL, 3.0F, 1.0F);
 			word.remove(i);
 			display();
-		},"&6" + str , "&1-----------------");
+		},"&6" + str , "");
 		slot++;
 	}
 
@@ -122,12 +122,12 @@ public class AlphabetGUI extends ChestGui{
 			setItem(2, new ItemStack(Material.BOOK), player -> {
 				lowerCase();
 				display();
-			}, "&aLower Case" , "&1-----------------\n");
+			}, "&aLower Case" , "");
 		}else{
 			setItem(2, new ItemStack(Material.ENCHANTED_BOOK), player -> {
 				upperCase();
 				display();
-			}, "&aUpper Case" , "&1-----------------\n");
+			}, "&aUpper Case" , "");
 		}
 	}
 
@@ -146,7 +146,7 @@ public class AlphabetGUI extends ChestGui{
 		setItem(4, new ItemStack(Material.ENCHANTED_BOOK), player -> {
 			symbolsToggled = !symbolsToggled;
 			display();
-		},"Symbols" , "&1-----------------\n");
+		},"Symbols" , "");
 	}
 
 	private void addSymbols(String str){
@@ -154,7 +154,7 @@ public class AlphabetGUI extends ChestGui{
 			word.add(str);
 			displayWord();
 			display();
-		}, "&6" + str.replace(" ", "[SPACE]") , "&1-----------------");
+		}, "&6" + str.replace(" ", "[SPACE]") , "");
 		slot++;
 	}
 
@@ -162,7 +162,7 @@ public class AlphabetGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			word.add(str);
 			display();
-		},"&6" + str , "&1-----------------");
+		},"&6" + str , "");
 		slot++;
 	}
 

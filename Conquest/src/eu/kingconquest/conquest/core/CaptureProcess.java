@@ -78,6 +78,6 @@ public class CaptureProcess{
 							village.setProgress(village.getProgress() + (Village.getCapSpeed() * village.getAttackers().size()));
 						}
 					}
-				}, 0, Config.getLongs("CaptureRate", village.getLocation())));
+				}, 0, Config.getLong("CaptureRate", village.getLocation())));
 	}
 }

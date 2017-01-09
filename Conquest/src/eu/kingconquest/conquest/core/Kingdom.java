@@ -55,7 +55,6 @@ public class Kingdom extends Objective{
 		wrapper.getScoreboard().KingdomBoard(p);
 		addMember(p.getUniqueId());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + p.getName() + " parent add " + getName());
-		Config.saveUsers(getWorld());
 	}
 		
 	/**
@@ -77,7 +76,6 @@ public class Kingdom extends Objective{
 		wrapper.getScoreboard().NeutralBoard(p);
 		removeMember(p.getUniqueId());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + p.getName() + " parent remove " + getName());
-		Config.saveUsers(getWorld());
 	}
 	
 //Getters
@@ -324,10 +322,8 @@ public class Kingdom extends Objective{
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions creategroup " + getName());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions group " + getName() + " meta addsuffix  100 " + "\"&6{" + getColorSymbol() + getName() + "}&r &7\"");
 		TNEApi.createAccount(getUUID());
-		if (Marker.update(this)){
-			Config.saveKingdoms(getLocation().getWorld());
+		if (Marker.update(this))
 			return true;
-		}
 		return false;
 	}
 	@Override

@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -90,8 +89,8 @@ public class CreateGUI extends ChestGui{
 		setItem(7, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			close(player);
 			previous.create();
-		}, "§4<< Home", "§1-----------------"
-				+ "\n§cGo back without Saving!\n");
+		}, "&4<< Home", 
+				"&cGo back without Saving!\n");
 	}
 	
 	private void saveButton(){
@@ -102,9 +101,7 @@ public class CreateGUI extends ChestGui{
 							, loc //Fixed location
 							, spawn //Spawn location
 							);
-					if (kingdom.create(player))
-						Config.saveKingdoms(loc.getWorld());
-					else
+					if (!kingdom.create(player))
 						Kingdom.removeKingdom(kingdom);
 					
 				} else if (previous instanceof TownGUI) {
@@ -114,9 +111,7 @@ public class CreateGUI extends ChestGui{
 							, spawn //Spawn location
 							, owner //Owner
 							); 
-					if (town.create(player))
-						Config.saveTowns(loc.getWorld());
-					else
+					if (!town.create(player))
 						Town.removeTown(town);
 				}else if (previous instanceof VillageGUI) {
 					Village village = new Village(
@@ -127,20 +122,17 @@ public class CreateGUI extends ChestGui{
 							, Kingdom.getKingdom("Neutral", loc.getWorld()) //Pre Owner
 							, null //Parent
 							);
-					if (village.create(player))
-						Config.saveVillages(loc.getWorld());
-					else
+					if (!village.create(player))
 						Village.removeVillage(village);
 				}
 				close(player);
 				previous.create();
-			}, "§2Create new!", displayInfo());
+			}, "&2Create new!", displayInfo());
 	}
 
 	private String displayInfo(){
-		String str = "&1-----------------";
 
-		str += "\n&aName: &r" + name;
+		String str = "\n&aName: &r" + name;
 		if (previous instanceof KingdomGUI)
 		str += "\n&aKing: &r" + "None"
 			+ "\n&aMembers: &r0";
@@ -176,8 +168,8 @@ public class CreateGUI extends ChestGui{
 			alphabetGUI = new AlphabetGUI(player, this, null);
 		alphabetGUI.create();
 		slot = 9;
-	}, "§4Set Name!",  "&1-----------------"
-			+ "\n§cSet name\n");
+	}, "&4Set Name!", 
+				"&cSet name\n");
 	slot++;
 	}
 	
@@ -187,8 +179,8 @@ public class CreateGUI extends ChestGui{
 			clearSlots();
 			slot = 9;
 			display();
-		}, "§4Set Spawn","§1-----------------"
-				+ "\n§cSet Spawn\n");
+		}, "&4Set Spawn",
+				"&cSet Spawn\n");
 		slot++;
 	}
 	
@@ -197,8 +189,8 @@ public class CreateGUI extends ChestGui{
 			slot = 9;
 			loc = player.getLocation().clone();
 			display();
-		}, "§4Set Location","§1-----------------"
-				+ "\n§cSet location\n");
+		}, "&4Set Location",
+				"&cSet location\n");
 		slot++;
 	}
 

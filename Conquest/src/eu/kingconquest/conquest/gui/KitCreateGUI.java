@@ -21,6 +21,7 @@ public class KitCreateGUI extends ChestGui{
 	private long cooldown = 0;
 	private String name = "";
 	private Objective owner;
+	private String tempString = "Cooldown: &3" + cooldown;
 	DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
 	DecimalFormat df;
 	
@@ -92,8 +93,7 @@ public class KitCreateGUI extends ChestGui{
 		setItem(9, new ItemStack(Material.BOOK), player -> {
 			alphabetGUI = new AlphabetGUI(player, this, null);
 			alphabetGUI.create();
-		},"&6Set Name of Kit" , "&1-----------------"
-				);
+		},"&6Set Name of Kit" , "");
 	}
 
 	private String ownerName = "";
@@ -101,8 +101,8 @@ public class KitCreateGUI extends ChestGui{
 		if (Validate.notNull(owner))
 			ownerName = owner.getName();
 		setItem(4, new ItemStack(Material.PAPER), player -> {
-		},"&6Kit Information" , "&1-----------------"
-				+ "\n&7Name: &3" + name
+		},"&6Kit Information" , 
+				"&7Name: &3" + name
 				+ "\n&7Owner: &3" + ownerName
 				+ "\n&7Cost: &3" + cost
 				+ "\n&7Cooldown: &3" + cooldown
@@ -113,8 +113,8 @@ public class KitCreateGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			owner = town;
 			display();
-		},"&6Select &7" + town.getName() +" &6as Owner of Kit" , "&1-----------------"
-				+ "\n&7Name: " + town.getName()
+		},"&6Select &7" + town.getName() +" &6as Owner of Kit" , 
+				"&7Name: " + town.getName()
 				+ "\n&7Children: &7(" + town.getChildren().size() + ")"
 				);
 	}
@@ -123,52 +123,71 @@ public class KitCreateGUI extends ChestGui{
 		setItem(10, new ItemStack(Material.LEVER), player -> {
 			costToggle = !costToggle;
 			display();
-		},"&3Toggle" , "&1-----------------"
-				+ "\n&7Cost Modifier Active: &3" + costToggle
-				+ "\n&7Cooldown Modifier Active: &3" + !costToggle
+		},"&3Toggle" , 
+				"&7Cost Modifier Active: &a" +  (costToggle ? "&a" + costToggle : "&c" + costToggle)
+				+ "\n&7Cooldown Modifier Active: &a" + (!costToggle ? "&a" + !costToggle : "&c" + !costToggle)
 				);
 	}
 
 	private void incrementReminderButton(){
+		tempString = "Cost: &3" + cost;
 		setItem(12, new ItemStack(Material.ENCHANTED_BOOK), player -> {
 			cost = Double.valueOf(df.format(cost + 0.1));
 			display();
-		},"&cReminder Incrementer" , "&1-----------------"
-				+ "\n&7 Add one to the Reminder"
+		},"&cReminder Incrementer" , 
+				"&7 " + tempString + " + 0.1"
+				+ "\n&7 add one to the Reminder"
 				);
 	}
 
 	private void incrementButton(){
+		if (costToggle){
+			tempString = "Cost: &3" + cost;
+		}else{
+			tempString = "Cooldown: &3" + cooldown;
+		}
 		setItem(11, new ItemStack(Material.ENCHANTED_BOOK), player -> {
-			if (costToggle)
-				cost++;
-			else
+			if (costToggle){
+				cost = Double.valueOf(df.format(cost+1));
+			}else{
 				cooldown++;
+			}
 			display();
-		},"&cMain Incrementer" , "&1-----------------"
+		},"&cMain Incrementer" , 
+				"&7 " + tempString + " + 1"
 				+ "\n&7 Add one to the Main"
 				);
 	}
 
 	private void decrementButton(){
 		int slot = 12;
-		if (costToggle)
+		if (costToggle){
+			tempString = "Cost: &3" + cost;
 			slot = 13;
+		}else{
+			tempString = "Cooldown: &3" + cooldown;
+		}
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			if (costToggle)
-				cost--;
-			else
+			if (costToggle){
+				cost = Double.valueOf(df.format(cost-1));
+			}else{
 				cooldown--;
+			}
 			display();
-		},"&cMain Decrementer" , "&1-----------------"
+		},"&cMain Decrementer" , 
+				"&7 " + tempString + " - 1"
+				+ "\n&7 Remove one from the Main"
 				);
 	}
 
 	private void decrementReminderButton(){
+		tempString = "Cost: &3" + cost;
 		setItem(14, new ItemStack(Material.BOOK), player -> {
 			cost = Double.valueOf(df.format(cost - 0.1));
 			display();
-		},"&cReminder Decrementer" , "&1-----------------"
+		},"&cReminder Decrementer" , 
+				"&7 " + tempString + " - 0.1"
+				+ "\n&7 Remove one from the Reminder"
 				);
 	}
 
@@ -180,14 +199,13 @@ public class KitCreateGUI extends ChestGui{
 	}
 
 	private void saveButton(){
-		ItemStack[] items = player.getInventory().getStorageContents();
 		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
-			Kit kit = new Kit(name, player.getWorld(), cost, cooldown, owner);
+			Kit kit = new Kit(name, player.getWorld(), cost, cooldown, owner.getUUID());
 			kit.addItem(-1, player.getInventory().getItemInMainHand());
-			kit.addItems(0, items);
+			kit.addItems(0, player.getInventory().getStorageContents());
 			new KitGUI(player, null);
-		},"&aSave" , "&1-----------------"
-				);
+			close(player);
+		},"&aSave" , "");
 	}
 
 }

@@ -84,9 +84,8 @@ public class KingdomGUI extends ChestGui{
 	}
 
 	private String displayInfo(Kingdom kingdom) {
-		String str = "&1-----------------";
 		
-		str += "\n&aName: &r" + kingdom.getName();
+		String str = "&aName: &r" + kingdom.getName();
 		if (Validate.notNull(kingdom.getKing()))
 			str += "\n&aKing: &r" + kingdom.getKing().getName();
 		else
@@ -111,8 +110,8 @@ public class KingdomGUI extends ChestGui{
 		setItem(7, new ItemStack(Material.DIAMOND_PICKAXE), player -> {
 			new CreateGUI(player, this);
 			setCurrentItem(0);
-		}, "§4Create new Kingdom!","§1-----------------"
-				+ "\n§cClick to open the Create manager!"
+		}, "&4Create new Kingdom!",
+				"&cClick to open the Create manager!"
 				);
 	}
 

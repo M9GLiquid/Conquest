@@ -105,9 +105,8 @@ public class EditGUI extends ChestGui{
 	private void teleportButton(){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			player.teleport(objective.getLocation());
-		}, "&2Teleport", "&1-----------------"
-				+ "\n&6Teleport to target"
-				+ "\n");
+		}, "&2Teleport", 
+				"&6Teleport to target");
 		slot++;
 	}
 
@@ -123,9 +122,8 @@ public class EditGUI extends ChestGui{
 		head.setItemMeta(skull);
         setSkullItem(slot, head, player ->{
         	new PlayerGUI(player ,this, objective);
-        }, "§4Manage Members","§1-----------------"
-        		+ "\n"
-        		);
+        }, "&4Manage Members",
+        		"");
 		slot++;
 	}
 	
@@ -143,8 +141,8 @@ public class EditGUI extends ChestGui{
 					villageGUI.create();
 				}
 				close(player);
-			}, "§4Remove!",  "&1-----------------"
-					+ "\n§4Click to remove!");
+			}, "&4Remove!",  
+					"&4Click to remove!");
 			slot++;
 	}
 
@@ -215,8 +213,8 @@ public class EditGUI extends ChestGui{
 			alphabetGUI = new AlphabetGUI(player, this, objective.getName());
 			alphabetGUI.create();
 			slot = 9;
-		}, "§4Edit Name!",  "&1-----------------"
-				+ "\n§cClick to edit!");
+		}, "&4Edit Name!",  
+				"&cClick to edit!");
 		slot++;
 	}
 	protected void setName(){
@@ -230,8 +228,8 @@ public class EditGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BED), player -> {
 			setSpawn(player);
 			display();
-		}, "§4Edit Spawn Location!","§1-----------------"
-				+ "\n§cClick to edit!");
+		}, "&4Edit Spawn Location!",
+				"&cClick to edit!");
 		slot++;
 	}
 	private void setSpawn(Player player){
@@ -252,8 +250,8 @@ public class EditGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
 			setLocation(player);
 			display();
-		}, "§4Edit Dynmap Location!","§1-----------------"
-				+ "\n§cClick to edit!");
+		}, "&4Edit Dynmap Location!",
+				"&cClick to edit!");
 		slot++;
 	}
 	private void setLocation(Player player){
@@ -274,8 +272,8 @@ public class EditGUI extends ChestGui{
 	private void ownerButton(){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			ownershipGui = new OwnerGUI(p, this);
-		}, "§4Edit Owner!","§1-----------------"
-				+ "\n§cClick to edit!");
+		}, "&4Edit Owner!",
+				"&cClick to edit!");
 		slot++;
 	}
 	private void setOwner(){
@@ -290,8 +288,8 @@ public class EditGUI extends ChestGui{
 	private void parentButton(){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			new ParentGUI(p, objective, this);
-		}, "§4Edit Parent!","§1-----------------"
-				+ "\n§cClick to edit!");
+		}, "&4Edit Parent!",
+				"&cClick to edit!");
 		slot++;
 	}
 }

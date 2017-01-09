@@ -22,6 +22,7 @@
 # ========================================================
 # |                                                        Example
 # | Database:
+# |   AutoSaveInterval: 5 #Minutes
 # |   Backend: SqlLite
 # |   MySql:
 # |     Host: localhost
@@ -30,7 +31,7 @@
 # |     Database: Conquest
 # |     Port: 21
 # |   SqlLite:
-# |   FlatFile
+# |   FlatFile:
 # | ActiveWorlds:
 # |   world:
 # |     General:
@@ -59,6 +60,7 @@ Database:
     Port: 21
   SqlLite:
   FlatFile:
+    AutoSaveInterval: 5 #Minutes
 ActiveWorlds:
   world:
     General:
@@ -72,7 +74,7 @@ ActiveWorlds:
       VillageBaseValue: 0.5
     Combat:
       CaptureRate: 0.3
-      CaptureDistance: 17.0
+      CaptureDistance: 5.0
       CaptureMaxY: 5.0
       CaptureMinY: 1.0
   Sezty:
@@ -87,6 +89,6 @@ ActiveWorlds:
       VillageBaseValue: 0.5
     Combat:
       CaptureRate: 0.3
-      CaptureDistance: 17.0
+      CaptureDistance: 5.0
       CaptureMaxY: 5.0
       CaptureMinY: 1.0

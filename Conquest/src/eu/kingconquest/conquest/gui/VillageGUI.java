@@ -21,7 +21,7 @@ public class VillageGUI extends ChestGui{
 
 	@Override
 	public void create(){
-		createGui(p, "&6Village Gui", Village.getVillages().size());
+		createGui(p, "&6Village Gui", Village.getVillages(p.getWorld()).size());
 		display();
 	}
 
@@ -46,9 +46,8 @@ public class VillageGUI extends ChestGui{
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
 			System.out.println("Item ID: " + getCurrentItem());
-			System.out.println("Size: " + Village.getVillages(p.getWorld()).size());
-			System.out.println("Items: " + getItems());
-			if (getCurrentItem() > (Village.getVillages(p.getWorld()).size() -1) || getItems() < 1)
+			System.out.println("Size: " + getItems());
+			if (getCurrentItem() > getItems() -1 || getItems() < 1)
 				break;
 			
 			if (Validate.hasPerm(p, "admin.edit.village")) 
@@ -66,9 +65,7 @@ public class VillageGUI extends ChestGui{
 	}
 
 	private String displayInfo(Village village) {
-		String str = "&1-----------------";
-		
-		str += "\n&aName: &f" + village.getName();
+		String str = "\n&aName: &f" + village.getName();
 		if (Validate.notNull(village.getParent()))
 			str += "\n&aParent: &f" + village.getParent().getName();
 		else
@@ -88,8 +85,8 @@ public class VillageGUI extends ChestGui{
 		setItem(7, new ItemStack(Material.DIAMOND_PICKAXE), player -> {
 			setCurrentItem(0);
 			new CreateGUI(player, this);
-		}, "§4Create new Village!", "§1-----------------"
-				+ "\n§cClick to open the Create manager!"
+		}, "&4Create new Village!", 
+				"\n&cClick to open the Create manager!"
 				);
 	}
 }

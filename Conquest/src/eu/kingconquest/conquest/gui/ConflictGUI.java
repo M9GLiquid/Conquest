@@ -68,7 +68,7 @@ public class ConflictGUI extends ChestGui{
 
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (targets.size() -1) || getItems() < 1)
+			if (getCurrentItem() > (getItems() -1) || getItems() < 1)
 				break;
 			tpButton(i);
 			setCurrentItem(getCurrentItem()+1);
@@ -79,9 +79,8 @@ public class ConflictGUI extends ChestGui{
 		setItem(i, new ItemStack(Material.ENDER_PEARL), player -> {
 			new Teleport(player, targets.get(getCurrentItem() -1).getLocation().clone());
 			targets.clear();
-		},"&1Teleport to: &f" + targets.get(getCurrentItem()).getName()
-		,"&1-----------------"
-				+ "\n&aSpawn Location: "
+		},"&1Teleport to: &f" + targets.get(getCurrentItem()).getName(),
+				"&aSpawn Location: "
 				+ "\n -&1X: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getX())
 				+ "\n -&1Y: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getY())
 				+ "\n -&1Z: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getZ())

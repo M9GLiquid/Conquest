@@ -63,8 +63,7 @@ public class TownGUI extends ChestGui{
 	}
 
 	private String displayInfo(Town town) {
-		String str = "&1-----------------";
-		str += "\n&aName: &f" + town.getName();
+		String str = "\n&aName: &f" + town.getName();
 		if (Validate.notNull(town.getChildren()))
 			str += "\n&aChildren: &f" + town.getChildren().size();
 		else
@@ -85,8 +84,8 @@ public class TownGUI extends ChestGui{
 			setCurrentItem(0);
 			new CreateGUI(player, this);
 			close(player);
-		}, "§4Create new Town!", "§1-----------------"
-				+ "\n§cClick to open the Create manager!"
+		}, "&4Create new Town!", 
+				"\n&cClick to open the Create manager!"
 				);
 	}
 }

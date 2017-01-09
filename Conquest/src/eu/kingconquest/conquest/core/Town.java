@@ -115,7 +115,7 @@ public class Town extends Objective{
 		return towns;
 	}
 	public static Town getTown(UUID ID, World world) {
-		for (Town town : getTowns())
+		for (Town town : getTowns(world))
 			if (town.getUUID().equals(ID)
 					&& town.getWorld().equals(world))
 				return town;
@@ -166,7 +166,7 @@ public class Town extends Objective{
 			for (Objective objective : Objective.getObjectives(getWorld())){
 				if (objective.equals(this))
 					continue;
-				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20, 20)){
+				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
 					ChatManager.Chat(player, Config.getChat("ToClose"));
 					return false;
 				}
@@ -196,7 +196,6 @@ public class Town extends Objective{
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 			
 			Cach.StaticTown = this;
-			Config.saveTowns(getWorld());
 			ChatManager.Chat(player, Config.getChat("TownCreated"));
 			return true;
 		}catch (Exception e){
@@ -248,7 +247,6 @@ public class Town extends Objective{
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 			ChatManager.Chat(player, Config.getChat("TownDeleted"));
 			removeTown(this);
-			Config.removeTowns(getWorld());
 			Marker.remove(this);
 			return true;
 		}catch (Exception e){

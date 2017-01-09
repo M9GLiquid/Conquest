@@ -5,18 +5,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Kingdom;
+import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
@@ -82,7 +89,7 @@ public class Config extends YamlConfiguration{
 				options().copyDefaults(true);
 
 				reader.close();
-				save();
+				saveConfig();
 				return true;
 			}
 		}catch (IOException exception){
@@ -100,7 +107,7 @@ public class Config extends YamlConfiguration{
 	 * Save configuration
 	 * @return void
 	 */
-	public void save() {
+	public void saveConfig() {
 		try {
 			options().indent(2);
 			save(file);
@@ -139,87 +146,76 @@ public class Config extends YamlConfiguration{
 		return loc;
 	}
 
-//Config Specific
+	//Config Specific
 	//Statics
 	private static String headerMsg = "";
 	private static String errorMsg = "&6| - &cFailed:";
 	private static HashMap<String, Boolean> loadMsg = new HashMap<>();
 	private static HashMap<String, Boolean> saveMsg = new HashMap<>();
 	private static HashMap<String, Boolean> removeMsg = new HashMap<>();
+	private static int saveTaskID = 0;
 
-	public static void loadFilesOnStartup(){
-		if (loadDefault()) 
-			loadMsg.put("&6| --&3 Default.yml [&6Global&3]", true);
-		else
-			loadMsg.put("&6| --&3 Default.yml [&6Global&3]", false);
-		if (loadLanguage())
-			loadMsg.put("&6| --&3 Language.yml [&6Global&3]", true);
-		else
-			loadMsg.put("&6| --&3 Language.yml [&6Global&3]", false);
-		loadFiles();
+	public static void save(){
+		if (saveTaskID > 0){
+			saveTaskID = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), new Runnable(){
+				@Override
+				public void run(){
+					//Save data
+					worlds.forEach(uniqueID->{
+						World world = Bukkit.getWorld(uniqueID);
+						saveKingdoms(world);
+						saveTowns(world);
+						saveVillages(world);
+						saveUsers(world);
+						saveKits(world);
+					});
+					saveMsg.clear();
+				}
+			}, 10, Long.valueOf(getStr("AutoSaveInterval"))).getTaskId();
+		}else{
+			headerMsg = "&6| - &aSaved:";
+			worlds.forEach(uniqueID->{
+				World world = Bukkit.getWorld(uniqueID);
+				saveKingdoms(world);
+				saveTowns(world);
+				saveVillages(world);
+				saveUsers(world);
+				saveKits(world);
+				output();
+			});
+		}
 	}
-	public static void loadFiles() {
+	public static void load(){
+		registerFiles();
+		loadDefault();
+		loadLanguage();
 		getWorlds().forEach(aWorld->{
+		World world = Bukkit.getWorld(aWorld);
 			headerMsg = "&6| - &aLoaded:";
-			Bukkit.getWorlds().stream()
-			.filter(world->Bukkit.getWorld(aWorld).equals(world))
-			.forEach(world->{
 				loadKingdoms(world);
 				loadUsers(world);
 				loadTowns(world);
 				loadVillages(world);
-			});
+				loadKits(world);
 		});
 	}
-	public static void removeOnDisable(){
-		removeFromFiles();
-		output();
-	}
-	public static void saveOnDisable(){
-		saveFiles();
-		output();
-
-		Kingdom.clear();
-		Town.clear();
-		Village.clear();
-	}
-	public static void removeFromFiles(){
+	public static void remove(){
 		headerMsg = "&6| - &cRemoved:";
 		worlds.forEach(uniqueID->{
 			World world = Bukkit.getWorld(uniqueID);
 			removeKingdoms(world);
+			removeUsers(world);
 			removeTowns(world);
 			removeVillages(world);
-			removeUsers(world);
+			removeKits(world);
 		});
-	}
-	public static void saveFiles() {
-		headerMsg = "&6| - &aSaved:";
-		worlds.forEach(uniqueID->{
-			World world = Bukkit.getWorld(uniqueID);
-			if (saveKingdoms(world))
-				saveMsg.put("&6| --&3 Kingdoms.yml [&6" + world.getName() + "&3]", true);
-			else
-				saveMsg.put("&6| --&3 Kingdoms.yml [&6" + world.getName() + "&3]", false);
-			if (saveUsers(world))
-				saveMsg.put("&6| --&3 Users.yml [&6" + world.getName() + "&3]", true);
-			else
-				saveMsg.put("&6| --&3 Users.yml [&6" + world.getName() + "&3]", false);
-			if (saveTowns(world))
-				saveMsg.put("&6| --&3 Towns.yml [&6" + world.getName() + "&3]", true);
-			else
-				saveMsg.put("&6| --&3 Towns.yml [&6" + world.getName() + "&3]", false);
-			if (saveVillages(world))
-				saveMsg.put("&6| --&3 Villages.yml [&6" + world.getName() + "&3]", true);
-			else
-				saveMsg.put("&6| --&3 Villages.yml [&6" + world.getName() + "&3]", false);
-		});
+		output();
 	}
 
 	public static Set<String> getPathSection(Config c, String path){
 		return c.getConfigurationSection(path).getKeys(false);
 	}
-
+	
 	public static void output(){
 		if (loadMsg.containsValue(true)) {
 			ChatManager.Console(headerMsg);
@@ -277,11 +273,12 @@ public class Config extends YamlConfiguration{
 	public static boolean loadDefault(){
 		Config config = getConfig("Config");
 
-		strings.put("Port", 	(config.getString("Database.MySql.Port") 		!= null ? 	config.getString("Database.MySql.Port") : "3306" ));
-		strings.put("Host", 	(config.getString("Database.MySql.Host") 		!= null ? 	config.getString("Database.MySql.Host") : "localhost" ));
-		strings.put("User", 	(config.getString("Database.MySql.Username") 	!= null ? 	config.getString("Database.MySql.Username") : "root" ));
-		strings.put("Pass", 	(config.getString("Database.MySql.Password") 	!= null ? 	config.getString("Database.MySql.Password") : "" ));
-		strings.put("Database", (config.getString("Database.MYSQL.Database") 	!= null ? 	config.getString("Database.MYSQL.Database") : "Conquest" ));
+		strings.put("Port", 	(config.getString("Database.MySql.Port") 								!= null ? 	config.getString("Database.MySql.Port") 				: "3306" ));
+		strings.put("Host", 	(config.getString("Database.MySql.Host") 								!= null ? 	config.getString("Database.MySql.Host") 			: "localhost" ));
+		strings.put("Username", 	(config.getString("Database.MySql.Username") 				!= null ? 	config.getString("Database.MySql.Username") 	: "root" ));
+		strings.put("Password", 	(config.getString("Database.MySql.Password") 				!= null ? 	config.getString("Database.MySql.Password") 	: "" ));
+		strings.put("Database", (config.getString("Database.MySql.Database") 				!= null ? 	config.getString("Database.MySql.Database") 	: "Conquest" ));
+		strings.put("AutoSaveInterval", (config.getString("Database.AutoSaveInterval") 	!= null ? 	config.getString("Database.AutoSaveInterval") 	: "5" ));
 		if (!config.isSet("ActiveWorlds"))
 			return false;
 		getPathSection(config, "ActiveWorlds").forEach(aWorld->{
@@ -304,7 +301,7 @@ public class Config extends YamlConfiguration{
 				lmap.put("TeleportDelay", (20 * config.getLong("ActiveWorlds." + world.getName() + ".General.TeleportDelay")));
 
 				bmap.put("DebugDynmapMarkers", config.getBoolean("ActiveWorlds." + world.getName() + ".Debug.DynmapMarkers"));
-				
+
 				doubles.put(world.getUID(), dmap);
 				longs.put(world.getUID(), lmap);
 				booleans.put(world.getUID(), bmap);
@@ -317,58 +314,17 @@ public class Config extends YamlConfiguration{
 		Config lang = getConfig("Language");
 
 		try {
-			//General
-			language.put("Prefix", 							lang.getString("Language.General.PluginPrefix"));
-			language.put("JoinSuccess", 					lang.getString("Language.General.JoinSuccess"));
-			language.put("LeaveSuccess", 				lang.getString("Language.General.LeaveSuccess"));
-			language.put("Teleported", 					lang.getString("Language.General.Teleported"));
-			language.put("StartTP", 							lang.getString("Language.General.startTP"));
-			language.put("UnBindSuccess", 				lang.getString("Language.General.unBindSuccess"));
-			language.put("MoveSuccess", 				lang.getString("Language.General.MoveSuccess"));
-			language.put("RemoveSuccess", 			lang.getString("Language.General.RemoveSuccess"));
-			/*languages.put("ConfigReloaded", 		lang.getString("Language.General.ConfigReloaded"));*/
-			//Admin
-			language.put("AdminMoveSuccess", 		lang.getString("Language.General.Admin.MoveSuccess"));
-			//Kingdoms
-			language.put("BelongTo", 						lang.getString("Language.Kingdoms.Belonging"));
-			language.put("KingdomCreated", 			lang.getString("Language.Kingdoms.KingdomCreated"));
-			language.put("KingdomDeleted", 			lang.getString("Language.Kingdoms.KingdomDeleted"));
-			language.put("KingdomExist", 				lang.getString("Language.Kingdoms.KingdomExist"));
-			//Admin
-			language.put("editKingdomName", 		lang.getString("Language.Kingdoms.Admin.EditName"));
-			language.put("editKingdomKing", 		lang.getString("Language.Kingdoms.Admin.EditKing"));
-			language.put("editKingdomSpawn", 		lang.getString("Language.Kingdoms.Admin.EditSpawn"));
-			language.put("editKingdomLocation", 	lang.getString("Language.Kingdoms.Admin.EditLocation"));
-			//Towns (Objectives)
-			language.put("CaptureTownSuccess", 	lang.getString("Language.Towns.CaptureSuccess"));
-			language.put("CaptureTownFail",	 		lang.getString("Language.Towns.CaptureFail"));
-			language.put("TownCreated", 				lang.getString("Language.Towns.TownCreated"));
-			language.put("TownDeleted", 				lang.getString("Language.Towns.TownDeleted"));
-			//Admin
-			language.put("editTownName", 			lang.getString("Language.Towns.Admin.EditName"));
-			language.put("editTownOwner", 			lang.getString("Language.Towns.Admin.EditOwner"));
-			language.put("editTownChildren", 		lang.getString("Language.Towns.Admin.EditChildren"));
-			language.put("editTownLocation", 		lang.getString("Language.Towns.Admin.EditLocation"));
-			language.put("editTownSpawn", 			lang.getString("Language.Towns.Admin.EditSpawn"));
-			//Villages (Outposts)
-			language.put("CaptureVillageSuccess", lang.getString("Language.Villages.CaptureSuccess"));
-			language.put("CaptureVillageFail", 		lang.getString("Language.Villages.CaptureFail"));
-			language.put("VillageCreated", 				lang.getString("Language.Villages.VillageCreated"));
-			language.put("VillageDeleted", 				lang.getString("Language.Villages.VillageDeleted"));
-			//Admin
-			language.put("editVillageName", 			lang.getString("Language.Villages.Admin.EditName"));
-			language.put("editVillageOwner", 			lang.getString("Language.Villages.Admin.EditOwner"));
-			language.put("editVillageParent", 			lang.getString("Language.Villages.Admin.EditParent"));
-			language.put("editVillageLocation", 		lang.getString("Language.Villages.Admin.EditLocation"));
-			language.put("editVillageSpawn", 		lang.getString("Language.Villages.Admin.EditSpawn"));
-			//Errors
-			language.put("AlreadyExists", 				lang.getString("Language.Errors.AlreadyExists"));
-			language.put("ToClose", 						lang.getString("Language.Errors.ToClose"));
-			//Broadcasts
-			language.put("Captured", 						lang.getString("Language.Broadcast.Captured"));
-			language.put("TownCaptured", 						lang.getString("Language.Broadcast.TownCaptured"));
-			language.put("WarnDistress", 				lang.getString("Language.Broadcast.WarnDistress"));
-			language.put("WarnNeutral", 				lang.getString("Language.Broadcast.WarnNeutral"));
+			getPathSection(lang, "Language").forEach(path->{
+				getPathSection(lang, "Language." + path).forEach(section->{
+					if (!section.toLowerCase().equals("admin")){
+						language.put(section, (lang.getString("Language." + path + "." + section) != null ? lang.getString("Language." + path + "." + section) : "&4Report: &7" + section + " Error!"));
+					}else{
+						getPathSection(lang, "").forEach(adminSection->{
+							language.put(section, (lang.getString("Language." + path + ".Admin." + section) != null ? lang.getString("Language." + path + ".Admin." + section) : "&4Report: &7" + section + " Error!"));
+						});
+					}
+				});
+			});
 			return true;
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -383,10 +339,9 @@ public class Config extends YamlConfiguration{
 
 		if (!config.isSet(world.getName()))
 			return;
-			for (String uniqueID : getPathSection(config, world.getName())){
-				if (Validate.notNull(Kingdom.getKingdom(UUID.fromString(uniqueID), world))) 
-					return; //Kingdom already loaded!
-
+		for (String uniqueID : getPathSection(config, world.getName())){
+			if (Validate.notNull(Kingdom.getKingdom(UUID.fromString(uniqueID), world))) 
+				return; //Kingdom already loaded!
 			new Kingdom(config.getString(world.getName() + "." + uniqueID + ".Name"),
 					config.getString(world.getName() + "." + uniqueID + ".King"),
 					uniqueID,
@@ -394,7 +349,11 @@ public class Config extends YamlConfiguration{
 					config.getLocation(world, world.getName() + "." + uniqueID + ".Spawn"),
 					config.getInt(world.getName() + "." + uniqueID + ".Color"));
 		}
-			loadMsg.put("&6| --&3 Kingdoms.yml [&6" + world.getName() + "&3]", true);
+		if (Validate.isNull(Kingdom.getKingdom("Neutral", world))){
+			Kingdom kingdom = new Kingdom("Neutral", null, world.getSpawnLocation().clone(), -1);
+			kingdom.create(null);
+		}
+		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);
 	}
 	private static void loadUsers(World world){
 		Config config = getConfig("Users");
@@ -416,7 +375,7 @@ public class Config extends YamlConfiguration{
 				}
 			});
 		});
-		loadMsg.put("&6| --&3 Users.yml [&6" + world.getName() + "&3]", true);
+		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);
 	}
 	private static void loadTowns(World world){
 		Config config = getConfig("Towns");
@@ -426,14 +385,14 @@ public class Config extends YamlConfiguration{
 		getPathSection(config, world.getName()).forEach(uniqueID ->{
 			if (Validate.notNull(Town.getTown(UUID.fromString(uniqueID), world)))
 				return; //Town already loaded!
-			
+
 			new Town(config.getString(world.getName() + "." + uniqueID + ".Name")
 					,uniqueID
 					,config.getLocation(world, world.getName() + "." + uniqueID + ".Location")
 					,config.getLocation(world, world.getName() + "." + uniqueID + ".Spawn")
 					,Kingdom.getKingdom(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".Owner")), world));
 		});
-		loadMsg.put("&6| --&3 Towns.yml [&6" + world.getName() + "&3]", true);
+		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);
 	}
 	private static void loadVillages(World world){
 		Config config = getConfig("Villages");
@@ -447,7 +406,7 @@ public class Config extends YamlConfiguration{
 				return; //Village already loaded!
 			if (config.isSet((world.getName() + "." + uniqueID + ".Parent")))
 				parent = Town.getTown(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".Parent")), world);
-			
+
 			Village village = new Village(
 					config.getString(world.getName() + "." + uniqueID + ".Name"),
 					uniqueID, 
@@ -465,11 +424,56 @@ public class Config extends YamlConfiguration{
 				if (!village.getOwner().isNeutral())
 					village.setProgress(100.0d);
 		});
-		loadMsg.put("&6| --&3 Villages.yml [&6" + world.getName() + "&3]", true);
+		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);
+	}
+	private static void loadKits(World world){
+		Config config = getConfig("Kits");
+		if (!config.isSet(world.getName()))
+			return;
+		getPathSection(config, world.getName()).forEach(kitUUID->{
+			if (Validate.notNull(Kit.getKit(UUID.fromString(kitUUID), world))) 
+				return; //Kit already loaded!
+			Kit kit = new Kit(
+					config.getString(world.getName() + "." + kitUUID + ".Name")
+					, world
+					, config.getDouble(world.getName() + "." + kitUUID + ".Cost")
+					, config.getLong(world.getName() + "." + kitUUID + ".Cooldown")
+					, UUID.fromString(kitUUID));
+			if (config.isSet(world.getName() + "." + kitUUID + ".Type") 
+					&& config.isSet(world.getName() + "." + kitUUID + ".Amount")){
+				//Get each type
+				getPathSection(config, config.getString(world.getName() + "." + kitUUID))
+				.forEach(type->{
+					ItemStack item = new ItemStack(Material.matchMaterial(type.toUpperCase()), config.getInt(world.getName() + "." + kitUUID + type + ".Amount"));
+					//Check if Config Item has Enchantment and if so add it to the item
+					if (config.isSet(world.getName() + "." + kitUUID + type + ".Enchant")){
+						getPathSection(config, config.getString(world.getName() + "." + kitUUID + type + ".Enchant"))
+						.forEach(enchant->{
+							item.addEnchantment(Enchantment.getByName(enchant.toUpperCase()), config.getInt(world.getName() + "." + kitUUID  + type + ".Enchant." + enchant));
+						});
+					}
+					//Check if Config Item has a Meta and if so add it to the item
+					if (config.isSet(world.getName() + "." + kitUUID + ".Meta")){
+						ItemMeta meta = item.getItemMeta();
+						if (config.isSet(world.getName() + "." + kitUUID  + type + ".Meta.Title"))
+							meta.setDisplayName(ChatManager.Format(config.getString(world.getName() + "." + kitUUID + type + ".Meta.Title")));
+						List<String> stringList  = new LinkedList<String>();
+						if (config.isSet(world.getName() + "." + kitUUID + type + ".Meta.Lore"))
+							config.getStringList(world.getName() + "." + kitUUID + type + ".Meta.Lore").forEach(string->{
+								stringList.add(ChatManager.Format(string));
+							});
+						meta.setLore(stringList);
+						item.setItemMeta(meta);
+					}
+					kit.addItem(kit.getItems().size() + 1, item);					
+				});
+			}
+		});
+		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);		
 	}
 
 	//SAVE
-	public static boolean saveKingdoms(World world){
+	private static void saveKingdoms(World world){
 		Config config = getConfig("Kingdoms");
 		try {
 			Kingdom.getKingdoms().forEach(kingdom->{
@@ -481,31 +485,31 @@ public class Config extends YamlConfiguration{
 				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getColor());
 				config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Location", kingdom.getLocation());
 				config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Spawn", kingdom.getSpawn());
-				config.save();
+				config.saveConfig();
 			});
-			return true;
+			saveMsg.put("&6| --&3 " + config.getName(), true);
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			saveMsg.put("&6| --&3 " + config.getName(), false);
 		}
 	}
-	public static boolean saveUsers(World world){
+	private static void saveUsers(World world){
 		Config config = getConfig("Users");
 
 		try {
 			Kingdom.getKingdoms(world).forEach(kingdom->{
 				kingdom.getMembers().forEach(user->{
 					config.createSection(world.getName() + "." + kingdom.getUUID().toString() + "." + user.toString());
-					config.save();
+					config.saveConfig();
 				});
 			});
-			return true;
+			saveMsg.put("&6| --&3 " + config.getName(), true);
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			saveMsg.put("&6| --&3 " + config.getName(), false);
 		}
 	}
-	public static boolean saveTowns(World world){
+	private static void saveTowns(World world){
 		Config config = getConfig("Towns");
 		try {
 			Town.getTowns(world).forEach(town->{
@@ -520,23 +524,21 @@ public class Config extends YamlConfiguration{
 				}
 				config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Location", town.getLocation());
 				config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Spawn", town.getSpawn());
-				config.save();
+				config.saveConfig();
 			});
-			return true;
+			saveMsg.put("&6| --&3 " + config.getName(), true);
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			saveMsg.put("&6| --&3 " + config.getName(), false);
 		}
 	}
-	public static boolean saveVillages(World world){
+	private static void saveVillages(World world){
 		Config config = getConfig("Villages");
 		try {
 			Village.getVillages(world).forEach(village->{
 				if (!village.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 					return;
-				config.set(world.getName() 
-						+ "." + village.getUUID().toString() 
-						+ ".Name", village.getName());
+				config.set(world.getName() + "." + village.getUUID().toString() + ".Name", village.getName());
 				config.set(world.getName() + "." + village.getUUID().toString() + ".Owner", village.getOwner().getUUID().toString());
 				if (Validate.notNull(village.getPreOwner()))
 					config.set(world.getName() + "." + village.getUUID().toString() + ".PreOwner", village.getPreOwner().getUUID().toString());
@@ -544,17 +546,56 @@ public class Config extends YamlConfiguration{
 					config.set(world.getName() + "." + village.getUUID().toString() + ".Parent", village.getParent().getUUID().toString());
 				config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Location", village.getLocation());
 				config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Spawn", village.getSpawn());
-				config.save();
+				config.saveConfig();
 			});
-			return true;
+			saveMsg.put("&6| --&3 " + config.getName(), true);
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			saveMsg.put("&6| --&3 " + config.getName(), false);
+		}
+	}
+	private static void saveKits(World world){
+		Config config = getConfig("Kits");
+		//Save Kits
+		try {
+			Kit.getKits(world).forEach(kit ->{
+				if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+					return;
+				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
+				config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwner().toString());
+				config.set(world.getName() + "." + kit.getUUID() + ".Cost", kit.getCost());
+				config.set(world.getName() + "." + kit.getUUID() + ".Cooldown", kit.getCooldown());
+				if (kit.getItems().size() < 1)
+					return;
+				kit.getItems().forEach((i, item)->{
+					if (item.getType().equals(Material.AIR.name())) // If item is air, return
+						return;
+					config.set(world.getName() + "." + kit.getUUID() + "." + item.getType().toString() + ".Amount", item.getAmount()); //Material Amount
+					if (item.hasItemMeta()){
+						if (item.getEnchantments().size() > 0){
+							item.getEnchantments().forEach((enchant, x)->{
+								config.set(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Enchant." + enchant.toString(), x); //Material Enchantment Level
+							});
+						}
+						config.createSection(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Meta");
+						if (item.getItemMeta().hasDisplayName())
+							config.set(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Meta.Title", item.getItemMeta().getDisplayName()); //Material Display Name
+						if (item.getItemMeta().hasLore())
+							config.set(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Meta.Lore", item.getItemMeta().getLore()); //Material Lore Name
+					}
+				});
+				config.saveConfig();
+			});
+			config.saveConfig();
+			saveMsg.put("&6| --&3 " + config.getName(), true);
+		}catch(Exception e){
+			e.printStackTrace();
+			saveMsg.put("&6| --&3 " + config.getName(), false);
 		}
 	}
 
 	//REMOVE
-	public static void removeKingdoms(World world){
+	private static void removeKingdoms(World world){
 		Config config = getConfig("Kingdoms");
 		if (!config.isSet(world.getName()))
 			return;
@@ -566,59 +607,73 @@ public class Config extends YamlConfiguration{
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
-		config.save();
+		config.saveConfig();
 	}
-	public static void removeTowns(World world){
+	private static void removeTowns(World world){
 		Config config = getConfig("Towns");
 		if (!config.isSet(world.getName()))
 			return;
-		getPathSection(config, world.getName()).forEach(townUniqueID->{
+		getPathSection(config, world.getName()).forEach(townUUID->{
 			//Remove Town from config if removed from game
-			if (Validate.isNull(Town.getTown(UUID.fromString(townUniqueID), world))){
+			if (Validate.isNull(Town.getTown(UUID.fromString(townUUID), world))){
 				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Town&3] " +  townUniqueID 
+				removeMsg.put("&6| --&3 [&6Town&3] " +  townUUID 
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
-		config.save();
+		config.saveConfig();
 	}
-	public static void removeVillages(World world){
+	private static void removeVillages(World world){
 		Config config = getConfig("Villages");
 		if (!config.isSet(world.getName()))
 			return;
-		getPathSection(config, world.getName()).forEach(villageUniqueID->{
+		getPathSection(config, world.getName()).forEach(villageUUID->{
 			//Remove Village from config if removed from game
-			if (Validate.isNull(Village.getVillage(UUID.fromString(villageUniqueID), world))){
+			if (Validate.isNull(Village.getVillage(UUID.fromString(villageUUID), world))){
 				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Village&3] " + villageUniqueID  
+				removeMsg.put("&6| --&3 [&6Village&3] " + villageUUID  
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
-		config.save();
+		config.saveConfig();
 	} 
-	public static void removeUsers(World world){
+	private static void removeUsers(World world){
 		Config config = getConfig("Users");
 		if (!config.isSet(world.getName()))
 			return;
-		getPathSection(config, world.getName()).forEach(kingdomUniqueID ->{
-			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUniqueID), world))) {
-				config.set(world.getName() + "." + kingdomUniqueID, null);
-				config.save();
-				removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + kingdomUniqueID 
+		getPathSection(config, world.getName()).forEach(kingdomUUID ->{
+			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))) {
+				config.set(world.getName() + "." + kingdomUUID, null);
+				config.saveConfig();
+				removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + kingdomUUID 
 						+ " [&6" + world.getName() + "&3]", true);
 				return;
 			}
-			getPathSection(config, world.getName() + "." + kingdomUniqueID).forEach(uniqueID ->{
-				if (!Kingdom.getKingdom(UUID.fromString(kingdomUniqueID), world).hasMember(UUID.fromString(uniqueID)) 
-						|| Kingdom.getKingdom(UUID.fromString(kingdomUniqueID), world).getMembers().size() == 0){
-					config.set(world.getName() + "." + kingdomUniqueID + "." + uniqueID, null);
-					removeMsg.put("&6| --&3 [&6User&3] " + uniqueID 
+			getPathSection(config, world.getName() + "." + kingdomUUID).forEach(playerrUUID ->{
+				if (!Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).hasMember(UUID.fromString(playerrUUID)) 
+						|| Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).getMembers().size() == 0){
+					config.set(world.getName() + "." + kingdomUUID + "." + playerrUUID, null);
+					removeMsg.put("&6| --&3 [&6User&3] " + playerrUUID 
 							+ " [&6" + world.getName() + "&3]", true);
 				}
 			});
 		});
-		config.save();
+		config.saveConfig();
 	}
+	private static void removeKits(World world){
+		Config config = getConfig("Kits");
+		if (!config.isSet(world.getName()))
+			return;
+		getPathSection(config, world.getName()).forEach(uniqueID->{
+			//Remove Village from config if removed from game
+			if (Validate.isNull(Kit.getKit(UUID.fromString(uniqueID), world))){
+				config.set(world.getName(), null);
+				removeMsg.put("&6| --&3 [&6Kit&3] " + uniqueID  
+						+ " [&6" + world.getName() + "&3]", true);
+			}
+		});
+		config.saveConfig();
+	} 
 
 	private static ArrayList<UUID> worlds = new ArrayList<UUID>();
 	public static ArrayList<UUID> getWorlds(){
@@ -645,28 +700,31 @@ public class Config extends YamlConfiguration{
 	}
 
 	//UUID of World
-	public static HashMap<String, String> strings = new HashMap<String, String>();
-	public static HashMap<String, String> language = new HashMap<String, String>();
-	public static HashMap<UUID, HashMap<String, Boolean>> booleans = new HashMap<>();
-	public static HashMap<UUID, HashMap<String, Integer>> integers = new HashMap<>();
-	public static HashMap<UUID, HashMap<String, Double>> doubles = new HashMap<>();
-	public static HashMap<UUID, HashMap<String, Long>> longs = new HashMap<>();
+	private static HashMap<String, String> strings = new HashMap<String, String>();
+	private static HashMap<String, String> language = new HashMap<String, String>();
+	private static HashMap<UUID, HashMap<String, Boolean>> booleans = new HashMap<>();
+	private static HashMap<UUID, HashMap<String, Integer>> integers = new HashMap<>();
+	private static HashMap<UUID, HashMap<String, Double>> doubles = new HashMap<>();
+	private static HashMap<UUID, HashMap<String, Long>> longs = new HashMap<>();
 	public static String getChat(String str) {
 		return language.get(str);
 	}
-	public static boolean getBooleans(String str, Location loc) {
+	public static String getStr(String str) {
+		return language.get(str);
+	}
+	public static boolean getBoolean(String str, Location loc) {
 		HashMap<String, Boolean> map2 = booleans.get(loc.getWorld().getUID()) ;
 		return map2.get(str);
 	}
-	public static int getIntegers(String str, Location loc) {
+	public static int getInteger(String str, Location loc) {
 		HashMap<String, Integer> map2 = integers.get(loc.getWorld().getUID());
 		return map2.get(str);
 	}
-	public static Double getDoubles(String str, Location loc) {
+	public static Double getDouble(String str, Location loc) {
 		HashMap<String, Double> map2 = doubles.get(loc.getWorld().getUID()) ;
 		return map2.get(str);
 	}
-	public static Long getLongs(String str, Location loc) {
+	public static Long getLong(String str, Location loc) {
 		HashMap<String, Long> map2 = longs.get(loc.getWorld().getUID());
 		return map2.get(str);
 	}
@@ -715,5 +773,6 @@ public class Config extends YamlConfiguration{
 		new Config("Data", "Towns.yml");
 		new Config("Data", "Villages.yml");
 		new Config("Data", "Users.yml");
+		new Config("Data", "Kits.yml");
 	}
 }
