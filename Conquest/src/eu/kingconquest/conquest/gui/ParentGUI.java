@@ -6,24 +6,24 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.Config;
-import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.Validate;
 
 public class ParentGUI extends ChestGui{
 	private ArrayList<Town> targets= new ArrayList<Town>();
 	private ChestGui previous;
 	private Village village;
+	private Objective objective;
 	private Player p;
 
-	public ParentGUI(Player player, Object objective, ChestGui previousGui){
+	public ParentGUI(Player player, Objective objective, ChestGui previousGui){
 		super();
 		p = player;
-		this.previous = (ChestGui) previousGui;;
-		this.village = (Village) objective;;
+		this.previous = (ChestGui) previousGui;
+		this.objective = objective;
 
 		create();
 	}
@@ -31,12 +31,19 @@ public class ParentGUI extends ChestGui{
 	@Override
 	public void create(){
 		targets.clear();
-		Town.getTowns(village.getLocation().getWorld())
-		.forEach(town->{
-			if (village.hasParent() && village.getParent().equals(town))
-				return;
-			targets.add(town);
-		});
+		if (objective instanceof Village){
+			Town.getTowns(village.getLocation().getWorld())
+			.forEach(town->{
+				
+				if (village.hasParent() && village.getParent().equals(town))
+					return;
+				targets.add(town);
+			});
+		}else if(objective instanceof Town){
+			
+		}else if(Validate.isNull(objective)){
+			targets = Town.getTowns(p.getWorld());
+		}
 		createGui(p, "", targets.size());
 		display();
 	}
@@ -67,14 +74,13 @@ public class ParentGUI extends ChestGui{
 
 	private void ParentButton(int slot, Town town){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
-			village.setParent(town);
-			town.addChild(village);
-			Cach.StaticVillage = village;
-			Cach.StaticTown = town;
-			ChatManager.Chat(player, Config.getChat("editVillageParent"));
+			objective = town;
 			previous.create();
-			close(player);
 		}, "&6Set &f" + town.getName() + " &6as Parent",
 				"&cClick to Select!");
+	}
+	
+	public Objective get(){
+		return objective;
 	}
 }

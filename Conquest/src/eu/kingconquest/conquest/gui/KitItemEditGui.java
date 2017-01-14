@@ -6,12 +6,14 @@ import org.bukkit.inventory.ItemStack;
 import eu.kingconquest.conquest.util.ChestGui;
 
 public class KitItemEditGui extends ChestGui{
+	private ChestGui previous;
 	private Player player;
 	@SuppressWarnings("unused")
 	private ItemStack item;
 	
-	public KitItemEditGui(Player player, ItemStack item){
+	public KitItemEditGui(Player player, ItemStack item, ChestGui previous){
 		super();
+		this.previous = previous;
 		this.player = player;
 		this.item = item;
 		create();
@@ -34,7 +36,9 @@ public class KitItemEditGui extends ChestGui{
 		previous(this);
 		//Slot 5
 		next(this);
-		
+
+		//Slot 8
+		backButton(previous);
 		//Slot MAIN
 	}
 }

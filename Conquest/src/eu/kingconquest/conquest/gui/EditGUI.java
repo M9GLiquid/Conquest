@@ -19,6 +19,7 @@ public class EditGUI extends ChestGui{
 	private final Player p;
 	private ChestGui previous;
 	private Objective objective;
+	private Town parent;
 	
 	public EditGUI(Player player, Object objective, Object previousGui){
 		super();
@@ -113,6 +114,7 @@ public class EditGUI extends ChestGui{
 	private void init(){
 		setName();
 		setOwner();
+		setParent();
 	}
 
 	private void playerButton(){
@@ -268,28 +270,43 @@ public class EditGUI extends ChestGui{
 		}
 	}
 	
-	private OwnerGUI ownershipGui;
+	private OwnerGUI ownerGui;
 	private void ownerButton(){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
-			ownershipGui = new OwnerGUI(p, this);
+			ownerGui = new OwnerGUI(p, this);
 		}, "&4Edit Owner!",
 				"&cClick to edit!");
 		slot++;
 	}
 	private void setOwner(){
-		if (Validate.notNull(ownershipGui) 
+		if (Validate.notNull(ownerGui) 
 				&& !(objective instanceof Kingdom)){
-				objective.setOwner(ownershipGui.get());
+				objective.setOwner(ownerGui.get());
 				objective.updateGlass();
-			ownershipGui.close(p);
+			ownerGui.close(p);
+			ownerGui = null;
 		}
 	}
 
+	private ParentGUI parentGui;
 	private void parentButton(){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
-			new ParentGUI(p, objective, this);
+			parentGui = new ParentGUI(p, objective, this);
 		}, "&4Edit Parent!",
 				"&cClick to edit!");
 		slot++;
+	}
+	private void setParent(){
+		if (Validate.notNull(parentGui)){
+			if (parentGui.get() instanceof Town)
+			parent = (Town) parentGui.get();
+			((Village) objective).setParent(parent);
+			parent.addChild((Village) objective);
+			Cach.StaticVillage = (Village) objective;
+			Cach.StaticTown = parent;
+			ChatManager.Chat(p, Config.getChat("editVillageParent"));
+			parentGui.close(p);
+			parentGui = null;
+		}
 	}
 }
