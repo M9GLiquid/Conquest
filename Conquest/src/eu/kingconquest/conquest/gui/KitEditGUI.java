@@ -45,8 +45,9 @@ public class KitEditGUI extends ChestGui{
 		backButton(previous);
 		
 		//Slot MAIN
+		setCurrentItem(0);
 		for(int slot = 9; slot < 54; slot++) {
-			if (getCurrentItem() > (getItems() -1) || getItems() == 0)
+			if (getCurrentItem() > (kit.getItems().size()) || kit.getItems().size() < 1)
 				break;
 			editButton(slot, kit.getItem(getCurrentItem()));
 			setCurrentItem(getCurrentItem() + 1);
@@ -60,7 +61,9 @@ public class KitEditGUI extends ChestGui{
 	}
 
 	private void editButton(int slot, ItemStack item){
-		String name = "";
+		if (Validate.isNull(item))
+			return;
+		String name = "&7" +  item.getType().toString();
 		if (Validate.notNull(item))
 			if (item.hasItemMeta())
 				if (item.getItemMeta().hasDisplayName())

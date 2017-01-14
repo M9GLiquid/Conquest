@@ -86,6 +86,7 @@ public class KitCreateGUI extends ChestGui{
 		clearSlots();
 		setCurrentItem(0);
 		setName();
+		//owner = ownerGui.get
 	}
 
 	AlphabetGUI alphabetGUI;

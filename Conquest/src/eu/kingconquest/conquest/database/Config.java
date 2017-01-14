@@ -5,21 +5,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Kingdom;
@@ -190,13 +184,13 @@ public class Config extends YamlConfiguration{
 		loadDefault();
 		loadLanguage();
 		getWorlds().forEach(aWorld->{
-		World world = Bukkit.getWorld(aWorld);
+			World world = Bukkit.getWorld(aWorld);
 			headerMsg = "&6| - &aLoaded:";
-				loadKingdoms(world);
-				loadUsers(world);
-				loadTowns(world);
-				loadVillages(world);
-				loadKits(world);
+			loadKingdoms(world);
+			loadUsers(world);
+			loadTowns(world);
+			loadVillages(world);
+			loadKits(world);
 		});
 	}
 	public static void remove(){
@@ -215,7 +209,7 @@ public class Config extends YamlConfiguration{
 	public static Set<String> getPathSection(Config c, String path){
 		return c.getConfigurationSection(path).getKeys(false);
 	}
-	
+
 	public static void output(){
 		if (loadMsg.containsValue(true)) {
 			ChatManager.Console(headerMsg);
@@ -439,341 +433,306 @@ public class Config extends YamlConfiguration{
 					, config.getDouble(world.getName() + "." + kitUUID + ".Cost")
 					, config.getLong(world.getName() + "." + kitUUID + ".Cooldown")
 					, UUID.fromString(kitUUID));
-			if (config.isSet(world.getName() + "." + kitUUID + ".Type") 
-					&& config.isSet(world.getName() + "." + kitUUID + ".Amount")){
-				//Get each type
-				getPathSection(config, config.getString(world.getName() + "." + kitUUID))
-				.forEach(type->{
-					ItemStack item = new ItemStack(Material.matchMaterial(type.toUpperCase()), config.getInt(world.getName() + "." + kitUUID + type + ".Amount"));
-					//Check if Config Item has Enchantment and if so add it to the item
-					if (config.isSet(world.getName() + "." + kitUUID + type + ".Enchant")){
-						getPathSection(config, config.getString(world.getName() + "." + kitUUID + type + ".Enchant"))
-						.forEach(enchant->{
-							item.addEnchantment(Enchantment.getByName(enchant.toUpperCase()), config.getInt(world.getName() + "." + kitUUID  + type + ".Enchant." + enchant));
-						});
-					}
-					//Check if Config Item has a Meta and if so add it to the item
-					if (config.isSet(world.getName() + "." + kitUUID + ".Meta")){
-						ItemMeta meta = item.getItemMeta();
-						if (config.isSet(world.getName() + "." + kitUUID  + type + ".Meta.Title"))
-							meta.setDisplayName(ChatManager.Format(config.getString(world.getName() + "." + kitUUID + type + ".Meta.Title")));
-						List<String> stringList  = new LinkedList<String>();
-						if (config.isSet(world.getName() + "." + kitUUID + type + ".Meta.Lore"))
-							config.getStringList(world.getName() + "." + kitUUID + type + ".Meta.Lore").forEach(string->{
-								stringList.add(ChatManager.Format(string));
-							});
-						meta.setLore(stringList);
-						item.setItemMeta(meta);
-					}
-					kit.addItem(kit.getItems().size() + 1, item);					
-				});
-			}
-		});
+			//Get each type
+			if (config.isSet(world.getName() + "." + kitUUID + ".Slots")){
+				getPathSection(config, world.getName() + "." + kitUUID + ".Slots")
+				.forEach(slot->{
+				kit.addItem(kit.getItems().size() + 1, config.getItemStack(world.getName() + "." + kitUUID + ".Slots." + slot));	
+			});
+		}
+	});
 		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);		
-	}
+}
+	
 
-	//SAVE
-	private static void saveKingdoms(World world){
-		Config config = getConfig("Kingdoms");
-		try {
-			Kingdom.getKingdoms().forEach(kingdom->{
-				if (!kingdom.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
-					return;
-				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Name", kingdom.getName());
-				if (Validate.notNull(kingdom.getKing()))
-					config.set(world.getName() + "." + kingdom.getUUID().toString() + ".King", kingdom.getKing().getUniqueId().toString());
-				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getColor());
-				config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Location", kingdom.getLocation());
-				config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Spawn", kingdom.getSpawn());
-				config.saveConfig();
-			});
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
-	private static void saveUsers(World world){
-		Config config = getConfig("Users");
-
-		try {
-			Kingdom.getKingdoms(world).forEach(kingdom->{
-				kingdom.getMembers().forEach(user->{
-					config.createSection(world.getName() + "." + kingdom.getUUID().toString() + "." + user.toString());
-					config.saveConfig();
-				});
-			});
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
-	private static void saveTowns(World world){
-		Config config = getConfig("Towns");
-		try {
-			Town.getTowns(world).forEach(town->{
-				if (!town.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
-					return;
-				config.set(world.getName() + "." + town.getUUID().toString() + ".Name", town.getName());
-				config.set(world.getName() + "." + town.getUUID().toString() + ".Owner", town.getOwner().getUUID().toString());
-				if (town.hasChildren()){
-					town.getChildren().forEach(child->{
-						config.createSection(world.getName() + "." + town.getUUID().toString() + ".Children." + child.getUUID().toString());
-					});
-				}
-				config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Location", town.getLocation());
-				config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Spawn", town.getSpawn());
-				config.saveConfig();
-			});
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
-	private static void saveVillages(World world){
-		Config config = getConfig("Villages");
-		try {
-			Village.getVillages(world).forEach(village->{
-				if (!village.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
-					return;
-				config.set(world.getName() + "." + village.getUUID().toString() + ".Name", village.getName());
-				config.set(world.getName() + "." + village.getUUID().toString() + ".Owner", village.getOwner().getUUID().toString());
-				if (Validate.notNull(village.getPreOwner()))
-					config.set(world.getName() + "." + village.getUUID().toString() + ".PreOwner", village.getPreOwner().getUUID().toString());
-				if (village.hasParent())
-					config.set(world.getName() + "." + village.getUUID().toString() + ".Parent", village.getParent().getUUID().toString());
-				config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Location", village.getLocation());
-				config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Spawn", village.getSpawn());
-				config.saveConfig();
-			});
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
-	private static void saveKits(World world){
-		Config config = getConfig("Kits");
-		//Save Kits
-		try {
-			Kit.getKits(world).forEach(kit ->{
-				if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
-					return;
-				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
-				if (Validate.notNull(kit.getOwner()))
-					config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwner().toString());
-				config.set(world.getName() + "." + kit.getUUID() + ".Cost", kit.getCost());
-				config.set(world.getName() + "." + kit.getUUID() + ".Cooldown", kit.getCooldown());
-				if (kit.getItems().size() < 1)
-					return;
-				kit.getItems().forEach((i, item)->{
-					if (item.getType().equals(Material.AIR.name())) // If item is air, return
-						return;
-					config.set(world.getName() + "." + kit.getUUID() + "." + item.getType().toString() + ".Amount", item.getAmount()); //Material Amount
-					if (item.hasItemMeta()){
-						if (item.getEnchantments().size() > 0){
-							item.getEnchantments().forEach((enchant, x)->{
-								config.set(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Enchant." + enchant.toString(), x); //Material Enchantment Level
-							});
-						}
-						config.createSection(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Meta");
-						if (item.getItemMeta().hasDisplayName())
-							config.set(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Meta.Title", item.getItemMeta().getDisplayName()); //Material Display Name
-						if (item.getItemMeta().hasLore())
-							config.set(world.getName() + "." + kit.getUUID()  + "." + item.getType().toString() + ".Meta.Lore", item.getItemMeta().getLore()); //Material Lore Name
-					}
-				});
-				config.saveConfig();
-			});
-			config.saveConfig();
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
-
-	//REMOVE
-	private static void removeKingdoms(World world){
-		Config config = getConfig("Kingdoms");
-		if (!config.isSet(world.getName()))
-			return;
-		getPathSection(config, world.getName()).forEach(kingdomUUID->{
-			//Remove Kingdom from config if removed from game
-			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))){
-				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Kingdom&3] " + kingdomUUID
-						+ " [&6" + world.getName() + "&3]", true);
-			}
-		});
-		config.saveConfig();
-	}
-	private static void removeTowns(World world){
-		Config config = getConfig("Towns");
-		if (!config.isSet(world.getName()))
-			return;
-		getPathSection(config, world.getName()).forEach(townUUID->{
-			//Remove Town from config if removed from game
-			if (Validate.isNull(Town.getTown(UUID.fromString(townUUID), world))){
-				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Town&3] " +  townUUID 
-						+ " [&6" + world.getName() + "&3]", true);
-			}
-		});
-		config.saveConfig();
-	}
-	private static void removeVillages(World world){
-		Config config = getConfig("Villages");
-		if (!config.isSet(world.getName()))
-			return;
-		getPathSection(config, world.getName()).forEach(villageUUID->{
-			//Remove Village from config if removed from game
-			if (Validate.isNull(Village.getVillage(UUID.fromString(villageUUID), world))){
-				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Village&3] " + villageUUID  
-						+ " [&6" + world.getName() + "&3]", true);
-			}
-		});
-		config.saveConfig();
-	} 
-	private static void removeUsers(World world){
-		Config config = getConfig("Users");
-		if (!config.isSet(world.getName()))
-			return;
-		getPathSection(config, world.getName()).forEach(kingdomUUID ->{
-			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))) {
-				config.set(world.getName() + "." + kingdomUUID, null);
-				config.saveConfig();
-				removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + kingdomUUID 
-						+ " [&6" + world.getName() + "&3]", true);
+//SAVE
+private static void saveKingdoms(World world){
+	Config config = getConfig("Kingdoms");
+	try {
+		Kingdom.getKingdoms().forEach(kingdom->{
+			if (!kingdom.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 				return;
+			config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Name", kingdom.getName());
+			if (Validate.notNull(kingdom.getKing()))
+				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".King", kingdom.getKing().getUniqueId().toString());
+			config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getColor());
+			config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Location", kingdom.getLocation());
+			config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Spawn", kingdom.getSpawn());
+			config.saveConfig();
+		});
+		saveMsg.put("&6| --&3 " + config.getName(), true);
+	}catch(Exception e){
+		e.printStackTrace();
+		saveMsg.put("&6| --&3 " + config.getName(), false);
+	}
+}
+private static void saveUsers(World world){
+	Config config = getConfig("Users");
+
+	try {
+		Kingdom.getKingdoms(world).forEach(kingdom->{
+			kingdom.getMembers().forEach(user->{
+				config.createSection(world.getName() + "." + kingdom.getUUID().toString() + "." + user.toString());
+				config.saveConfig();
+			});
+		});
+		saveMsg.put("&6| --&3 " + config.getName(), true);
+	}catch(Exception e){
+		e.printStackTrace();
+		saveMsg.put("&6| --&3 " + config.getName(), false);
+	}
+}
+private static void saveTowns(World world){
+	Config config = getConfig("Towns");
+	try {
+		Town.getTowns(world).forEach(town->{
+			if (!town.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+				return;
+			config.set(world.getName() + "." + town.getUUID().toString() + ".Name", town.getName());
+			config.set(world.getName() + "." + town.getUUID().toString() + ".Owner", town.getOwner().getUUID().toString());
+			if (town.hasChildren()){
+				town.getChildren().forEach(child->{
+					config.createSection(world.getName() + "." + town.getUUID().toString() + ".Children." + child.getUUID().toString());
+				});
 			}
-			getPathSection(config, world.getName() + "." + kingdomUUID).forEach(playerrUUID ->{
-				if (!Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).hasMember(UUID.fromString(playerrUUID)) 
-						|| Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).getMembers().size() == 0){
-					config.set(world.getName() + "." + kingdomUUID + "." + playerrUUID, null);
-					removeMsg.put("&6| --&3 [&6User&3] " + playerrUUID 
-							+ " [&6" + world.getName() + "&3]", true);
-				}
+			config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Location", town.getLocation());
+			config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Spawn", town.getSpawn());
+			config.saveConfig();
+		});
+		saveMsg.put("&6| --&3 " + config.getName(), true);
+	}catch(Exception e){
+		e.printStackTrace();
+		saveMsg.put("&6| --&3 " + config.getName(), false);
+	}
+}
+private static void saveVillages(World world){
+	Config config = getConfig("Villages");
+	try {
+		Village.getVillages(world).forEach(village->{
+			if (!village.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+				return;
+			config.set(world.getName() + "." + village.getUUID().toString() + ".Name", village.getName());
+			config.set(world.getName() + "." + village.getUUID().toString() + ".Owner", village.getOwner().getUUID().toString());
+			if (Validate.notNull(village.getPreOwner()))
+				config.set(world.getName() + "." + village.getUUID().toString() + ".PreOwner", village.getPreOwner().getUUID().toString());
+			if (village.hasParent())
+				config.set(world.getName() + "." + village.getUUID().toString() + ".Parent", village.getParent().getUUID().toString());
+			config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Location", village.getLocation());
+			config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Spawn", village.getSpawn());
+			config.saveConfig();
+		});
+		saveMsg.put("&6| --&3 " + config.getName(), true);
+	}catch(Exception e){
+		e.printStackTrace();
+		saveMsg.put("&6| --&3 " + config.getName(), false);
+	}
+}
+private static void saveKits(World world){
+	Config config = getConfig("Kits");
+	//Save Kits
+	try {
+		Kit.getKits(world).forEach(kit ->{
+			if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+				return;
+			config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
+			if (Validate.notNull(kit.getOwner()))
+				config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwnerUUID().toString());
+			config.set(world.getName() + "." + kit.getUUID() + ".Cost", kit.getCost());
+			config.set(world.getName() + "." + kit.getUUID() + ".Cooldown", kit.getCooldown());
+			if (kit.getItems().size() < 1)
+				return;
+			kit.getItems().forEach((i, item)->{
+				config.set(world.getName() + "." + kit.getUUID() + ".Slots." + i, item);
 			});
 		});
 		config.saveConfig();
+		saveMsg.put("&6| --&3 " + config.getName(), true);
+	}catch(Exception e){
+		e.printStackTrace();
+		saveMsg.put("&6| --&3 " + config.getName(), false);
 	}
-	private static void removeKits(World world){
-		Config config = getConfig("Kits");
-		if (!config.isSet(world.getName()))
+}
+
+
+//REMOVE
+private static void removeKingdoms(World world){
+	Config config = getConfig("Kingdoms");
+	if (!config.isSet(world.getName()))
+		return;
+	getPathSection(config, world.getName()).forEach(kingdomUUID->{
+		//Remove Kingdom from config if removed from game
+		if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))){
+			config.set(world.getName(), null);
+			removeMsg.put("&6| --&3 [&6Kingdom&3] " + kingdomUUID
+					+ " [&6" + world.getName() + "&3]", true);
+		}
+	});
+	config.saveConfig();
+}
+private static void removeTowns(World world){
+	Config config = getConfig("Towns");
+	if (!config.isSet(world.getName()))
+		return;
+	getPathSection(config, world.getName()).forEach(townUUID->{
+		//Remove Town from config if removed from game
+		if (Validate.isNull(Town.getTown(UUID.fromString(townUUID), world))){
+			config.set(world.getName(), null);
+			removeMsg.put("&6| --&3 [&6Town&3] " +  townUUID 
+					+ " [&6" + world.getName() + "&3]", true);
+		}
+	});
+	config.saveConfig();
+}
+private static void removeVillages(World world){
+	Config config = getConfig("Villages");
+	if (!config.isSet(world.getName()))
+		return;
+	getPathSection(config, world.getName()).forEach(villageUUID->{
+		//Remove Village from config if removed from game
+		if (Validate.isNull(Village.getVillage(UUID.fromString(villageUUID), world))){
+			config.set(world.getName(), null);
+			removeMsg.put("&6| --&3 [&6Village&3] " + villageUUID  
+					+ " [&6" + world.getName() + "&3]", true);
+		}
+	});
+	config.saveConfig();
+} 
+private static void removeUsers(World world){
+	Config config = getConfig("Users");
+	if (!config.isSet(world.getName()))
+		return;
+	getPathSection(config, world.getName()).forEach(kingdomUUID ->{
+		if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))) {
+			config.set(world.getName() + "." + kingdomUUID, null);
+			config.saveConfig();
+			removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + kingdomUUID 
+					+ " [&6" + world.getName() + "&3]", true);
 			return;
-		getPathSection(config, world.getName()).forEach(uniqueID->{
-			//Remove Village from config if removed from game
-			if (Validate.isNull(Kit.getKit(UUID.fromString(uniqueID), world))){
-				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Kit&3] " + uniqueID  
+		}
+		getPathSection(config, world.getName() + "." + kingdomUUID).forEach(playerrUUID ->{
+			if (!Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).hasMember(UUID.fromString(playerrUUID)) 
+					|| Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).getMembers().size() == 0){
+				config.set(world.getName() + "." + kingdomUUID + "." + playerrUUID, null);
+				removeMsg.put("&6| --&3 [&6User&3] " + playerrUUID 
 						+ " [&6" + world.getName() + "&3]", true);
 			}
 		});
-		config.saveConfig();
-	} 
-
-	private static ArrayList<UUID> worlds = new ArrayList<UUID>();
-	public static ArrayList<UUID> getWorlds(){
-		return worlds;
-	}
-	public static void addWorld(World world) {
-		worlds.add(world.getUID());
-	}
-	public static World getWorld(UUID uuid) {
-		for (UUID uniqueID : worlds){
-			Validate.isNull(Bukkit.getWorld(uniqueID), "Test 1");
-			if (Bukkit.getWorld(uniqueID).getUID().equals(uuid))
-				return Bukkit.getWorld(uniqueID);
+	});
+	config.saveConfig();
+}
+private static void removeKits(World world){
+	Config config = getConfig("Kits");
+	if (!config.isSet(world.getName()))
+		return;
+	getPathSection(config, world.getName()).forEach(uniqueID->{
+		//Remove Village from config if removed from game
+		if (Validate.isNull(Kit.getKit(UUID.fromString(uniqueID), world))){
+			config.set(world.getName(), null);
+			removeMsg.put("&6| --&3 [&6Kit&3] " + uniqueID  
+					+ " [&6" + world.getName() + "&3]", true);
 		}
-		return null;
-	}
-	public static boolean isActiveWorld(String name) {
-		for (UUID uniqueID : worlds){
-			Validate.isNull(Bukkit.getWorld(uniqueID), "Not a known world UUID");
-			if (Bukkit.getWorld(uniqueID).getName().equals(name))
-				return true;
-		}
-		return false;
-	}
+	});
+	config.saveConfig();
+} 
 
-	//UUID of World
-	private static HashMap<String, String> strings = new HashMap<String, String>();
-	private static HashMap<String, String> language = new HashMap<String, String>();
-	private static HashMap<UUID, HashMap<String, Boolean>> booleans = new HashMap<>();
-	private static HashMap<UUID, HashMap<String, Integer>> integers = new HashMap<>();
-	private static HashMap<UUID, HashMap<String, Double>> doubles = new HashMap<>();
-	private static HashMap<UUID, HashMap<String, Long>> longs = new HashMap<>();
-	public static String getChat(String str) {
-		return language.get(str);
+private static ArrayList<UUID> worlds = new ArrayList<UUID>();
+public static ArrayList<UUID> getWorlds(){
+	return worlds;
+}
+public static void addWorld(World world) {
+	worlds.add(world.getUID());
+}
+public static World getWorld(UUID uuid) {
+	for (UUID uniqueID : worlds){
+		Validate.isNull(Bukkit.getWorld(uniqueID), "Test 1");
+		if (Bukkit.getWorld(uniqueID).getUID().equals(uuid))
+			return Bukkit.getWorld(uniqueID);
 	}
-	public static String getStr(String str) {
-		return language.get(str);
-	}
-	public static boolean getBoolean(String str, Location loc) {
-		HashMap<String, Boolean> map2 = booleans.get(loc.getWorld().getUID()) ;
-		return map2.get(str);
-	}
-	public static int getInteger(String str, Location loc) {
-		HashMap<String, Integer> map2 = integers.get(loc.getWorld().getUID());
-		return map2.get(str);
-	}
-	public static Double getDouble(String str, Location loc) {
-		HashMap<String, Double> map2 = doubles.get(loc.getWorld().getUID()) ;
-		return map2.get(str);
-	}
-	public static Long getLong(String str, Location loc) {
-		HashMap<String, Long> map2 = longs.get(loc.getWorld().getUID());
-		return map2.get(str);
-	}
-
-	private static ArrayList<Config> configs = new ArrayList<>();
-	public static boolean hasConfigs(){
-		if (configs.size() != 0)
+	return null;
+}
+public static boolean isActiveWorld(String name) {
+	for (UUID uniqueID : worlds){
+		Validate.isNull(Bukkit.getWorld(uniqueID), "Not a known world UUID");
+		if (Bukkit.getWorld(uniqueID).getName().equals(name))
 			return true;
-		return false;
 	}
-	public static ArrayList<Config> getConfigs(){
-		return configs;
-	}
-	public static Config getConfig(String name){
-		for (Config c : getConfigs()){
-			if (c.getName().replace(".yml", "").equals(name)){
-				c.reload();
-				return c;
-			}
+	return false;
+}
+
+//UUID of World
+private static HashMap<String, String> strings = new HashMap<String, String>();
+private static HashMap<String, String> language = new HashMap<String, String>();
+private static HashMap<UUID, HashMap<String, Boolean>> booleans = new HashMap<>();
+private static HashMap<UUID, HashMap<String, Integer>> integers = new HashMap<>();
+private static HashMap<UUID, HashMap<String, Double>> doubles = new HashMap<>();
+private static HashMap<UUID, HashMap<String, Long>> longs = new HashMap<>();
+public static String getChat(String str) {
+	return language.get(str);
+}
+public static String getStr(String str) {
+	return language.get(str);
+}
+public static boolean getBoolean(String str, Location loc) {
+	HashMap<String, Boolean> map2 = booleans.get(loc.getWorld().getUID()) ;
+	return map2.get(str);
+}
+public static int getInteger(String str, Location loc) {
+	HashMap<String, Integer> map2 = integers.get(loc.getWorld().getUID());
+	return map2.get(str);
+}
+public static Double getDouble(String str, Location loc) {
+	HashMap<String, Double> map2 = doubles.get(loc.getWorld().getUID()) ;
+	return map2.get(str);
+}
+public static Long getLong(String str, Location loc) {
+	HashMap<String, Long> map2 = longs.get(loc.getWorld().getUID());
+	return map2.get(str);
+}
+
+private static ArrayList<Config> configs = new ArrayList<>();
+public static boolean hasConfigs(){
+	if (configs.size() != 0)
+		return true;
+	return false;
+}
+public static ArrayList<Config> getConfigs(){
+	return configs;
+}
+public static Config getConfig(String name){
+	for (Config c : getConfigs()){
+		if (c.getName().replace(".yml", "").equals(name)){
+			c.reload();
+			return c;
 		}
-		ChatManager.Console("&4ERROR: Could not find config: " + name + " file");
-		ChatManager.Console("&4: Wrong name?");
-		return null;
 	}
-	public static void addConfig(Config config){
-		configs.add(config);
-	}
+	ChatManager.Console("&4ERROR: Could not find config: " + name + " file");
+	ChatManager.Console("&4: Wrong name?");
+	return null;
+}
+public static void addConfig(Config config){
+	configs.add(config);
+}
 
-	public static void clear() {
-		configs.clear();
-	}
+public static void clear() {
+	configs.clear();
+}
 
-	@Override
-	public String getName(){
-		return name;
-	}
+@Override
+public String getName(){
+	return name;
+}
 
-	public void setName(String name){
-		this.name = name;
-	}
+public void setName(String name){
+	this.name = name;
+}
 
-	public static void registerFiles(){
-		new Config(null, "Config.yml", "Config.yml");
-		new Config(null, "Language.yml", "Language.yml");
-		new Config("Data", "Kingdoms.yml");
-		new Config("Data", "Towns.yml");
-		new Config("Data", "Villages.yml");
-		new Config("Data", "Users.yml");
-		new Config("Data", "Kits.yml");
-	}
+public static void registerFiles(){
+	new Config(null, "Config.yml", "Config.yml");
+	new Config(null, "Language.yml", "Language.yml");
+	new Config("Data", "Kingdoms.yml");
+	new Config("Data", "Towns.yml");
+	new Config("Data", "Villages.yml");
+	new Config("Data", "Users.yml");
+	new Config("Data", "Kits.yml");
+}
 }

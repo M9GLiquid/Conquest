@@ -58,7 +58,6 @@ public class OwnerGUI extends ChestGui{
 				"&cClick to Select!!");
 	}
 
-
 	public Kingdom get(){
 		return this.owner;
 	}

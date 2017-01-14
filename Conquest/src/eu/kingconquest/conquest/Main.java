@@ -61,7 +61,6 @@ public class Main extends JavaPlugin implements Listener{
 				ChatManager.Console("&6|&2 Configs:");
 				Config.output();
 				ChatManager.Console("&6|=======================================|");
-				
 			}
 		});
 

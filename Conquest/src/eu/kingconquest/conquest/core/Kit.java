@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
@@ -79,14 +78,12 @@ public class Kit{
 	
 	public void addItem(int i, ItemStack temp){
 		if (Validate.notNull(temp))
-			if (!temp.getType().equals(Material.AIR.name())) // if item is air, return
 				items.put(i, temp.clone());
 	}
 	
 	public void addItems(int i, ItemStack[] temp){
 		for (ItemStack item : temp){
 			if (Validate.notNull(item)){
-				if (!item.getType().equals(Material.AIR.name())) // if item is air, return
 					items.put(i++, item.clone());
 			}
 		}

@@ -195,24 +195,26 @@ public abstract class ChestGui extends Pagination{
 		ItemStack stack = item.clone();
 		ToolTip = toolTip;
 		ItemMeta meta = stack.getItemMeta();
-
-		if (Validate.notNull(itemName) && itemName != ""){
-			itemName = new StringBuilder(itemName).insert(2, "&l").toString(); // Make every title bold
-			meta.setDisplayName(ChatManager.Format(itemName));
-		}
-
-		List<String> temp = new ArrayList<String>();
-		if (Validate.notNull(toolTip) && toolTip != ""){
-			temp.add(ChatManager.Format("&1-----------------"));
-			if (meta.hasLore())meta.getLore().forEach(lore->{ temp.add(ChatManager.Format(lore)); });
-			String[] a = toolTip.split("\n");
-			for (int i= 0; i < a.length; i++){
-				temp.add(ChatManager.Format(a[i]));
+		if (Validate.notNull(meta)){ //Material that does not have a Item Meta (Example: Air)
+			if (Validate.notNull(itemName) && itemName != ""){
+				itemName = new StringBuilder(itemName).insert(2, "&l").toString(); // Make every title bold
+				meta.setDisplayName(ChatManager.Format(itemName));
 			}
-			meta.setLore(temp);
+	
+			List<String> temp = new ArrayList<String>();
+			if (Validate.notNull(toolTip) && toolTip != ""){
+				temp.add(ChatManager.Format("&1-----------------"));
+				if (meta.hasLore()) 
+					meta.getLore().forEach(lore->{ temp.add(ChatManager.Format(lore)); });
+				String[] a = toolTip.split("\n");
+				for (int i= 0; i < a.length; i++){
+					temp.add(ChatManager.Format(a[i]));
+				}
+				meta.setLore(temp);
+			}
+			meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			stack.setItemMeta(meta);
 		}
-		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-		stack.setItemMeta(meta);
 		inventory.setItem(slot, stack);
 		if (Validate.notNull(action))
 			actions.put(slot, action);
