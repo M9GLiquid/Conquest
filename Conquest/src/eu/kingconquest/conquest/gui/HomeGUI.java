@@ -80,8 +80,8 @@ public class HomeGUI extends ChestGui{
 				return;
 			}
 			ChatManager.Chat(player, "{plugin_prefix} &7Config.yml & Language.yml &cFailed to reload!");
-		}, "&3Reload Config","§1-----------------"
-				+ "\n&6Affected Files: "
+		}, "&3Reload Config",
+				"&6Affected Files: "
 				+ "\n&7 - Language.yml"
 				+ "\n&7 - Config.yml"
         		+ "\n"
@@ -91,8 +91,7 @@ public class HomeGUI extends ChestGui{
 	public String displayInfo(){
 		String str = "";
 		if (Validate.hasPerm(player, "admin.*")){
-			str = "§1-----------------"
-        		+ "\n&7Manage Player Attributes:"
+			str = "&7Manage Player Attributes:"
         		+ "\n&6- &cExperience"
         		+ "\n&6- &cDemote"
         		+ "\n&6- &cPromote"
@@ -103,8 +102,8 @@ public class HomeGUI extends ChestGui{
         		+ "\n&6- &cBan"
         		+ "\n";
 		}else{
-			str = "§1-----------------"
-	        		+ "\n&7Manage Player Attributes:"
+			str = 
+	        		"&7Manage Player Attributes:"
 	        		+ "\n&6- &aScoreBoard"
 	        		+ "\n&6- &cFriends"
 	        		+ "\n&6- &cMoney"
@@ -134,9 +133,8 @@ public class HomeGUI extends ChestGui{
 	
 	String str = "";
 	private String aboutInfo() {
-		str += "&1-----------------";
 		
-		str += "\n&6Plugin Name: &7" + Main.getInstance().getDescription().getName()
+		str = "&6Plugin Name: &7" + Main.getInstance().getDescription().getName()
 				+ "\n&6Version: &7" + Main.getInstance().getDescription().getVersion()
 				+ "\n&6Website: &7" + Main.getInstance().getDescription().getWebsite()
 				+ "\n&6Author: ";
@@ -151,16 +149,16 @@ public class HomeGUI extends ChestGui{
 	private void helpButton(){	
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			new HelpGUI(player, this);
-		}, "&2Help Information", "&1-----------------"
-				+ "\n");
+		}, "&2Help Information", 
+				"");
 		slot++;
 	}
 
 	private void spawnButton(){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			player.teleport(PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getSpawn());
-		}, "&2Kingdom Spawn", "&1-----------------"
-				+ "\n&6Teleport to Kingdom spawn"
+		}, "&2Kingdom Spawn", 
+				"&6Teleport to Kingdom spawn"
 				+ "\n&6Alias: &7/kc home"
 				+ "\n");
 		slot++;
@@ -169,13 +167,12 @@ public class HomeGUI extends ChestGui{
 	private void kingdomButton(){	
 		String detail;
 		if (Validate.hasPerm(player, ".admin")){
-		 detail = "&1-----------------"
-				+ "\n&6Admin only:" 
+		 detail = 
+				 "&6Admin only:" 
 				+ "\n&2Create&6/&3Edit &6Kingdoms!"
 				+ "\n";
 		}else{
-			 detail = "&1-----------------"
-						+ "\n&2Join&6/&4Leave &6Kingdoms!"
+			 detail = "\n&2Join&6/&4Leave &6Kingdoms!"
 						+ "\n";
 		}
 	setItem(slot, new ItemStack(Material.BEACON), player -> {
@@ -187,8 +184,8 @@ public class HomeGUI extends ChestGui{
 	private void townButton(){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			new TownGUI(player, this);
-		}, "&6Town Menu", "&1-----------------"
-				+ "\n&6Admin only:" 
+		}, "&6Town Menu", 
+				"&6Admin only:" 
 				+ "\n&2Create&6/&3Edit &6Towns!"
 				+ "\n");
 		slot++;
@@ -197,8 +194,8 @@ public class HomeGUI extends ChestGui{
 	private void villageButton(){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			new VillageGUI(player, this);
-		}, "&6Village Menu", "&1-----------------"
-				+ "\n&6Admin only:" 
+		}, "&6Village Menu", 
+				"&6Admin only:" 
 				+ "\n&2Create&6/&3Edit &6Villages!"
 				+ "\n");
 		slot++;
@@ -207,8 +204,8 @@ public class HomeGUI extends ChestGui{
 	private void conflictButton(){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			new ConflictGUI(player, this);
-		}, "&6Conflict Gui", "&1-----------------"
-				+ "\n&6Teleport to a Town/Village under"
+		}, "&6Conflict Gui", 
+				"&6Teleport to a Town/Village under"
 				+ "\n&6your kingdoms controle"
 				+ "Alias: /kc tp" 
 				+ "\n");
@@ -218,8 +215,8 @@ public class HomeGUI extends ChestGui{
 	private void resetButton(){
 		setItem(slot, new ItemStack(Material.BARRIER), player -> {
 			new ResetGUI(player, this);
-		}, "&6Reset Menu", "&1-----------------"
-				+ "\n&6"
+		}, "&6Reset Menu", 
+				"&6"
 				+ "\n");
 		slot++;
 	}
@@ -227,8 +224,8 @@ public class HomeGUI extends ChestGui{
 	private void kitButton(){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			new KitGUI(player, this);
-		}, "&6Kit Menu", "&1-----------------"
-				+ "\n&6"
+		}, "&6Kit Menu", 
+				"&3Create/Edit Kits &7(Reward Boxes)"
 				+ "\n");
 		slot++;
 	}

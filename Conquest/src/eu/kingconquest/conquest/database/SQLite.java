@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import eu.kingconquest.conquest.Main;
-
+import eu.kingconquest.conquest.database.Database;
 
 /**
  * Connects to and uses a SQLite database

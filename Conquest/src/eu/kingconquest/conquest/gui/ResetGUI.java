@@ -10,8 +10,6 @@ import eu.kingconquest.conquest.event.ServerResetEvent;
 import eu.kingconquest.conquest.event.WorldResetEvent;
 import eu.kingconquest.conquest.util.ChestGui;
 
-
-
 public class ResetGUI extends ChestGui{
 	private boolean saveKingdoms = false;
 	private boolean saveMembers = false;
@@ -68,8 +66,8 @@ public class ResetGUI extends ChestGui{
 		if (!serverReset)
 			str = "\n&6 -: World: &7" + world.getName();
 		setItem(4, new ItemStack(Material.PAPER), player -> {
-		}, "&6Current Settings:", "&1-----------------"
-				+ "\n&6Server Reset: &7" + serverReset
+		}, "&6Current Settings:", 
+				"\n&6Server Reset: &7" + serverReset
 				+ "\n&6World Reset : &7" + !serverReset
 				+ str
 				+ "\n&6Save Kingdoms: &7" + saveKingdoms
@@ -81,8 +79,8 @@ public class ResetGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			serverReset ^= true;
 			display();
-		}, "&2Toggle Reset Mode", "&1-----------------"
-				+ "\n&6Reset Server: &7" + serverReset
+		}, "&2Toggle Reset Mode", 
+				"\n&6Reset Server: &7" + serverReset
 				+ "\n&6Reset World: &7" + !serverReset
 				+ "\n");
 		slot++;
@@ -92,8 +90,8 @@ public class ResetGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			saveKingdoms ^= true;
 			display();
-		}, "&2Save the Kingdoms", "&1-----------------"
-				+ "\n&6Keep the Kingdoms: &7" + saveKingdoms
+		}, "&2Save the Kingdoms", 
+				"\n&6Keep the Kingdoms: &7" + saveKingdoms
 				+ "\n&6Does not include members see &7Save Members"
 				+ "\n");
 		slot++;
@@ -103,8 +101,8 @@ private void saveKingdomMembersButton(){
 	setItem(slot, new ItemStack(Material.BOOK), player -> {
 		saveMembers ^= true;
 		display();
-	}, "&2Save the Kingdoms", "&1-----------------"
-			+ "\n&6Reset Kingdoms Members &7" + saveMembers
+	}, "&2Save the Kingdoms", 
+			"\n&6Reset Kingdoms Members &7" + saveMembers
 			+ "\n");
 	slot++;
 }
@@ -116,8 +114,8 @@ private void saveKingdomMembersButton(){
 		setItem(17, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			Bukkit.getPluginManager().callEvent(new ServerResetEvent(player, saveKingdoms, saveMembers));
 			display();
-		}, "&2Reset Server", "&1-----------------"
-				+ "\n&6Current Settings:"
+		}, "&2Reset Server", 
+				"\n&6Current Settings:"
 				+ "\n&6Save Kingdoms: &7" + saveKingdoms
 				+ "\n");
 		slot++;
@@ -130,8 +128,8 @@ private void saveKingdomMembersButton(){
 		setItem(17, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			Bukkit.getPluginManager().callEvent(new WorldResetEvent(player, world, saveKingdoms, saveMembers));
 			display();
-		}, "&2Reset This World", "&1-----------------"
-				+ "\n&6Current Settings:"
+		}, "&2Reset This World", 
+				"\n&6Current Settings:"
 				+ "\n&6World : &7" + player.getWorld().getName()
 				+ "\n&6Save Kingdoms: &7" + saveKingdoms
 				+ "\n");

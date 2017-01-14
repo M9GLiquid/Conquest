@@ -12,20 +12,20 @@ import eu.kingconquest.conquest.util.Validate;
 
 public class Kit{
 	private HashMap<Integer, ItemStack> items = new HashMap<Integer, ItemStack>();
-	private UUID objective;
+	private UUID owner;
 	private String name;
 	private UUID uuid;
 	private UUID world;
 	private double cost;
 	private long cooldown;
 	
-	public Kit(String name, World world, double cost, long cooldown, Objective objective){
+	public Kit(String name, World world, double cost, long cooldown, UUID owner){
 		this.name = name;
 		newUUID();
 		this.world = world.getUID();
 		this.cost = cost;
 		this.cooldown = cooldown;
-		this.objective = objective.getUUID();
+		this.owner = owner;
 		addKit(this);
 	}
 
@@ -45,12 +45,15 @@ public class Kit{
 		return cost;
 	}
 	
-	public Objective getObjective(){
-		if (Validate.notNull(Town.getTown(objective, getWorld())))
-			return Town.getTown(objective, getWorld());
-		if (Validate.notNull(Village.getVillage(objective, getWorld())))
-			return Village.getVillage(objective, getWorld());
+	public Objective getOwner(){
+		if (Validate.notNull(Town.getTown(owner, getWorld())))
+			return Town.getTown(owner, getWorld());
+		if (Validate.notNull(Village.getVillage(owner, getWorld())))
+			return Village.getVillage(owner, getWorld());
 		return null;
+	}
+	public UUID getOwnerUUID(){
+		return owner;
 	}
 	
 	public double getCooldown(){
@@ -73,13 +76,17 @@ public class Kit{
 		return items.get(i);
 	}
 	
-	public void addItem(int i, ItemStack item){
-		items.put(i, item);
+	public void addItem(int i, ItemStack temp){
+		if (Validate.notNull(temp))
+				items.put(i, temp.clone());
 	}
 	
-	public void addItems(int i, ItemStack[] items){
-		for (ItemStack item : items)
-			this.items.put(i++, item);
+	public void addItems(int i, ItemStack[] temp){
+		for (ItemStack item : temp){
+			if (Validate.notNull(item)){
+					items.put(i++, item.clone());
+			}
+		}
 	}
 	
 	private static ArrayList<Kit> kits = new ArrayList<Kit>();
@@ -95,15 +102,22 @@ public class Kit{
 			});
 		return kits;
 	}
-	public static Kit getKit(UUID uuid, World world){
+	public static Kit getKit(UUID uniqueID, World world){
 		for (Kit kit : getKits(world))
-			if (kit.getUUID().equals(uuid)
+			if (kit.getUUID().equals(uniqueID)
 					&& kit.getWorld().equals(world))
 				return kit;
 		return null;
 	}
 	private static void addKit(Kit kit){
 		kits.add(kit);
+	}
+	
+	public static void clear(){
+		kits.forEach(kit ->{
+			kit.items.clear();
+		});
+		kits.clear();
 	}
 	
 	private void newUUID(){

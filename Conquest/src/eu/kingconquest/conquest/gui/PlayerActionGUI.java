@@ -94,10 +94,9 @@ public class PlayerActionGUI extends ChestGui{
 			setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 				objective = targets.get(getCurrentItem());
 				display();
-			}, "§4Choose Kingdom", "§1-----------------"
-					+ "\n§cGo back without Saving!\n");
+			}, "&4Choose Kingdom", 
+					"&cGo back without Saving!\n");
 		}
-
 		slot++;
 	}
 	
@@ -135,9 +134,8 @@ public class PlayerActionGUI extends ChestGui{
 				ChatManager.Chat(p, Config.getChat("adminMoveSuccess"));
 				ChatManager.Chat(target, Config.getChat("RemoveSuccess"));
 				display();
-			}, "§4Remove from " +kingdom.getColorSymbol() + kingdom.getName()
-				, "§1-----------------"
-					+ "\n§c\n");
+			}, "&4Remove from " +kingdom.getColorSymbol() + kingdom.getName(), 
+					"\n&c\n");
 			slot++;
 		}
 	}
@@ -151,9 +149,8 @@ public class PlayerActionGUI extends ChestGui{
 				ChatManager.Chat(p, Config.getChat("adminMoveSuccess"));
 				ChatManager.Chat(target, Config.getChat("MoveSuccess"));
 				display();
-			}, "§4Move to " + kingdom.getName()
-				, "§1-----------------"
-					+ "\n§c\n");
+			}, "&4Move to " + kingdom.getName(),
+					"");
 			slot++;
 		}
 	}

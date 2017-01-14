@@ -3,10 +3,10 @@ package eu.kingconquest.conquest.gui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.Validate;
 
 public class KitEditGUI extends ChestGui{
 	private ChestGui previous;
@@ -45,8 +45,9 @@ public class KitEditGUI extends ChestGui{
 		backButton(previous);
 		
 		//Slot MAIN
+		setCurrentItem(0);
 		for(int slot = 9; slot < 54; slot++) {
-			if (getCurrentItem() > (getItems() -1) || getItems() == 0)
+			if (getCurrentItem() > (kit.getItems().size()) || kit.getItems().size() < 1)
 				break;
 			editButton(slot, kit.getItem(getCurrentItem()));
 			setCurrentItem(getCurrentItem() + 1);
@@ -56,15 +57,20 @@ public class KitEditGUI extends ChestGui{
 	private void addButton(){
 		setItem(1, new ItemStack(Material.ARMOR_STAND), player -> {
 			kit.addItem(kit.getItems().size(), player.getInventory().getItemInMainHand());
-		});
+		}, "", "");
 	}
 
 	private void editButton(int slot, ItemStack item){
-		ItemMeta meta = item.getItemMeta();
+		if (Validate.isNull(item))
+			return;
+		String name = "&7" +  item.getType().toString();
+		if (Validate.notNull(item))
+			if (item.hasItemMeta())
+				if (item.getItemMeta().hasDisplayName())
+				name = item.getItemMeta().getDisplayName();
 		setItem(slot, item, player -> {
 			new KitItemEditGui(player, item);
-		},"&dEdit:  &r" + meta.getDisplayName() , "&1-----------------"
-				+ "\n&dLore:"
-				+ meta.getLore());
+		}, name,  
+				"\n&3Click to Edit");
 	}
 }

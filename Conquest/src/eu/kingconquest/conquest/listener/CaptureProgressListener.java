@@ -1,7 +1,6 @@
 package eu.kingconquest.conquest.listener;
 
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,7 +14,6 @@ import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
-import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
 import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ChatManager;
@@ -66,20 +64,19 @@ public class CaptureProgressListener implements Listener{
 			new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
 			village.getParent().getChildren().forEach(child->{
 				new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
-				TNEApi.addFunds(village.getOwner().getUUID(), Config.getDoubles("CapCash", village.getLocation())); // Add Funds for each 
+				TNEApi.addFunds(village.getOwner().getUUID(), Config.getDouble("CapCash", village.getLocation())); // Add Funds for each 
 			});
 			ChatManager.Chat(player, Config.getChat("TownCaptured"));
 			ChatManager.Chat(player, Config.getChat("CaptureTownSuccess"));
-			TNEApi.addFunds(player, Config.getDoubles("CapCash", village.getLocation()));
+			TNEApi.addFunds(player, Config.getDouble("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
 			ChatManager.Chat(player, Config.getChat("CaptureVillageSuccess"));
-			TNEApi.addFunds(village.getOwner().getUUID(), Config.getDoubles("CapCash", village.getLocation()));
-			TNEApi.addFunds(player, Config.getDoubles("CapCash", village.getLocation()));
+			TNEApi.addFunds(village.getOwner().getUUID(), Config.getDouble("CapCash", village.getLocation()));
+			TNEApi.addFunds(player, Config.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
 		ChatManager.Broadcast(Config.getChat("Captured"));
-	Config.saveVillages(village.getWorld());
 	if (village.getAttackers().size() < 1)
 		village.stop();
 	village.addDefender(player);
@@ -99,8 +96,8 @@ public class CaptureProgressListener implements Listener{
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getPreOwner();
 		ChatManager.Broadcast(Config.getChat("WarnNeutral"));
-		Config.saveVillages(village.getWorld());
-		Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 50));
+		//Config.saveVillages(village.getWorld());
+		//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 	}
 }

@@ -18,16 +18,11 @@ public class DatabaseManager {
 
 		if (config.getString("Database.Backend").equalsIgnoreCase("mysql")){
 
-			int port = (config.getInt("Database.MySql.Port") > 0 
-					? config.getInt("Database.MySql.Port") : 3306 );
-			String host = (config.getString("Database.MySql.Host") != null 
-					? config.getString("Database.MySql.Host") : "localhost" );
-			String database = (config.getString("Database.MySql.Database") != null 
-					? config.getString("Database.MySql.Database") : "Conquest" );
-			String user = (config.getString("Database.MySql.Username") != null 
-					? config.getString("Database.MySql.Username") : "root" );
-			String pass =  (config.getString("Database.MySql.Password") != null 
-					? config.getString("Database.MySql.Password") : "root" );
+			int port = Integer.valueOf(Config.getStr("Port"));
+			String host = Config.getStr("Host");
+			String database = Config.getStr("Database");
+			String user = Config.getStr("Username");
+			String pass =  Config.getStr("Password");
 			
 			MySQL mysql = new MySQL(host, port, database, user, pass);
 			try{

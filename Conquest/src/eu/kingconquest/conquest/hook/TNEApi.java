@@ -150,7 +150,7 @@ public class TNEApi{
 	    		return false;*/
 		}else if (Validate.notNull(Vault.econ)){
 			if (Vault.econ.depositPlayer(player, amount).transactionSuccess()){
-	    		ChatManager.Chat(player, "&3Added " + Config.getDoubles("CapCash", player.getLocation()) +"$ to you're account");
+	    		ChatManager.Chat(player, "&3Added " + Config.getDouble("CapCash", player.getLocation()) +"$ to you're account");
 				return true;
 			}else
 				return false;

@@ -14,18 +14,17 @@ public class Teleport{
 	private static int taskID;
 
 	public Teleport(Player player, Location loc){
-		Cach.tpDelay = Config.getLongs("TeleportDelay", loc);
-		ChatManager.Chat(player, Config.getChat("startTP"));
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable(){
+		Cach.tpDelay = Config.getLong("TeleportDelay", loc);
+		ChatManager.Chat(player, Config.getChat("StartTP"));
+		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){
 				player.setInvulnerable(true);
 				loc.setY(256);
 				player.teleport(loc);
 				startFall(player);
-				ChatManager.Chat(player, Config.getChat("Teleported"));
 			}
-		}, Config.getLongs("TeleportDelay", loc));
+		}, Config.getLong("TeleportDelay", loc));
 	}
 
 	/**
@@ -34,14 +33,14 @@ public class Teleport{
 	 * @return void
 	 */
 	private void startFall(Player player){
-		taskID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable(){
+		taskID = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Main.getInstance(), new Runnable(){
 			@Override
-			public void run(){;
+			public void run(){
 			player.setFlying(false);
 			if (player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR)
 				stopFall(player);
 			}
-		}, 0, 10);
+		}, 0, 10).getTaskId();
 	}
 
 	/**

@@ -38,7 +38,7 @@ public class Dynmap{
 
 	public Dynmap(){
 		if (setupDynmap()){
-			Hooks.put("&6| --&3 Dynmap [&6Dynmap &3]", true);
+			Hooks.put("&6| --&3 Dynmap [&6Dynmap&3]", true);
 		}else{
 			Hooks.put("&6| --&3 Dynmap [&6Dynmap&3]", false);
 			return;
@@ -93,7 +93,6 @@ public class Dynmap{
 					icon = dynmapAPI.getMarkerAPI().createMarkerIcon(image, image, stream);
 				}
 				icons.add(icon);
-				
 			}
 			dynmapAPI.getMarkerAPI().createMarkerSet("Conquest", "Conquest", icons, false);
 			setAllowedIcons(icons);
@@ -111,7 +110,7 @@ public class Dynmap{
 		try{
 			for (Kingdom kingdom : Kingdom.getKingdoms()){
 				if (Marker.create(kingdom)){
-					if (!Config.getBooleans("DebugDynmapMarkers", kingdom.getLocation()))
+					if (!Config.getBoolean("DebugDynmapMarkers", kingdom.getLocation()))
 					ChatManager.Console("&6Marker for " + kingdom.getName()
 							+ " &cWas not Added");
 				}
@@ -126,7 +125,7 @@ public class Dynmap{
 		try{
 			for (Town town : Town.getTowns()){
 				if (Marker.create(town)){
-					if (!Config.getBooleans("DebugDynmapMarkers", town.getLocation()))
+					if (!Config.getBoolean("DebugDynmapMarkers", town.getLocation()))
 					ChatManager.Console("&6Marker for " + town.getName()
 							+ " &cWas not Added");
 				}
@@ -140,7 +139,7 @@ public class Dynmap{
 		try{
 			for (Village village : Village.getVillages()){
 				if (Marker.create(village)){
-					if (!Config.getBooleans("DebugDynmapMarkers", village.getLocation()))
+					if (!Config.getBoolean("DebugDynmapMarkers", village.getLocation()))
 					ChatManager.Console("&6Marker for " + village.getName()
 							+ " &cWas not Added");
 				}

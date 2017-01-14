@@ -72,8 +72,7 @@ public class PlayerGUI extends ChestGui{
 	private void clearMembersButton(){
 		setItem(6, new ItemStack(Material.REDSTONE_BLOCK), player->{
 			((Kingdom) objective).clearMembers();
-		}, "§4Clear Members","§1-----------------"
-				+ "\n§cClick to clear a Kingdoms Members"
+		}, "§4Clear Members","\n§cClick to clear a Kingdoms Members"
 				+ "\n"
 				);
 	}
@@ -86,8 +85,8 @@ public class PlayerGUI extends ChestGui{
 		head.setItemMeta(skull);
         setSkullItem(slot, head, player ->{
 			new PlayerActionGUI(player, targetPlayer, objective, this);
-		}, "§4" + targetPlayer.getName(),"§1-----------------"
-				+ "\n§cClick to get into Player specific GUI"
+		}, "§4" + targetPlayer.getName(),
+        		"\n§cClick to get into Player specific GUI"
 				+ "\n"
 				);
         setCurrentItem(getCurrentItem() + 1);
