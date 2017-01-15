@@ -221,7 +221,7 @@ public class EditGUI extends ChestGui{
 	}
 	protected void setName(){
 		if (Validate.notNull(alphabetGUI)){
-			objective.setName(alphabetGUI.getWord());
+			objective.setName(alphabetGUI.get());
 			alphabetGUI.close(p);
 		}
 	}

@@ -84,17 +84,16 @@ public class KitCreateGUI extends ChestGui{
 	AlphabetGUI alphabetGUI;
 	private void nameButton(){
 		setItem(13, new ItemStack(Material.BOOK), player -> {
-			alphabetGUI = new AlphabetGUI(player, this, null);
-			alphabetGUI.create();
+			alphabetGUI = new AlphabetGUI(player, this, "");
 		},"&3Set Name" , 
 
 				(name != "" ? "&7Name: &3" + name + "\n" : name)
 				 +  "&aClick to Select!"
 				);
 	}
-	protected void setName(){
+	private void setName(){
 		if (Validate.notNull(alphabetGUI)){
-			name = alphabetGUI.getWord();
+			name = alphabetGUI.get();
 			alphabetGUI.close(player);
 		}
 	}
@@ -137,7 +136,6 @@ public class KitCreateGUI extends ChestGui{
 				);
 	}
 	
-
 	private void cooldownSubstractButton(){
 		setItem(30, new ItemStack(Material.WOOD_BUTTON), player -> {
 			cooldown--;

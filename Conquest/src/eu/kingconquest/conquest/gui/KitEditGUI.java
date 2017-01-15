@@ -69,7 +69,8 @@ public class KitEditGUI extends ChestGui{
 				if (item.getItemMeta().hasDisplayName())
 				name = item.getItemMeta().getDisplayName();
 		setItem(slot, item, player -> {
-			new KitItemEditGui(player, item, this);
+			if (!item.getType().equals(Material.AIR))
+				new KitItemEditGui(player, item, this);
 		}, name,  
 				"\n&3Click to Edit");
 	}
