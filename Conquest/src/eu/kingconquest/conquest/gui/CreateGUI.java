@@ -165,7 +165,7 @@ public class CreateGUI extends ChestGui{
 	AlphabetGUI alphabetGUI;
 	private void nameButton(){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			alphabetGUI = new AlphabetGUI(player, this, null);
+			alphabetGUI = new AlphabetGUI(player, this, "");
 		alphabetGUI.create();
 		slot = 9;
 	}, "&4Set Name!", 
@@ -196,7 +196,7 @@ public class CreateGUI extends ChestGui{
 
 	protected void setName(){
 		if (Validate.notNull(alphabetGUI)){
-			name = alphabetGUI.getWord();
+			name = alphabetGUI.get();
 			alphabetGUI.close(p);
 		}
 	}

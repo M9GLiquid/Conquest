@@ -24,16 +24,17 @@ import eu.kingconquest.conquest.gui.HomeGUI;
 import eu.kingconquest.conquest.hook.TNEApi;
 
 public abstract class ChestGui extends Pagination{
-	private int invSize = 9;
-	private String title = " ";
-	private UUID uniqueID;
-	private Inventory inventory;
-	private ClickType clickType;
-	private Map<Integer, onGuiAction> actions;
 	public static Map<UUID, ChestGui> inventoriesByUUID = new HashMap<>();
 	public static Map<UUID, UUID> openInventories = new HashMap<>();
 	private static Map<UUID, Integer> taskID = new HashMap<>();
+	private Map<Integer, onGuiAction> actions;
+	private boolean itemFlag = false;
+	private ClickType clickType;
+	private Inventory inventory;
+	private String title = " ";
+	private UUID uniqueID;
 	private String ToolTip;
+	private int invSize = 9;
 
 	/*
 	 * ClickTypes
@@ -74,17 +75,17 @@ public abstract class ChestGui extends Pagination{
 	}
 
 	private static int oldTaskID = 0;
-	public void createGui(Player p, String str, Integer items ){
+	public void createGui(Player player, String str, Integer items ){
 		setItems(items);
 		setTitle(str);
 
-		if (Validate.notNull(taskID.get(p.getUniqueId())))
-			oldTaskID = taskID.get(p.getUniqueId()); // Close any old Tasks of the player (Previous ChestGui)
+		if (Validate.notNull(taskID.get(player.getUniqueId())))
+			oldTaskID = taskID.get(player.getUniqueId()); // Close any old Tasks of the player (Previous ChestGui)
 
-		taskID.put(p.getUniqueId(), new BukkitRunnable() {
+		taskID.put(player.getUniqueId(), new BukkitRunnable() {
 			@Override
 			public void run() {
-				open(p);
+				open(player);
 				Bukkit.getScheduler().cancelTask(oldTaskID);
 			}
 		}.runTaskLater(Main.getInstance(), 1).getTaskId());
@@ -92,27 +93,27 @@ public abstract class ChestGui extends Pagination{
 		clearSlots();
 	}
 
-	public void open(Player p){
-		p.openInventory(inventory);
-		openInventories.put(p.getUniqueId(), getUuid());
+	public void open(Player player){
+		player.openInventory(inventory);
+		openInventories.put(player.getUniqueId(), getUuid());
 	}
-	public void close(Player p){
-		UUID u = openInventories.get(p.getUniqueId());
+	public void close(Player player){
+		UUID u = openInventories.get(player.getUniqueId());
 		if (u.equals(getUuid())){
-			p.closeInventory();
+			player.closeInventory();
 		}
 		inventoriesByUUID.remove(getUuid());
 	}
 
-	public void playerInfo(Player p){
+	public void playerInfo(Player player){
 		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 		SkullMeta skull = (SkullMeta) head.getItemMeta();
-		skull.setOwner(p.getName());
+		skull.setOwner(player.getName());
 		head.setItemMeta(skull);
-		setSkullItem(0, head, player ->{
-		}, "&4" + p.getName() + " Information",
-				"\n&4Kingdom: " + (PlayerWrapper.getWrapper(p).isInKingdom(p.getWorld()) ? PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getName() : "None")
-				+ "\n&4Money: " + TNEApi.getBalance(p)
+		setSkullItem(0, head, p ->{
+		}, "&4" + player.getName() + " Information",
+				"\n&4Kingdom: " + (PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()) ? PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getName() : "None")
+				+ "\n&4Money: " + TNEApi.getBalance(player)
 				);
 	}
 	public void homeButton(){
@@ -180,7 +181,9 @@ public abstract class ChestGui extends Pagination{
 			return 54;
 		return 9;
 	}
-
+	public void toggleItemFlag(){
+		itemFlag = !itemFlag;
+	}
 	//Setters
 	public void setClickType(ClickType type){
 		clickType = type;
@@ -212,7 +215,8 @@ public abstract class ChestGui extends Pagination{
 				}
 				meta.setLore(temp);
 			}
-			meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			if (!itemFlag)
+				meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 			stack.setItemMeta(meta);
 		}
 		inventory.setItem(slot, stack);

@@ -1,6 +1,7 @@
 package eu.kingconquest.conquest.gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,7 +13,7 @@ import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
 public class AlphabetGUI extends ChestGui{
-	private Player p;
+	private Player player;
 	private ChestGui previous;
 	private String[] alphabet = 
 		{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q","R", "S", "T", "U", "V", "W", "X", "Y","Z"};
@@ -24,21 +25,32 @@ public class AlphabetGUI extends ChestGui{
 	private ArrayList<String> word = new ArrayList<String>();
 	private int slot = 9;
 
-	public AlphabetGUI(Player p, Object previousGui, String word) {
+	public AlphabetGUI(Player player, ChestGui previousGui, String word) {
 		super();
-		this.p = p;
+		this.player = player;
 		previous = (ChestGui) previousGui;
-		create();
-		
 		if (Validate.isNull(word))
 			setWord(" ");
 		else
 			setWord(word);
+		create();
 	}
+
+	public AlphabetGUI(Player player, ChestGui previousGui, List<String> lore){
+		super();
+		this.player = player;
+		previous = (ChestGui) previousGui;
+		if (Validate.isNull(word))
+			setWord(" ");
+		else
+			setWord(lore.toString());
+		create();
+	}
+	
 
 	@Override
 	 public void create(){
-			createGui(p, "&6Alphabet Gui", symbols.length);
+			createGui(player, "&6Alphabet Gui", symbols.length);
 			display();
 	}
 	
@@ -47,7 +59,7 @@ public class AlphabetGUI extends ChestGui{
 		clearSlots();
 		slot = 9;
 		//Slot 0
-		playerInfo(p);
+		playerInfo(player);
 		//Slot 1
 		displayWord();
 		//Slot 2
@@ -81,7 +93,7 @@ public class AlphabetGUI extends ChestGui{
 
 	private void displayWord(){
 		setItem(1, new ItemStack(Material.PAPER), player -> {
-		},"&6" + getWord() , "");
+		},"&6" + get() , "");
 	}
 
 	private void clearButton(){
@@ -166,7 +178,7 @@ public class AlphabetGUI extends ChestGui{
 		slot++;
 	}
 
-	public String getWord() {
+	public String get() {
 		if (word.size() <= 0)
 			return " ";
 		String text = " ";
