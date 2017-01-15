@@ -2,6 +2,7 @@ package eu.kingconquest.conquest.gui;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kit;
@@ -41,6 +42,8 @@ public class KitEditGUI extends ChestGui{
 		previous(this);
 		//Slot 5
 		next(this);
+		//Slot 7
+		removeButton();
 		//Slot 8
 		backButton(previous);
 		
@@ -49,9 +52,21 @@ public class KitEditGUI extends ChestGui{
 		for(int slot = 9; slot < 54; slot++) {
 			if (getCurrentItem() > (kit.getItems().size()) || kit.getItems().size() < 1)
 				break;
-			editButton(slot, kit.getItem(getCurrentItem()));
+			editButton(slot, kit.getItem(getCurrentItem()), getCurrentItem());
 			setCurrentItem(getCurrentItem() + 1);
 		}
+	}
+
+	private void removeButton(){
+		setItem(7, new ItemStack(Material.BARRIER), player -> {
+			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
+				Kit.removeKit(kit);
+				previous.create();
+				close(player);
+			}
+		}, "&4Remove &fKit",  
+				"\n&4WARNING!"
+						+ "\n&3Double Click to &cRemove");
 	}
 
 	private void addButton(){
@@ -60,7 +75,7 @@ public class KitEditGUI extends ChestGui{
 		}, "", "");
 	}
 
-	private void editButton(int slot, ItemStack item){
+	private void editButton(int slot, ItemStack item, int itemSlot){
 		if (Validate.isNull(item))
 			return;
 		String name = "&7" +  item.getType().toString();
@@ -70,7 +85,7 @@ public class KitEditGUI extends ChestGui{
 				name = item.getItemMeta().getDisplayName();
 		setItem(slot, item, player -> {
 			if (!item.getType().equals(Material.AIR))
-				new KitItemEditGui(player, item, this);
+				new KitItemEditGui(player, kit, item, itemSlot, this);
 		}, name,  
 				"\n&3Click to Edit");
 	}

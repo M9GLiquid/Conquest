@@ -131,13 +131,13 @@ public abstract class ChestGui extends Pagination{
 			chestGui.create();
 			openInventories.remove(player.getUniqueId());
 		}, "&4<< Back",
-				"&cClick to go Home");
+				"\n&3Click to go &aHome");
 	}
 	public void closeButton(){
 		setItem(8, new ItemStack(Material.BARRIER), player -> {
 			close(player);
 		}, "&4Close!",
-				"\n&cClick to close!\n"
+				"\n&3Click to &cclose!"
 				);
 	}
 	public void clearSlots(){
@@ -191,28 +191,27 @@ public abstract class ChestGui extends Pagination{
 	public void setChestSlots(int i){
 		this.invSize = getCorrectSlots(i);
 	}
-	public void setItem(int slot, ItemStack item, onGuiAction action, String itemName, String toolTip){
+	public void setItem(int slot, ItemStack item, onGuiAction action, String title, String lore){
 		if (Validate.isNull(item))
 			return;
 		
 		ItemStack stack = item.clone();
-		ToolTip = toolTip;
+		ToolTip = lore;
 		ItemMeta meta = stack.getItemMeta();
 		if (Validate.notNull(meta)){ //Material that does not have a Item Meta (Example: Air)
-			if (Validate.notNull(itemName) && itemName != ""){
-				itemName = new StringBuilder(itemName).insert(2, "&l").toString(); // Make every title bold
-				meta.setDisplayName(ChatManager.Format(itemName));
+			if (Validate.notNull(title) && title != ""){
+				title = new StringBuilder(title).insert(2, "&l").toString(); // Make every title bold
+				meta.setDisplayName(ChatManager.Format(title));
 			}
 	
 			List<String> temp = new ArrayList<String>();
-			if (Validate.notNull(toolTip) && toolTip != ""){
+			if (Validate.notNull(lore) && lore != ""){
 				temp.add(ChatManager.Format("&1-----------------"));
 				if (meta.hasLore()) 
-					meta.getLore().forEach(lore->{ temp.add(ChatManager.Format(lore)); });
-				String[] a = toolTip.split("\n");
-				for (int i= 0; i < a.length; i++){
+					meta.getLore().forEach(tempLore->{ temp.add(ChatManager.Format(tempLore)); });
+				String[] a = lore.split("\n");
+				for (int i= 0; i < a.length; i++)
 					temp.add(ChatManager.Format(a[i]));
-				}
 				meta.setLore(temp);
 			}
 			if (!itemFlag)

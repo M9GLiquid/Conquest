@@ -45,8 +45,6 @@ public class VillageGUI extends ChestGui{
 		
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			System.out.println("Item ID: " + getCurrentItem());
-			System.out.println("Size: " + getItems());
 			if (getCurrentItem() > getItems() -1 || getItems() < 1)
 				break;
 			

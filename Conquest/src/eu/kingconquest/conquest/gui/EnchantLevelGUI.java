@@ -5,23 +5,29 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
 
 public class EnchantLevelGUI extends ChestGui{
 	private Enchantment enchant;
+	private ItemStack tempItem;
 	private ChestGui previous;
 	private ItemStack item;
-	private ItemStack tempItem;
 	private Player player;
 	private int level = 1;
+	private int itemSlot;
+	private Kit kit;
 	
 
-	public EnchantLevelGUI(Player player, ItemStack item, Enchantment enchant, ChestGui previousGui){
+	public EnchantLevelGUI(Player player, Kit kit, ItemStack item, int slot, Enchantment enchant, ChestGui previousGui){
 		super();
-		this.player = player;
+		this.tempItem = item.clone();
 		this.previous = previousGui;
 		this.enchant = enchant;
-		this.tempItem = item.clone();
+		this.player = player;
+		this.itemSlot = slot;
+		this.kit = kit;
+		
 		if (!tempItem.containsEnchantment(enchant)){
 			level = tempItem.getEnchantmentLevel(enchant);
 			tempItem.addEnchantment(enchant, level);
@@ -75,7 +81,7 @@ public class EnchantLevelGUI extends ChestGui{
 		setItem(13, tempItem, player -> {
 			item.removeEnchantment(enchant);
 			item.addUnsafeEnchantment(enchant, level);
-			new KitItemEditGui(player, item, new KitGUI(player, new HomeGUI(player)));
+			new KitItemEditGui(player, kit, item, itemSlot, new KitGUI(player, new HomeGUI(player)));
 			close(player);
 		}, "&aSave", "");
 	}

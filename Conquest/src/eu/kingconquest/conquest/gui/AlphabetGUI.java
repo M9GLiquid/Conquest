@@ -16,23 +16,21 @@ public class AlphabetGUI extends ChestGui{
 	private Player player;
 	private ChestGui previous;
 	private String[] alphabet = 
-		{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q","R", "S", "T", "U", "V", "W", "X", "Y","Z"};
+		{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q","R", "S", "T", "U", "V", "W", "X", "Y","Z", " ", "[NEW LINE]"};
 	private String[] symbols = 
-		{" ", "!", "@", "#", "£", "¤", "$", "%", "&", "/", "{", "(", "[", ")", "]"
+		{	"1", "2", "3", "4", "5" ,"6", "7", "8", "9", "0"
+			, "!", "@", "#", "£", "¤", "$", "%", "&", "\\","/", "{", "(", "[", ")", "]"
 			, "=", "}", "?", "+", "^", "~", "*", "-", "_", ".", ":", ",", ";" ,"<", ">"
-			, "í", "'"
-			, "|", "1", "2", "3", "4", "5" ,"6", "7", "8", "9", "0"};
+			, "í", "|"};
 	private ArrayList<String> word = new ArrayList<String>();
 	private int slot = 9;
+	private String tempWord = "";
 
 	public AlphabetGUI(Player player, ChestGui previousGui, String word) {
 		super();
 		this.player = player;
+		this.tempWord = word;
 		previous = (ChestGui) previousGui;
-		if (Validate.isNull(word))
-			setWord(" ");
-		else
-			setWord(word);
 		create();
 	}
 
@@ -40,17 +38,16 @@ public class AlphabetGUI extends ChestGui{
 		super();
 		this.player = player;
 		previous = (ChestGui) previousGui;
-		if (Validate.isNull(word))
-			setWord(" ");
-		else
-			setWord(lore.toString());
 		create();
 	}
 	
-
 	@Override
 	 public void create(){
 			createGui(player, "&6Alphabet Gui", symbols.length);
+			if (Validate.isNull(tempWord))
+				setWord(" ");
+			else
+				setWord(tempWord);
 			display();
 	}
 	
@@ -93,7 +90,7 @@ public class AlphabetGUI extends ChestGui{
 
 	private void displayWord(){
 		setItem(1, new ItemStack(Material.PAPER), player -> {
-		},"&6" + get() , "");
+		},"&6" + get() , " ");
 	}
 
 	private void clearButton(){
@@ -109,7 +106,7 @@ public class AlphabetGUI extends ChestGui{
 		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
 			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, 1.0F);
 			previous.create();
-		},"&aSave Word" , "");
+		},"&aSave" , "");
 	}
 
 	private boolean removeToggled = false;
@@ -162,11 +159,13 @@ public class AlphabetGUI extends ChestGui{
 	}
 
 	private void addSymbols(String str){
+		String tempWord = str.replace(" ", "[SPACE]");
+		tempWord = str.replace(" ", "[NEW LINE]");
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			word.add(str);
 			displayWord();
 			display();
-		}, "&6" + str.replace(" ", "[SPACE]") , "");
+		}, "&6" + tempWord, "");
 		slot++;
 	}
 
@@ -179,7 +178,7 @@ public class AlphabetGUI extends ChestGui{
 	}
 
 	public String get() {
-		if (word.size() <= 0)
+		if (word.size() < 1)
 			return " ";
 		String text = " ";
 		for (String str : word) 
@@ -189,9 +188,11 @@ public class AlphabetGUI extends ChestGui{
 
 	public void setWord(String text) {
 		word.clear();
-		for (String str : text.replaceAll("([§][1-9a-f])", "").trim().split(""))
+		for (String str : text.replaceAll("([&][1-9a-f])", "").trim().split(" "))
 			if (str != "")
 				word.add(str);
+		if (word.size() < 1)
+			word.add(" ");
 		displayWord();
 	}
 }

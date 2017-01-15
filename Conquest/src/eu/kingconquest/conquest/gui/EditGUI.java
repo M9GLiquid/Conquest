@@ -213,7 +213,6 @@ public class EditGUI extends ChestGui{
 	private void nameButton(){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			alphabetGUI = new AlphabetGUI(player, this, objective.getName());
-			alphabetGUI.create();
 			slot = 9;
 		}, "&4Edit Name!",  
 				"&cClick to edit!");

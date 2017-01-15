@@ -6,22 +6,27 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
 
 public class EnchantGUI extends ChestGui{
 	private ArrayList<Enchantment> targets= new ArrayList<Enchantment>();
 	private ChestGui previous;
-	private Player player;
 	private ItemStack item;
-
+	private Player player;
+	private int itemSlot;
+	private Kit kit;
 	
-	public EnchantGUI(Player player, ItemStack item, ChestGui previousGui){
+	public EnchantGUI(Player player, Kit kit, ItemStack item, int slot, ChestGui previousGui){
 		super();
-		this.player = player;
 		previous = previousGui;
+		this.player = player;
+		this.itemSlot = slot;
 		this.item = item;
+		this.kit = kit;
 		create();
 	}
+
 
 	@Override
 	public void create(){
@@ -57,7 +62,7 @@ public class EnchantGUI extends ChestGui{
 		tempItem.addUnsafeEnchantment(enchant, 1);
 		
 		setItem(slot, tempItem, player -> {
-			new EnchantLevelGUI(player, item, enchant, this);
+			new EnchantLevelGUI(player, kit, item, itemSlot, enchant, this);
 			close(player);
 		}, "&6Set Enchant: &f" + enchant.getName(),
 				"&cClick to Select!");

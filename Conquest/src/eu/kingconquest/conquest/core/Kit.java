@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
@@ -89,6 +90,14 @@ public class Kit{
 		}
 	}
 	
+	public void removeItem(int slot){
+		items.replace(slot, new ItemStack(Material.AIR));
+	}
+	public void removeItems(int... slots){
+		for (int slot : slots)
+			items.replace(slot, new ItemStack(Material.AIR));
+	}
+	
 	private static ArrayList<Kit> kits = new ArrayList<Kit>();
 	public static ArrayList<Kit> getKits(){
 		return kits;
@@ -111,6 +120,9 @@ public class Kit{
 	}
 	private static void addKit(Kit kit){
 		kits.add(kit);
+	}
+	public static void removeKit(Kit kit){
+		kits.remove(kit);
 	}
 	
 	public static void clear(){
