@@ -51,7 +51,7 @@ public class KitGUI extends ChestGui{
 	}
 
 	private void editButton(int slot, Kit kit){
-		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
+		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			new KitEditGUI(player, this, kit);
 		},"&1Kit: &f" + kit.getName(),
 				"&aCost: " + kit.getCost()
@@ -60,7 +60,7 @@ public class KitGUI extends ChestGui{
 	}
 
 	private void createButton(){
-		setItem(7, new ItemStack(Material.ENDER_PEARL), player -> {
+		setItem(7, new ItemStack(Material.ENDER_CHEST), player -> {
 			new KitCreateGUI(player, this);
 		},"&3Create New Kit", 
 				"");

@@ -46,23 +46,18 @@ public class Main extends JavaPlugin implements Listener{
 	public void onEnable(){
 		instance = this;
 
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), new Runnable(){
-			@Override
-			public void run(){
-				new TNEApi();
-				new Vault();
-				new Dynmap();
+		new TNEApi();
+		new Vault();
+		new Dynmap();
 		
-				Config.load();
-				ChatManager.Console("&6|==============={plugin_prefix}==============|");
-				ChatManager.Console("&6|&2 Version: " + getDescription().getVersion());
-				ChatManager.Console("&6|&2 Hooks:");
-				Hooks.output();
-				ChatManager.Console("&6|&2 Configs:");
-				Config.output();
-				ChatManager.Console("&6|=======================================|");
-			}
-		});
+		Config.load();
+		ChatManager.Console("&6|==============={plugin_prefix}==============|");
+		ChatManager.Console("&6|&2 Version: " + getDescription().getVersion());
+		ChatManager.Console("&6|&2 Hooks:");
+		Hooks.output();
+		ChatManager.Console("&6|&2 Configs:");
+		Config.output();
+		ChatManager.Console("&6|=======================================|");
 
 		ServerRestartListener srl = new ServerRestartListener();
 		if (Bukkit.getOnlinePlayers().size() > 0){

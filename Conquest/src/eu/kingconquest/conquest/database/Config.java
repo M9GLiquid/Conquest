@@ -385,6 +385,7 @@ public class Config extends YamlConfiguration{
 					,config.getLocation(world, world.getName() + "." + uniqueID + ".Location")
 					,config.getLocation(world, world.getName() + "." + uniqueID + ".Spawn")
 					,Kingdom.getKingdom(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".Owner")), world));
+			
 		});
 		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);
 	}
