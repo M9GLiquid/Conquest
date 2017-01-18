@@ -222,7 +222,7 @@ public class HomeGUI extends ChestGui{
 	}
 
 	private void kitButton(){
-		setItem(slot, new ItemStack(Material.CHEST), player -> {
+		setItem(slot, new ItemStack(Material.ENDER_CHEST), player -> {
 			new KitGUI(player, this);
 		}, "&6Kit Menu", 
 				"&3Create/Edit Kits &7(Reward Boxes)"

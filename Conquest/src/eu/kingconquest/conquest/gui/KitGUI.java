@@ -2,10 +2,12 @@ package eu.kingconquest.conquest.gui;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.Validate;
 
 public class KitGUI extends ChestGui{
 	private ChestGui previous;
@@ -52,10 +54,21 @@ public class KitGUI extends ChestGui{
 
 	private void editButton(int slot, Kit kit){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
-			new KitEditGUI(player, this, kit);
-		},"&1Kit: &f" + kit.getName(),
-				"&aCost: " + kit.getCost()
-				+ "\n&aCooldown: " + kit.getCooldown()
+			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
+				Kit.removeKit(kit);
+				previous.create();
+				close(player);
+			}else{
+				new KitEditGUI(player, this, kit);
+			}
+		},"&6Kit Information" , 
+				"&7Name: &3" + kit.getName()
+				+ "\n&7Owner: &3" + (Validate.notNull(kit.getOwner()) ? kit.getOwner().getName(): "")
+				+ "\n&7Cost: &3" + kit.getCost()
+				+ "\n&7Cooldown: &3" + kit.getCooldown()
+				+ "\n"
+				+ "\n&4Warning! &3Double-Click to Remove"
+				+"\n&3Click to Edit"
 				);
 	}
 

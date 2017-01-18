@@ -237,13 +237,13 @@ public class EditGUI extends ChestGui{
 		objective.setSpawn(player.getLocation());
 		if (objective instanceof Kingdom) {
 			Cach.StaticKingdom = (Kingdom) objective;
-			ChatManager.Chat(player, Config.getChat("editKingdomSpawn"));
+			ChatManager.Chat(player, Config.getStr("editKingdomSpawn"));
 		}if (objective instanceof Town) {
 			Cach.StaticTown = (Town) objective;
-			ChatManager.Chat(player, Config.getChat("editTownSpawn"));
+			ChatManager.Chat(player, Config.getStr("editTownSpawn"));
 		}if (objective instanceof Village) {
 			Cach.StaticVillage = (Village) objective;
-			ChatManager.Chat(player, Config.getChat("editVillageSpawn"));
+			ChatManager.Chat(player, Config.getStr("editVillageSpawn"));
 		}
 	}
 
@@ -259,13 +259,13 @@ public class EditGUI extends ChestGui{
 		objective.setSpawn(player.getLocation());
 		if (objective instanceof Kingdom) {
 			Cach.StaticKingdom = (Kingdom) objective;
-			ChatManager.Chat(player, Config.getChat("editKingdomLocation"));
+			ChatManager.Chat(player, Config.getStr("editKingdomLocation"));
 		}if (objective instanceof Town) {
 			Cach.StaticTown = (Town) objective;
-			ChatManager.Chat(player, Config.getChat("editTownLocation"));
+			ChatManager.Chat(player, Config.getStr("editTownLocation"));
 		}if (objective instanceof Village) {
 			Cach.StaticVillage = (Village) objective;
-			ChatManager.Chat(player, Config.getChat("editVillageLocation"));
+			ChatManager.Chat(player, Config.getStr("editVillageLocation"));
 		}
 	}
 	
@@ -303,7 +303,7 @@ public class EditGUI extends ChestGui{
 			parent.addChild((Village) objective);
 			Cach.StaticVillage = (Village) objective;
 			Cach.StaticTown = parent;
-			ChatManager.Chat(p, Config.getChat("editVillageParent"));
+			ChatManager.Chat(p, Config.getStr("editVillageParent"));
 			parentGui.close(p);
 			parentGui = null;
 		}

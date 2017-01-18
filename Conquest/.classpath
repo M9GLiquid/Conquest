@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11/plugins/dynmap-2.3.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11.2/plugins/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11.2/spigot.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11.2/craftbukkit-1.11.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

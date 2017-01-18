@@ -131,8 +131,8 @@ public class PlayerActionGUI extends ChestGui{
 				kingdom.leave(target);
 				Cach.StaticKingdom = kingdom;
 				Cach.StaticPlayer = target;
-				ChatManager.Chat(p, Config.getChat("adminMoveSuccess"));
-				ChatManager.Chat(target, Config.getChat("RemoveSuccess"));
+				ChatManager.Chat(p, Config.getStr("adminMoveSuccess"));
+				ChatManager.Chat(target, Config.getStr("RemoveSuccess"));
 				display();
 			}, "&4Remove from " +kingdom.getColorSymbol() + kingdom.getName(), 
 					"\n&c\n");
@@ -146,8 +146,8 @@ public class PlayerActionGUI extends ChestGui{
 			setItem(slot, new ItemStack(Material.EMERALD_BLOCK), player -> {
 				kingdom.join(target);
 				Cach.StaticKingdom = kingdom;
-				ChatManager.Chat(p, Config.getChat("adminMoveSuccess"));
-				ChatManager.Chat(target, Config.getChat("MoveSuccess"));
+				ChatManager.Chat(p, Config.getStr("adminMoveSuccess"));
+				ChatManager.Chat(target, Config.getStr("MoveSuccess"));
 				display();
 			}, "&4Move to " + kingdom.getName(),
 					"");

@@ -15,7 +15,7 @@ public class Teleport{
 
 	public Teleport(Player player, Location loc){
 		Cach.tpDelay = Config.getLong("TeleportDelay", loc);
-		ChatManager.Chat(player, Config.getChat("StartTP"));
+		ChatManager.Chat(player, Config.getStr("StartTP"));
 		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){

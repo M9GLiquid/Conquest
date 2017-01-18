@@ -50,7 +50,7 @@ public class Kingdom extends Objective{
 		
 		//Player joins this Kingdom
 		Cach.StaticKingdom = this;
-		ChatManager.Chat(p, Config.getChat("JoinSuccess"));
+		ChatManager.Chat(p, Config.getStr("JoinSuccess"));
 		wrapper.setKingdom(getUUID());
 		wrapper.getScoreboard().KingdomBoard(p);
 		addMember(p.getUniqueId());
@@ -71,7 +71,7 @@ public class Kingdom extends Objective{
 			return;
 		
 		Cach.StaticKingdom = this;
-		ChatManager.Chat(p, Config.getChat("LeaveSuccess"));
+		ChatManager.Chat(p, Config.getStr("LeaveSuccess"));
 		wrapper.setKingdom(null);
 		wrapper.getScoreboard().NeutralBoard(p);
 		removeMember(p.getUniqueId());
@@ -328,7 +328,7 @@ public class Kingdom extends Objective{
 	}
 	@Override
 	public boolean delete(Player player){
-		ChatManager.Chat(player, Config.getChat("KingdomDeleted"));
+		ChatManager.Chat(player, Config.getStr("KingdomDeleted"));
 		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions removegroup " + getName());
 		removeKingdom(this);

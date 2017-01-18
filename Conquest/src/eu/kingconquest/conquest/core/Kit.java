@@ -13,16 +13,25 @@ import eu.kingconquest.conquest.util.Validate;
 
 public class Kit{
 	private HashMap<Integer, ItemStack> items = new HashMap<Integer, ItemStack>();
+	private long cooldown;
 	private UUID owner;
 	private String name;
-	private UUID uuid;
 	private UUID world;
-	private double cost;
-	private long cooldown;
+	private UUID uuid;
+	private long cost;
 	
-	public Kit(String name, World world, double cost, long cooldown, UUID owner){
+	public Kit(String name, World world, long cost, long cooldown, UUID owner){
 		this.name = name;
 		newUUID();
+		this.world = world.getUID();
+		this.cost = cost;
+		this.cooldown = cooldown;
+		this.owner = owner;
+		addKit(this);
+	}
+	public Kit(String name, World world, long cost, long cooldown, UUID owner, UUID uuid){
+		this.name = name;
+		this.uuid = uuid;
 		this.world = world.getUID();
 		this.cost = cost;
 		this.cooldown = cooldown;
@@ -42,7 +51,7 @@ public class Kit{
 		return Bukkit.getWorld(world);
 	}
 	
-	public double getCost(){
+	public long getCost(){
 		return cost;
 	}
 	
@@ -57,7 +66,7 @@ public class Kit{
 		return owner;
 	}
 	
-	public double getCooldown(){
+	public long getCooldown(){
 		return cooldown;
 	}
 	
@@ -65,7 +74,7 @@ public class Kit{
 		this.cooldown = cooldown;
 	}
 	
-	public void setCost(double cost){
+	public void setCost(long cost){
 		this.cost = cost;
 	}
 	

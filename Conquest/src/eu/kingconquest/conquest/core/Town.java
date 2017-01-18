@@ -167,12 +167,12 @@ public class Town extends Objective{
 				if (objective.equals(this))
 					continue;
 				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(player, Config.getChat("ToClose"));
+					ChatManager.Chat(player, Config.getStr("ToClose"));
 					return false;
 				}
 			}
 			if (getTowns(getName(), getWorld()).size() > 1) 
-				ChatManager.Chat(player, Config.getChat("AlreadyExists"));
+				ChatManager.Chat(player, Config.getStr("AlreadyExists"));
 			
 			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 
@@ -196,7 +196,7 @@ public class Town extends Objective{
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 			
 			Cach.StaticTown = this;
-			ChatManager.Chat(player, Config.getChat("TownCreated"));
+			ChatManager.Chat(player, Config.getStr("TownCreated"));
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -245,7 +245,7 @@ public class Town extends Objective{
 			setBeaconBase(rows, loc, AIR, null);
 
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
-			ChatManager.Chat(player, Config.getChat("TownDeleted"));
+			ChatManager.Chat(player, Config.getStr("TownDeleted"));
 			removeTown(this);
 			Marker.remove(this);
 			return true;

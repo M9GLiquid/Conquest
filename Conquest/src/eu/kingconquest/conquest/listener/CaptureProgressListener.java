@@ -27,7 +27,7 @@ public class CaptureProgressListener implements Listener{
 		Village village = (Village) e.getObjective();
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getOwner();
-		ChatManager.Broadcast(Config.getChat("WarnDistress"));
+		ChatManager.Broadcast(Config.getStr("WarnDistress"));
 		
 		//Run Mob Spawns as defence if objective owner isn't Neutral
 	}
@@ -66,17 +66,17 @@ public class CaptureProgressListener implements Listener{
 				new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 				TNEApi.addFunds(village.getOwner().getUUID(), Config.getDouble("CapCash", village.getLocation())); // Add Funds for each 
 			});
-			ChatManager.Chat(player, Config.getChat("TownCaptured"));
-			ChatManager.Chat(player, Config.getChat("CaptureTownSuccess"));
+			ChatManager.Chat(player, Config.getStr("TownCaptured"));
+			ChatManager.Chat(player, Config.getStr("CaptureTownSuccess"));
 			TNEApi.addFunds(player, Config.getDouble("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
-			ChatManager.Chat(player, Config.getChat("CaptureVillageSuccess"));
+			ChatManager.Chat(player, Config.getStr("CaptureVillageSuccess"));
 			TNEApi.addFunds(village.getOwner().getUUID(), Config.getDouble("CapCash", village.getLocation()));
 			TNEApi.addFunds(player, Config.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
-		ChatManager.Broadcast(Config.getChat("Captured"));
+		ChatManager.Broadcast(Config.getStr("Captured"));
 	if (village.getAttackers().size() < 1)
 		village.stop();
 	village.addDefender(player);
@@ -95,7 +95,7 @@ public class CaptureProgressListener implements Listener{
 
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getPreOwner();
-		ChatManager.Broadcast(Config.getChat("WarnNeutral"));
+		ChatManager.Broadcast(Config.getStr("WarnNeutral"));
 		//Config.saveVillages(village.getWorld());
 		//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral

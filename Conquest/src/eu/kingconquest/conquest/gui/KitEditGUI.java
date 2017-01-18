@@ -2,16 +2,16 @@ package eu.kingconquest.conquest.gui;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.util.ChestGui;
-import eu.kingconquest.conquest.util.Validate;
 
 public class KitEditGUI extends ChestGui{
 	private ChestGui previous;
+	private int cooldown;
 	private Player player;
+	private int cost;
 	private Kit kit;
 
 	public KitEditGUI(Player player, ChestGui previous, Kit kit){
@@ -25,13 +25,12 @@ public class KitEditGUI extends ChestGui{
 
 	@Override
 	public void create(){
-		createGui(player, "&6Kit Gui", kit.getItems().size());
+		createGui(player, "&6Kit Gui", 54);
 		display();
 	}
 
 	@Override
 	public void display(){
-		setCurrentItem(0);
 		clearSlots();
 
 		//Slot 0
@@ -42,51 +41,88 @@ public class KitEditGUI extends ChestGui{
 		previous(this);
 		//Slot 5
 		next(this);
-		//Slot 7
-		removeButton();
 		//Slot 8
 		backButton(previous);
+
+		DecreaseCostButton(10, -100);
+		DecreaseCostButton(11, -10);
+		DecreaseCostButton(12, -1);
+		costDisplayButton(13);
+		IncreaseCostButton(14, 1);
+		IncreaseCostButton(15, 10);
+		IncreaseCostButton(16, 100);
+
+		DecreaseCooldownButton(19, -100);
+		DecreaseCooldownButton(20, -10);
+		DecreaseCooldownButton(21, -1);
+		cooldownDisplayButton(22);
+		IncreaseCooldownButton(23, 1);
+		IncreaseCooldownButton(24, 10);
+		IncreaseCooldownButton(25, 100);
 		
-		//Slot MAIN
-		setCurrentItem(0);
-		for(int slot = 9; slot < 54; slot++) {
-			if (getCurrentItem() > (kit.getItems().size()) || kit.getItems().size() < 1)
-				break;
-			editButton(slot, kit.getItem(getCurrentItem()), getCurrentItem());
-			setCurrentItem(getCurrentItem() + 1);
-		}
+		itemsButton(40);
 	}
 
-	private void removeButton(){
-		setItem(7, new ItemStack(Material.BARRIER), player -> {
-			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
-				Kit.removeKit(kit);
-				previous.create();
-				close(player);
-			}
-		}, "&4Remove &fKit",  
-				"\n&4WARNING!"
-						+ "\n&3Double Click to &cRemove");
+	private void DecreaseCostButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.WOOD_BUTTON, amount), player -> {
+			cost = cost - amount;
+			display();
+		},"&3Decrease&6(&c- " + amount +"&6)" , 
+				"&cClick to Decrease!"
+				);
+	}
+	private void costDisplayButton(int slot){
+		setItem(slot, new ItemStack(Material.GOLD_NUGGET), player -> {
+			kit.setCost(cost);
+		},"&3Cost: &6" + kit.getCost() , 
+				"\n&aClick to Save"
+				);
+	}
+	private void IncreaseCostButton(int slot, int amount){
+		setItem(slot, new ItemStack(Material.STONE_BUTTON, amount), player -> {
+			cost = cost + amount;
+			display();
+		},"&3Increase&6(&c+ " + amount +"&6)" , 
+				"&aClick to Increase!"
+				);
 	}
 
-	private void addButton(){
+	private void DecreaseCooldownButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.WOOD_BUTTON,  amount), player -> {
+				cooldown = cooldown - amount;
+			display();
+		},"&3Decrease&6(&c- " + amount +"&6)" , 
+				"&cClick to Decrease!"
+				);
+	}
+	private void cooldownDisplayButton(int slot){
+		setItem(slot, new ItemStack(Material.WATCH), player -> {
+			kit.setCooldown(cooldown);
+		},"&3Cooldown: &6" + kit.getCooldown() , 
+				"\n&aClick to Save"
+				);
+	}
+	private void IncreaseCooldownButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.STONE_BUTTON,  amount), player -> {
+			cooldown = cooldown + amount;
+			display();
+		},"&3Increase&6(&c+ " + amount +"&6)" , 
+				"&aClick to Increase!"
+				);
+	}
+	
+	private void addButton(){ //ctrl + click add item to Kit (Add to Slot and on press Save)
 		setItem(1, new ItemStack(Material.ARMOR_STAND), player -> {
 			kit.addItem(kit.getItems().size(), player.getInventory().getItemInMainHand());
-		}, "", "");
+		}, "", 
+				"\n&3Ctrl+Click to &aSelect Item &3in your inventory"
+				+"\n&3Click to &aSave");
 	}
 
-	private void editButton(int slot, ItemStack item, int itemSlot){
-		if (Validate.isNull(item))
-			return;
-		String name = "&7" +  item.getType().toString();
-		if (Validate.notNull(item))
-			if (item.hasItemMeta())
-				if (item.getItemMeta().hasDisplayName())
-				name = item.getItemMeta().getDisplayName();
-		setItem(slot, item, player -> {
-			if (!item.getType().equals(Material.AIR))
-				new KitItemEditGui(player, kit, item, itemSlot, this);
-		}, name,  
-				"\n&3Click to Edit");
+	private void itemsButton(int slot){
+		setItem(slot, new ItemStack(Material.ARMOR_STAND), player -> {
+			new ItemEditGUI(player, kit, previous);
+		}, "&3Edit Items",  
+				"\n&3Click to Edit Items");
 	}
 }

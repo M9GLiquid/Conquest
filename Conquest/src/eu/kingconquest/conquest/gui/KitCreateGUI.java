@@ -1,8 +1,5 @@
 package eu.kingconquest.conquest.gui;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,17 +12,13 @@ import eu.kingconquest.conquest.util.Validate;
 public class KitCreateGUI extends ChestGui{
 	private ChestGui previous;
 	private Player player;
-	private Double cost = 0.00;
+	private long cost = 0;
 	private long cooldown = 0;
 	private String name = "";
 	private Objective parent;
-	DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
-	DecimalFormat df;
 	
 	public KitCreateGUI(Player player, ChestGui previous){
 		super();
-		symbols.setDecimalSeparator('.');
-		df = new DecimalFormat("#.##", symbols);
 		this.player = player;
 		this.previous = previous;
 		create();
@@ -56,16 +49,22 @@ public class KitCreateGUI extends ChestGui{
 		nameButton();
 		
 		//Cost
-		costDisplayButton();
-		costAddReminderButton();
-		costAddButton();
-		costSubstractButton();
-		costSubstractReminderButton();
+		DecreaseCostButton(19, -100);
+		DecreaseCostButton(20, -10);
+		DecreaseCostButton(21, -1);
+		costDisplayButton(22);
+		IncreaseCostButton(23, 1);
+		IncreaseCostButton(24, 10);
+		IncreaseCostButton(25, 100);
 		
 		//Cooldown
-		cooldownAddButton();
-		cooldownDisplayButton();
-		cooldownSubstractButton();
+		DecreaseCooldownButton(28, -100);
+		DecreaseCooldownButton(29, -10);
+		DecreaseCooldownButton(30, -1);
+		cooldownDisplayButton(31);
+		IncreaseCooldownButton(32, 1);
+		IncreaseCooldownButton(33, 10);
+		IncreaseCooldownButton(34, 100);
 		
 		//Owner
 		parentButton();
@@ -98,66 +97,55 @@ public class KitCreateGUI extends ChestGui{
 		}
 	}
 
-	private void costSubstractButton(){
-		setItem(20, new ItemStack(Material.WOOD_BUTTON), player -> {
-			cost = Double.valueOf(df.format(cost-1));
+	private void DecreaseCooldownButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
+			cooldown = cooldown - amount;
+			if (cost < 0)
+				cost = 0;
 			display();
-		},"&3Decrease&6(&c- 1.0&6)" , 
+		},"&3Decrease&6(&c- " + amount +"&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
-	private void costSubstractReminderButton(){
-		setItem(21, new ItemStack(Material.WOOD_BUTTON), player -> {
-			cost = Double.valueOf(df.format(cost-0.1));
-			display();
-		},"&3Decrease&6(&c- 0.1&6)" , 
-				"&cClick to Decrease!"
-				);
-	}
-	private void costDisplayButton(){
-		setItem(22, new ItemStack(Material.GOLD_NUGGET), player -> {
-		},"&3Cost: &6" + cost , ""
-				);
-	}
-	private void costAddReminderButton(){
-		setItem(23, new ItemStack(Material.STONE_BUTTON), player -> {
-			cost = Double.valueOf(df.format(cost+0.1));
-			display();
-		},"&3Increase&6(&a+ 0.1&6)" , 
-				"&aClick to Increase!"
-				);
-	}
-	private void costAddButton(){
-		setItem(24, new ItemStack(Material.STONE_BUTTON), player -> {
-			cost = Double.valueOf(df.format(cost+1));
-			display();
-		},"&3Increase&6(&a+ 1.0&6)" , 
-				"&aClick to Increase!"
-				);
-	}
-	
-	private void cooldownSubstractButton(){
-		setItem(30, new ItemStack(Material.WOOD_BUTTON), player -> {
-			cooldown--;
-			display();
-		},"&3Decrease&6(&c- 1&6)" , 
-				"&cClick to Decrease!"
-				);
-	}
-	private void cooldownDisplayButton(){
-		setItem(31, new ItemStack(Material.WATCH), player -> {
+	private void cooldownDisplayButton(int slot){
+		setItem(slot, new ItemStack(Material.WATCH), player -> {
 		},"&3Cooldown: &6" + cooldown , ""
 				);
 	}
-	private void cooldownAddButton(){
-		setItem(32, new ItemStack(Material.STONE_BUTTON), player -> {
-			cooldown++;
+	private void IncreaseCooldownButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
+			cooldown = cooldown + amount;
 			display();
-		},"&3Increase&6(&a+ 1&6)" , 
+		},"&3Increase&6(&c+ " + amount +"&6)" , 
 				"&aClick to Increase!"
 				);
 	}
 
+	private void DecreaseCostButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
+			if ((cost - amount) >= 0)
+				cost = cost - amount;
+			else
+				cost = 0;
+			display();
+		},"&3Decrease&6(&c- " + amount +"&6)" , 
+				"&cClick to Decrease!"
+				);
+	}
+	private void costDisplayButton(int slot){
+		setItem(slot, new ItemStack(Material.GOLD_NUGGET), player -> {
+		},"&3Cost: &6" + cost , ""
+				);
+	}
+	private void IncreaseCostButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
+			cost = cost + amount;
+			display();
+		},"&3Increase&6(&c+ " + amount +"&6)" , 
+				"&aClick to Increase!"
+				);
+	}
+	
 	private ParentGUI parentGui;
 	private void parentButton(){
 		setItem(40, new ItemStack(Material.BEACON), player -> {

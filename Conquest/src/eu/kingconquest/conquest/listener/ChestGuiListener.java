@@ -20,18 +20,15 @@ public class ChestGuiListener implements Listener{
 	public void onClick(InventoryClickEvent e){
 		if (!(e.getWhoClicked() instanceof Player))
 			return;
-		if (Validate.notNull(e.getCurrentItem())){
-			if (Validate.notNull(e.getCurrentItem().getData().getItemType())){
-				if (e.getCurrentItem().getData().getItemType().equals(Material.AIR.name())){ // if item is air, return
-					e.setCancelled(true);
-					return;
-				}
-			}
-		}
 		Player p = (Player) e.getWhoClicked();
 		UUID inventoryUUID = ChestGui.openInventories.get(p.getUniqueId());
 		if (Validate.notNull(inventoryUUID)){
 			e.setCancelled(true);
+
+			if (Validate.notNull(e.getCurrentItem()))
+				if (Validate.notNull(e.getCurrentItem().getData().getItemType()))
+					if (e.getCurrentItem().getData().getItemType().equals(Material.AIR.name())) // if item is air, return
+						return;
 			ChestGui GUI = ChestGui.getInventoriesByUUID().get(inventoryUUID);
 			GUI.setClickType(e.getClick());
 			if (Validate.notNull(GUI.getActions().get(e.getSlot()))){

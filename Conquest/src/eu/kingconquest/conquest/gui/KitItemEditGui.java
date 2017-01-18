@@ -19,6 +19,7 @@ public class KitItemEditGui extends ChestGui{
 	private Player player;
 	private int itemSlot;
 	private Kit kit;
+	private int itemSize;
 
 	public KitItemEditGui(Player player, Kit kit, ItemStack item, int slot, ChestGui previous){
 		super();
@@ -54,18 +55,35 @@ public class KitItemEditGui extends ChestGui{
 		//Slot 8
 		backButton(previous);
 
+		RemoveButton(4);
 		nameButton(13);
 		loreButton(22);
 		enchantButton(31);
 		flagButton(40);
-		RemoveButton(49);
+
+		DecreaseItemButton(47, 10);
+		DecreaseItemButton(48, 1);
+		itemButton(49);
+		IncreaseItemButton(50, 1);
+		IncreaseItemButton(51, 10);
 	}
 	
 	private void init(){
 		setName();
 		setLore();
 	}
-	
+
+	private void RemoveButton(int slot){
+		setItem(slot, new ItemStack(Material.BARRIER), player -> {
+			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
+				kit.removeItem(itemSlot);
+				previous.create();
+				close(player);
+			}
+		}, "&4Remove &fItem",  
+				"\n&4WARNING!"
+				+ "\n&3Double Click to &cRemove");
+	}
 	AlphabetGUI nameGUI;
 	private void nameButton(int slot){
 		setItem(slot, tempItem, player -> {
@@ -122,15 +140,37 @@ public class KitItemEditGui extends ChestGui{
 				"\n&3Click to Edit");
 	}
 
-	private void RemoveButton(int slot){
-		setItem(slot, new ItemStack(Material.BARRIER), player -> {
-			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
-				kit.removeItem(itemSlot);
-				previous.create();
-				close(player);
-			}
-		}, "&4Remove &fItem",  
-				"\n&4WARNING!"
-				+ "\n&3Double Click to &cRemove");
+	private void DecreaseItemButton(int slot, int amount){
+		tempItem.setAmount(amount);
+		setItem(slot, new ItemStack(Material.WOOD_BUTTON, amount), player -> {
+			if(itemSize - amount < 0)
+				itemSize = item.getMaxStackSize();
+			else 
+				itemSize = itemSize - amount;
+			display();
+		},"&3Increase&6(&c- " + amount +"&6)" , 
+				"&aClick to Increase!"
+				);
+	}
+	private void itemButton(int slot){
+		tempItem.setAmount(itemSize);
+		setItem(slot, tempItem, player -> {
+			item.setAmount(itemSize);
+		},"" , 
+				"\n&3Edit the amount of blocks"
+				+ "\n&aClick to Save"
+				);
+	}
+	private void IncreaseItemButton(int slot, int amount){
+		tempItem.setAmount(amount);
+		setItem(slot, new ItemStack(Material.STONE_BUTTON, amount), player -> {
+			if ((item.getAmount() + amount) < item.getMaxStackSize())
+				itemSize = item.getMaxStackSize();
+			else
+				itemSize = itemSize + amount;
+			display();
+		},"&3Increase&6(&c+ " + amount +"&6)" , 
+				"&aClick to Increase!"
+				);
 	}
 }

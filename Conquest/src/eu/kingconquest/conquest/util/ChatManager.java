@@ -3,7 +3,6 @@ package eu.kingconquest.conquest.util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.database.Config;
 import net.md_5.bungee.api.ChatColor;
 
@@ -41,7 +40,7 @@ public class ChatManager {
 	 */
 	public static String placeholders(String text){
 		try {
-			text = text.contains("{plugin_prefix}") 	? text.replace("{plugin_prefix}", Config.getChat("Prefix")) : text.replace("{plugin_prefix}", "");
+			text = text.contains("{plugin_prefix}") 	? text.replace("{plugin_prefix}", Config.getStr("Prefix")) : text.replace("{plugin_prefix}", "");
 			text = text.contains("{town}") 				? text.replace("{town}", Cach.StaticTown.getName()) : text.replace("{town}", "");
 			text = text.contains("{village}") 			? text.replace("{village}", Cach.StaticVillage.getName()) : text.replace("{village}", "");
 			text = text.contains("{kingdom}") 			? text.replace("{kingdom}", Cach.StaticKingdom.getName()) : text.replace("{kingdom}", "");
@@ -70,7 +69,7 @@ public class ChatManager {
 	 */
 	public static void Console(String string){
 		String text = "&2" + string;
-		Main.getInstance().getServer().getConsoleSender().sendMessage(Format(text));
+		Bukkit.getConsoleSender().sendMessage(Format(text));
 	}
 	
 	/**
