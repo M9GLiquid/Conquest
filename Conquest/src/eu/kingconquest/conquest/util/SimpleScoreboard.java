@@ -53,7 +53,7 @@ public class SimpleScoreboard {
     }
 
     public void add(Integer score, String text) {
-    	text = ChatManager.Format(text);
+    	text = Message.getMessage(text);
         if (text.length() > 30) 
             text = text.substring(0, 29); // cut off suffix, done if text is over 30 characters
 
@@ -212,7 +212,7 @@ public class SimpleScoreboard {
     }
 
     public void setTitle(String title) {
-    	title = ChatManager.Format(title);
+    	title = Message.getMessage(title);
         this.title = (title.length() > 32 ? title.substring(0, 31) : title);
 
         if(objective != null)

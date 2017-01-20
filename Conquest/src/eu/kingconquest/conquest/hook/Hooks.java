@@ -2,7 +2,8 @@ package eu.kingconquest.conquest.hook;
 
 import java.util.HashMap;
 
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 
@@ -20,18 +21,18 @@ public class Hooks{
 		}
 		
 			if (msg.containsValue(true)) {
-				ChatManager.Console(headerMsg);
+				new Message(null, MessageType.CONSOLE, headerMsg);
 				msg.forEach((s,b)->{
 					if (b) {
-						ChatManager.Console(s);
+						new Message(null, MessageType.CONSOLE, s);
 					}
 				});
 			}
 			if (msg.containsValue(false)) {
-				ChatManager.Console(errorMsg);
+				new Message(null, MessageType.CONSOLE, errorMsg);
 				msg.forEach((s,b)->{
 					if (!b)
-						ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 				});
 			}
 			msg.clear();

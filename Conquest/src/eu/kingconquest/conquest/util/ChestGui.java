@@ -34,13 +34,6 @@ public abstract class ChestGui extends Pagination{
 	private UUID uniqueID;
 	private int invSize = 9;
 
-	/*
-	 * ClickTypes
-	 * Place in setItem->{ }
-	 * if (getClickType().equals(ClickType.LEFT))
-		player.sendMessage("LEFT");
-	}*/
-
 	/**
 	 * Greate a Chest GUI
 	 * @param invSize - int
@@ -58,7 +51,7 @@ public abstract class ChestGui extends Pagination{
 		setChestSlots(invSize);
 		generateUUID();
 		inventory = Bukkit.createInventory(null, this.invSize, this.title);
-		inventory.setMaxStackSize(100); // min -128 max 127
+		//inventory.setMaxStackSize(72); // min -128 max 127
 		inventoriesByUUID.put(getUuid(), this);
 	}
 
@@ -196,17 +189,17 @@ public abstract class ChestGui extends Pagination{
 		if (Validate.notNull(meta)){ //Material that does not have a Item Meta (Example: Air)
 			if (Validate.notNull(title) && title != ""){
 				title = new StringBuilder(title).insert(2, "&l").toString(); // Make every title bold
-				meta.setDisplayName(ChatManager.Format(title));
+				meta.setDisplayName(Message.getMessage(title));
 			}
 	
 			List<String> temp = new ArrayList<String>();
 			if (Validate.notNull(lore) && lore != ""){
-				temp.add(ChatManager.Format("&1-----------------"));
+				temp.add(Message.getMessage("&1-----------------"));
 				if (meta.hasLore()) 
-					meta.getLore().forEach(tempLore->{ temp.add(ChatManager.Format(tempLore)); });
+					meta.getLore().forEach(tempLore->{ temp.add(Message.getMessage(tempLore)); });
 				String[] a = lore.split("\n");
 				for (int i= 0; i < a.length; i++)
-					temp.add(ChatManager.Format(a[i]));
+					temp.add(Message.getMessage(a[i]));
 				meta.setLore(temp);
 			}
 			if (!itemFlag)
@@ -214,6 +207,7 @@ public abstract class ChestGui extends Pagination{
 			stack.setItemMeta(meta);
 		}
 		//NmsUtils.setItemStackSize(inventory.getHolder(), stack, stack.getAmount());
+		//stack.setAmount(72);
 		inventory.setItem(slot, stack);
 		
 		if (Validate.notNull(action))
@@ -225,17 +219,17 @@ public abstract class ChestGui extends Pagination{
 		if (Validate.notNull(meta)){ //Material that does not have a Item Meta (Example: Air)
 			if (Validate.notNull(title) && title != ""){
 				title = new StringBuilder(title).insert(2, "&l").toString(); // Make every title bold
-				meta.setDisplayName(ChatManager.Format(title));
+				meta.setDisplayName(Message.getMessage(title));
 			}
 	
 			List<String> temp = new ArrayList<String>();
 			if (Validate.notNull(lore) && lore != ""){
-				temp.add(ChatManager.Format("&1-----------------"));
+				temp.add(Message.getMessage("&1-----------------"));
 				if (meta.hasLore()) 
-					meta.getLore().forEach(tempLore->{ temp.add(ChatManager.Format(tempLore)); });
+					meta.getLore().forEach(tempLore->{ temp.add(Message.getMessage(tempLore)); });
 				String[] a = lore.split("\n");
 				for (int i= 0; i < a.length; i++)
-					temp.add(ChatManager.Format(a[i]));
+					temp.add(Message.getMessage(a[i]));
 				meta.setLore(temp);
 			}
 			if (!itemFlag)
@@ -247,7 +241,7 @@ public abstract class ChestGui extends Pagination{
 			actions.put(slot, action);
 	}
 	public void setTitle(String title){
-		this.title = ChatManager.Format(title);
+		this.title = Message.getMessage(title);
 	}
 	public void setStackSize(Player player){
 		player.updateInventory();

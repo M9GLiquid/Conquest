@@ -1,6 +1,7 @@
 package eu.kingconquest.conquest.listener;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,14 +11,16 @@ import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Rocket;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
+import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
 import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 public class CaptureProgressListener implements Listener{
 	private Player player;
@@ -27,7 +30,7 @@ public class CaptureProgressListener implements Listener{
 		Village village = (Village) e.getObjective();
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getOwner();
-		ChatManager.Broadcast(Config.getStr("WarnDistress"));
+		new Message(null, MessageType.BROADCAST, "{WarnDistress}");
 		
 		//Run Mob Spawns as defence if objective owner isn't Neutral
 	}
@@ -64,19 +67,19 @@ public class CaptureProgressListener implements Listener{
 			new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
 			village.getParent().getChildren().forEach(child->{
 				new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
-				TNEApi.addFunds(village.getOwner().getUUID(), Config.getDouble("CapCash", village.getLocation())); // Add Funds for each 
+				TNEApi.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each 
 			});
-			ChatManager.Chat(player, Config.getStr("TownCaptured"));
-			ChatManager.Chat(player, Config.getStr("CaptureTownSuccess"));
-			TNEApi.addFunds(player, Config.getDouble("CapCash", village.getLocation()));
+			new Message(player, MessageType.CHAT, "{CaptureTownSuccess}");
+			new Message(player, MessageType.CHAT, "{TownCaptured}");
+			TNEApi.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
-			ChatManager.Chat(player, Config.getStr("CaptureVillageSuccess"));
-			TNEApi.addFunds(village.getOwner().getUUID(), Config.getDouble("CapCash", village.getLocation()));
-			TNEApi.addFunds(player, Config.getDouble("CapCash", village.getLocation()));
+			new Message(player, MessageType.CHAT, "{CaptureVillageSuccess}");
+			TNEApi.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation()));
+			TNEApi.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
-		ChatManager.Broadcast(Config.getStr("Captured"));
+		new Message(null, MessageType.BROADCAST, "{Captured}");
 	if (village.getAttackers().size() < 1)
 		village.stop();
 	village.addDefender(player);
@@ -95,9 +98,8 @@ public class CaptureProgressListener implements Listener{
 
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getPreOwner();
-		ChatManager.Broadcast(Config.getStr("WarnNeutral"));
-		//Config.saveVillages(village.getWorld());
-		//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+		new Message(null, MessageType.BROADCAST, "{WarnNeutral}");
+		Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 	}
 }

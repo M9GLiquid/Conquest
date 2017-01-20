@@ -8,19 +8,20 @@ import org.bukkit.event.Listener;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.ServerResetEvent;
 import eu.kingconquest.conquest.event.WorldResetEvent;
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 public class ResetListener implements Listener{
 	
 	public void onServerReset(ServerResetEvent e){
 		Player player = e.getPlayer();
-		ChatManager.Chat(player, "{plugin_prefix} &aServer Reset Started!");
-		ChatManager.Console("{plugin_prefix}&4 &aServer Reset Started!");
+		new Message(player, MessageType.CHAT, "{Prefix} &aServer Reset Started!");
+		new Message(null, MessageType.CONSOLE, "{Prefix} &aServer Reset Started!");
 		
-		Config.getWorlds().forEach(uniqueID->{
+		YmlStorage.getWorlds().forEach(uniqueID->{
 			if (e.getKingdomSave())
 				Kingdom.removeKingdoms(Kingdom.getKingdoms());
 			if (e.getMemberSave())
@@ -33,8 +34,8 @@ public class ResetListener implements Listener{
 	public void onWorldReset(WorldResetEvent e){
 		Player player = e.getPlayer();
 		World world = e.getWorld();
-		ChatManager.Chat(player, "{plugin_prefix} " + world.getName() + " &aReset Started!");
-		ChatManager.Console("{plugin_prefix}&4 Reset for World: " + world.getName() + " &aStarted!");
+		new Message(player, MessageType.CHAT, "{Prefix} " + world.getName() + " &aReset Started!");
+		new Message(null, MessageType.CONSOLE, "{Prefix} &aReset for World: " + world.getName() + " Started!");
 		
 		if (e.getKingdomSave())
 			Kingdom.removeKingdoms(Kingdom.getKingdoms(world));

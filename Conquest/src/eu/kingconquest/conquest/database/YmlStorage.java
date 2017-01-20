@@ -25,11 +25,11 @@ import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
-
-public class Config extends YamlConfiguration{
+public class YmlStorage extends YamlConfiguration{
 	private String name;
 	private File file;
 	private String defaults;
@@ -40,7 +40,7 @@ public class Config extends YamlConfiguration{
 	 * @param path - String
 	 * @param fileName - String
 	 */
-	public Config(String path, String fileName) {
+	public YmlStorage(String path, String fileName) {
 		this(path, fileName, null);
 	}
 
@@ -50,7 +50,7 @@ public class Config extends YamlConfiguration{
 	 * @param fileName - String
 	 * @param defaultsName - String
 	 */
-	public Config(String path, String fileName, String defaultsName) {
+	public YmlStorage(String path, String fileName, String defaultsName) {
 		defaults = defaultsName;
 		String pathway = (path == null) 
 				? Main.getInstance().getDataFolder() + File.separator + fileName 
@@ -216,58 +216,58 @@ public class Config extends YamlConfiguration{
 		output();
 	}
 
-	public static Set<String> getPathSection(Config c, String path){
+	public static Set<String> getPathSection(YmlStorage c, String path){
 		return c.getConfigurationSection(path).getKeys(false);
 	}
 
 	public static void output(){
 		if (loadMsg.containsValue(true)) {
-			ChatManager.Console(headerMsg);
+			new Message(null, MessageType.CONSOLE, headerMsg);
 			loadMsg.forEach((s,b)->{
 				if (b) {
-					ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 				}
 			});
 		}
 		if (loadMsg.containsValue(false)) {
-			ChatManager.Console(errorMsg);
+			new Message(null, MessageType.CONSOLE, errorMsg);
 			loadMsg.forEach((s,b)->{
 				if (!b)
-					ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 			});
 		}
 		loadMsg.clear();
 
 		if (saveMsg.containsValue(true)) {
-			ChatManager.Console(headerMsg);
+			new Message(null, MessageType.CONSOLE, headerMsg);
 			saveMsg.forEach((s,b)->{
 				if (b) {
-					ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 				}
 			});
 		}
 		if (saveMsg.containsValue(false)) {
-			ChatManager.Console(errorMsg);
+			new Message(null, MessageType.CONSOLE, errorMsg);
 			saveMsg.forEach((s,b)->{
 				if (!b)
-					ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 			});
 		}
 		saveMsg.clear();
 
 		if (removeMsg.containsValue(true)) {
-			ChatManager.Console(headerMsg);
+			new Message(null, MessageType.CONSOLE, headerMsg);
 			removeMsg.forEach((s,b)->{
 				if (b) {
-					ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 				}
 			});
 		}
 		if (removeMsg.containsValue(false)) {
-			ChatManager.Console(errorMsg);
+			new Message(null, MessageType.CONSOLE, errorMsg);
 			removeMsg.forEach((s,b)->{
 				if (!b)
-					ChatManager.Console(s);
+					new Message(null, MessageType.CONSOLE, s);
 			});
 		}
 		removeMsg.clear();
@@ -275,7 +275,7 @@ public class Config extends YamlConfiguration{
 
 	//Config Loads
 	public static boolean loadDefault(){
-		Config config = getConfig("Config");
+		YmlStorage config = getConfig("Config");
 
 		strings.put("Port", 	(config.getString("Database.MySql.Port") 								!= null ? 	config.getString("Database.MySql.Port") 				: "3306" ));
 		strings.put("Host", 	(config.getString("Database.MySql.Host") 								!= null ? 	config.getString("Database.MySql.Host") 			: "localhost" ));
@@ -315,16 +315,16 @@ public class Config extends YamlConfiguration{
 		return true;
 	}
 	public static boolean loadLanguage(){
-		Config lang = getConfig("Language");
+		YmlStorage lang = getConfig("Language");
 
 		try {
 			getPathSection(lang, "Language").forEach(path->{
 				getPathSection(lang, "Language." + path).forEach(pathSection->{
 					if (!pathSection.toLowerCase().equals("admin")){
-						strings.put(pathSection, (lang.getString("Language." + path + "." + pathSection) != null ? lang.getString("Language." + path + "." + pathSection) : "&4Report: &7" + pathSection + " Error!"));
+						strings.put(pathSection, (lang.getString("Language." + path + "." + pathSection) != null ? lang.getString("Language." + path + "." + pathSection) : ""));
 					}else{
 						getPathSection(lang, "Language." + path + "." + pathSection).forEach(adminSection->{
-							strings.put(adminSection, (lang.getString("Language." + path + ".Admin." + adminSection) != null ? lang.getString("Language." + path + ".Admin." + adminSection) : "&4Report: &7" + adminSection + " Error!"));
+							strings.put("Admin" +adminSection, (lang.getString("Language." + path + ".Admin." + adminSection) != null ? lang.getString("Language." + path + ".Admin." + adminSection) : ""));
 						});
 					}
 				});
@@ -338,7 +338,7 @@ public class Config extends YamlConfiguration{
 	//Data Files
 	//LOAD
 	private static void loadKingdoms(World world){
-		Config config = getConfig("Kingdoms");
+		YmlStorage config = getConfig("Kingdoms");
 
 		if (!config.isSet(world.getName()))
 			return;
@@ -358,7 +358,7 @@ public class Config extends YamlConfiguration{
 		}
 	}
 	private static void loadUsers(World world){
-		Config config = getConfig("Users");
+		YmlStorage config = getConfig("Users");
 
 		if (!config.isSet(world.getName()))
 			return;
@@ -379,7 +379,7 @@ public class Config extends YamlConfiguration{
 		});
 	}
 	private static void loadTowns(World world){
-		Config config = getConfig("Towns");
+		YmlStorage config = getConfig("Towns");
 
 		if (!config.isSet(world.getName()))
 			return;
@@ -396,7 +396,7 @@ public class Config extends YamlConfiguration{
 		});
 	}
 	private static void loadVillages(World world){
-		Config config = getConfig("Villages");
+		YmlStorage config = getConfig("Villages");
 
 
 		if (!config.isSet(world.getName()))
@@ -434,7 +434,7 @@ public class Config extends YamlConfiguration{
 	    			if (Validate.notNull(Kit.getKit(UUID.fromString(kitUUID), world))) 
 	    				return; //Kit already loaded!
 	    			
-		    		Config config = getConfig(kitUUID);
+		    		YmlStorage config = getConfig(kitUUID);
 		    		if (!config.isSet(world.getName()))
 		    			return;
 		    			Kit kit = new Kit(
@@ -463,7 +463,7 @@ public class Config extends YamlConfiguration{
 
 	//SAVE
 	private static void saveKingdoms(World world){
-		Config config = getConfig("Kingdoms");
+		YmlStorage config = getConfig("Kingdoms");
 		try {
 			Kingdom.getKingdoms().forEach(kingdom->{
 				if (!kingdom.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
@@ -483,7 +483,7 @@ public class Config extends YamlConfiguration{
 		}
 	}
 	private static void saveUsers(World world){
-		Config config = getConfig("Users");
+		YmlStorage config = getConfig("Users");
 
 		try {
 			Kingdom.getKingdoms(world).forEach(kingdom->{
@@ -499,7 +499,7 @@ public class Config extends YamlConfiguration{
 		}
 	}
 	private static void saveTowns(World world){
-		Config config = getConfig("Towns");
+		YmlStorage config = getConfig("Towns");
 		try {
 			Town.getTowns(world).forEach(town->{
 				if (!town.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
@@ -522,7 +522,7 @@ public class Config extends YamlConfiguration{
 		}
 	}
 	private static void saveVillages(World world){
-		Config config = getConfig("Villages");
+		YmlStorage config = getConfig("Villages");
 		try {
 			Village.getVillages(world).forEach(village->{
 				if (!village.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
@@ -547,7 +547,7 @@ public class Config extends YamlConfiguration{
 		Kit.getKits(world).forEach(kit ->{
 			if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 				return;
-			Config config = new Config("Data" + File.separator + "Kits", kit.getUUID().toString() + ".yml");
+			YmlStorage config = new YmlStorage("Data" + File.separator + "Kits", kit.getUUID().toString() + ".yml");
 			try {
 				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
 				config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwnerUUID().toString());
@@ -568,7 +568,7 @@ public class Config extends YamlConfiguration{
 	}
 	@SuppressWarnings("unused")
 	private static void saveKitsOld(World world){
-		Config config = getConfig("Kits");
+		YmlStorage config = getConfig("Kits");
 		//Save Kits
 		try {
 			Kit.getKits(world).forEach(kit ->{
@@ -596,7 +596,7 @@ public class Config extends YamlConfiguration{
 
 	//REMOVE
 	private static void removeKingdoms(World world){
-		Config config = getConfig("Kingdoms");
+		YmlStorage config = getConfig("Kingdoms");
 		if (!config.isSet(world.getName()))
 			return;
 		getPathSection(config, world.getName()).forEach(kingdomUUID->{
@@ -610,7 +610,7 @@ public class Config extends YamlConfiguration{
 		config.saveConfig();
 	}
 	private static void removeTowns(World world){
-		Config config = getConfig("Towns");
+		YmlStorage config = getConfig("Towns");
 		if (!config.isSet(world.getName()))
 			return;
 		getPathSection(config, world.getName()).forEach(townUUID->{
@@ -624,7 +624,7 @@ public class Config extends YamlConfiguration{
 		config.saveConfig();
 	}
 	private static void removeVillages(World world){
-		Config config = getConfig("Villages");
+		YmlStorage config = getConfig("Villages");
 		if (!config.isSet(world.getName()))
 			return;
 		getPathSection(config, world.getName()).forEach(villageUUID->{
@@ -638,7 +638,7 @@ public class Config extends YamlConfiguration{
 		config.saveConfig();
 	} 
 	private static void removeUsers(World world){
-		Config config = getConfig("Users");
+		YmlStorage config = getConfig("Users");
 		if (!config.isSet(world.getName()))
 			return;
 		getPathSection(config, world.getName()).forEach(kingdomUUID ->{
@@ -662,7 +662,7 @@ public class Config extends YamlConfiguration{
 	}
 	@SuppressWarnings("unused")
 	private static void removeKits(World world){
-		Config config = getConfig("Kits");
+		YmlStorage config = getConfig("Kits");
 		if (!config.isSet(world.getName()))
 			return;
 		getPathSection(config, world.getName()).forEach(uniqueID->{
@@ -701,7 +701,7 @@ public class Config extends YamlConfiguration{
 	}
 
 	//UUID of World
-	private static HashMap<String, String> strings = new HashMap<String, String>();
+	public static HashMap<String, String> strings = new HashMap<String, String>();
 	private static HashMap<UUID, HashMap<String, Boolean>> booleans = new HashMap<>();
 	private static HashMap<UUID, HashMap<String, Integer>> integers = new HashMap<>();
 	private static HashMap<UUID, HashMap<String, Double>> doubles = new HashMap<>();
@@ -726,27 +726,27 @@ public class Config extends YamlConfiguration{
 		return map2.get(str);
 	}
 
-	private static ArrayList<Config> configs = new ArrayList<>();
+	private static ArrayList<YmlStorage> configs = new ArrayList<>();
 	public static boolean hasConfigs(){
 		if (configs.size() != 0)
 			return true;
 		return false;
 	}
-	public static ArrayList<Config> getConfigs(){
+	public static ArrayList<YmlStorage> getConfigs(){
 		return configs;
 	}
-	public static Config getConfig(String name){
-		for (Config c : getConfigs()){
+	public static YmlStorage getConfig(String name){
+		for (YmlStorage c : getConfigs()){
 			if (c.getName().replace(".yml", "").equals(name)){
 				c.reload();
 				return c;
 			}
 		}
-		ChatManager.Console("&4ERROR: Could not find config: " + name + " file");
-		ChatManager.Console("&4: Wrong name?");
+		new Message(null, MessageType.CONSOLE, "&4ERROR: Could not find config: " + name + " file");
+		new Message(null, MessageType.CONSOLE, "&4: Wrong name?");
 		return null;
 	}
-	public static void addConfig(Config config){
+	public static void addConfig(YmlStorage config){
 		configs.add(config);
 	}
 
@@ -764,25 +764,23 @@ public class Config extends YamlConfiguration{
 	}
 
 	public static void registerFiles(){
-		new Config(null, "Config.yml", "Config.yml");
-		new Config(null, "LanguageCopy.yml", "LanguageCopy.yml");
-		new Config(null, "Language.yml", "Language.yml");
-		new Config("Data", "Kingdoms.yml");
-		new Config("Data", "Towns.yml");
-		new Config("Data", "Villages.yml");
-		new Config("Data", "Users.yml");
-		//new Config("Data", "Kits.yml");
+		new YmlStorage(null, "Config.yml", "Config.yml");
+		new YmlStorage(null, "Language.yml", "Language.yml");
+		new YmlStorage("Data", "Kingdoms.yml");
+		new YmlStorage("Data", "Towns.yml");
+		new YmlStorage("Data", "Villages.yml");
+		new YmlStorage("Data", "Users.yml");
 
 		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))) {
 		    paths.forEach(filePath -> {
 		        if (Files.isRegularFile(filePath)) {
-		    		new Config("Data" + File.separator + "Kits", filePath.getFileName().toString());
+		    		new YmlStorage("Data" + File.separator + "Kits", filePath.getFileName().toString());
 					loadMsg.put("&6| --&3 " +  filePath.getFileName().toString(), true);		
 		        }
 		    });
 		}
 		catch (IOException e){
-			ChatManager.Console("&6| --&3 No Kits");
+			new Message(null, MessageType.CONSOLE, "&6| --&3 No Kits");
 		}
 	}
 }

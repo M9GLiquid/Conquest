@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerActionGUI extends ChestGui{
@@ -131,8 +131,8 @@ public class PlayerActionGUI extends ChestGui{
 				kingdom.leave(target);
 				Cach.StaticKingdom = kingdom;
 				Cach.StaticPlayer = target;
-				ChatManager.Chat(p, Config.getStr("adminMoveSuccess"));
-				ChatManager.Chat(target, Config.getStr("RemoveSuccess"));
+				new Message(player, MessageType.CHAT, "{AdminMoveSuccess}");
+				new Message(player, MessageType.CHAT, "{RemoveSuccess}");
 				display();
 			}, "&4Remove from " +kingdom.getColorSymbol() + kingdom.getName(), 
 					"\n&c\n");
@@ -146,8 +146,8 @@ public class PlayerActionGUI extends ChestGui{
 			setItem(slot, new ItemStack(Material.EMERALD_BLOCK), player -> {
 				kingdom.join(target);
 				Cach.StaticKingdom = kingdom;
-				ChatManager.Chat(p, Config.getStr("adminMoveSuccess"));
-				ChatManager.Chat(target, Config.getStr("MoveSuccess"));
+				new Message(player, MessageType.CHAT, "{AdminMoveSuccess}");
+				new Message(player, MessageType.CHAT, "{MoveSuccess}");
 				display();
 			}, "&4Move to " + kingdom.getName(),
 					"");

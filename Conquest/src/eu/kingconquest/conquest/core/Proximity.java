@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.CaptureZoneEnterEvent;
 import eu.kingconquest.conquest.event.CaptureZoneExitEvent;
 import eu.kingconquest.conquest.util.Validate;
@@ -29,12 +28,7 @@ public class Proximity implements Listener{
 			return;
 		
 		Village.getVillages(player.getWorld()).forEach(village->{
-			if (Validate.isWithinArea(
-					player.getLocation()
-					,village.getLocation()
-					,2
-					,Config.getDouble("CaptureMaxY", village.getLocation())
-					, Config.getDouble("CaptureMinY", village.getLocation()))){
+			if (Validate.isWithinCaptureArea(player.getLocation(), village.getLocation())){
 				pm.callEvent(new CaptureZoneEnterEvent(player, village));
 			}else{
 				// If the player is outside of the area

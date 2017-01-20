@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import eu.kingconquest.conquest.Main;
-import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
@@ -78,6 +78,6 @@ public class CaptureProcess{
 							village.setProgress(village.getProgress() + (Village.getCapSpeed() * village.getAttackers().size()));
 						}
 					}
-				}, 0, Config.getLong("CaptureRate", village.getLocation())));
+				}, 0, YmlStorage.getLong("CaptureRate", village.getLocation())));
 	}
 }

@@ -1,7 +1,6 @@
 package eu.kingconquest.conquest.util;
 
 public enum MessageType{
-	NONE("None"),
 	CHAT("Chat"),
 	DEBUG("Debug"),
 	CONSOLE("Console"),
@@ -12,6 +11,7 @@ public enum MessageType{
 	MessageType(String name){
 	this.name = name;	
 	}
+	
 	public String getName(){
 		return name;
 	}

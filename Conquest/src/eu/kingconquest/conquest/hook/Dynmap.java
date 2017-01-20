@@ -14,9 +14,10 @@ import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.Config;
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Dynmap{
@@ -99,7 +100,7 @@ public class Dynmap{
 			setDynmapMarker(icons);
 		}catch (Exception e){
 			e.printStackTrace();
-			ChatManager.Console("&4Cannot load image!");
+			new Message(null, MessageType.CONSOLE, "&4Cannot load image!");
 		}
 		createKingdom();
 		createTown();
@@ -110,13 +111,12 @@ public class Dynmap{
 		try{
 			for (Kingdom kingdom : Kingdom.getKingdoms()){
 				if (Marker.create(kingdom)){
-					if (!Config.getBoolean("DebugDynmapMarkers", kingdom.getLocation()))
-					ChatManager.Console("&6Marker for " + kingdom.getName()
-							+ " &cWas not Added");
+					if (!YmlStorage.getBoolean("DebugDynmapMarkers", kingdom.getLocation()))
+						new Message(null, MessageType.CONSOLE, "&6Marker for " + kingdom.getName() + " &cWas not Added");
 				}
 			}
 		}catch (Exception e){
-			ChatManager.Console("&4Cannot load marker!");
+			new Message(null, MessageType.CONSOLE, "&4Cannot load marker!");
 		}
 		
 	}
@@ -125,13 +125,12 @@ public class Dynmap{
 		try{
 			for (Town town : Town.getTowns()){
 				if (Marker.create(town)){
-					if (!Config.getBoolean("DebugDynmapMarkers", town.getLocation()))
-					ChatManager.Console("&6Marker for " + town.getName()
-							+ " &cWas not Added");
+					if (!YmlStorage.getBoolean("DebugDynmapMarkers", town.getLocation()))
+						new Message(null, MessageType.CONSOLE, "&6Marker for " + town.getName() + " &cWas not Added");
 				}
 			}
 		}catch (Exception e){
-			ChatManager.Console("&4Cannot load marker!");
+			new Message(null, MessageType.CONSOLE, "&4Cannot load marker!");
 		}
 	}
 
@@ -139,13 +138,12 @@ public class Dynmap{
 		try{
 			for (Village village : Village.getVillages()){
 				if (Marker.create(village)){
-					if (!Config.getBoolean("DebugDynmapMarkers", village.getLocation()))
-					ChatManager.Console("&6Marker for " + village.getName()
-							+ " &cWas not Added");
+					if (!YmlStorage.getBoolean("DebugDynmapMarkers", village.getLocation()))
+						new Message(null, MessageType.CONSOLE, "&6Marker for " + village.getName() + " &cWas not Added");
 				}
 			}
 		}catch (Exception e){
-			ChatManager.Console("&4Cannot load marker!");
+			new Message(null, MessageType.CONSOLE, "&4Cannot load marker!");
 		}
 	}
 

@@ -8,14 +8,14 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.ColorManager;
 import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 
@@ -41,41 +41,41 @@ public class Kingdom extends Objective{
 	
 	/**
 	 * Kingdom Join
-	 * @param p - Player Instance
+	 * @param player - Player Instance
 	 * @param kingdomitalName - Name of Kingdom
 	 * @return void
 	 */
-	public  void join(Player p){
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
+	public  void join(Player player){
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 		
 		//Player joins this Kingdom
 		Cach.StaticKingdom = this;
-		ChatManager.Chat(p, Config.getStr("JoinSuccess"));
+		new Message(player, MessageType.CHAT, "{JoinSuccess}");
 		wrapper.setKingdom(getUUID());
-		wrapper.getScoreboard().KingdomBoard(p);
-		addMember(p.getUniqueId());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + p.getName() + " parent add " + getName());
+		wrapper.getScoreboard().KingdomBoard(player);
+		addMember(player.getUniqueId());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + player.getName() + " parent add " + getName());
 	}
 		
 	/**
 	 * Kingdom Leave
-	 * @param p - Player Instance
+	 * @param player - Player Instance
 	 * @param kingdomitalName - Name of Kingdom
 	 * @return void
 	 */
-	public  void leave(Player p){
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(p);
-		if (!wrapper.getKingdom(p.getWorld()).equals(this))
+	public  void leave(Player player){
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+		if (!wrapper.getKingdom(player.getWorld()).equals(this))
 			return;
-		if(!getMembers().contains(p.getUniqueId()))
+		if(!getMembers().contains(player.getUniqueId()))
 			return;
 		
 		Cach.StaticKingdom = this;
-		ChatManager.Chat(p, Config.getStr("LeaveSuccess"));
+		new Message(player, MessageType.CHAT, "{LeaveSuccess}");
 		wrapper.setKingdom(null);
-		wrapper.getScoreboard().NeutralBoard(p);
-		removeMember(p.getUniqueId());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + p.getName() + " parent remove " + getName());
+		wrapper.getScoreboard().NeutralBoard(player);
+		removeMember(player.getUniqueId());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + player.getName() + " parent remove " + getName());
 	}
 	
 //Getters
@@ -328,7 +328,7 @@ public class Kingdom extends Objective{
 	}
 	@Override
 	public boolean delete(Player player){
-		ChatManager.Chat(player, Config.getStr("KingdomDeleted"));
+		new Message(player, MessageType.CHAT, "|KingdomDeleted|");
 		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions removegroup " + getName());
 		removeKingdom(this);

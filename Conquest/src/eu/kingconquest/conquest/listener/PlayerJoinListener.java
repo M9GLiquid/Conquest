@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.SimpleScoreboard;
@@ -29,7 +29,7 @@ public class PlayerJoinListener implements Listener{
 		if (!TNEApi.accountExist(player.getUniqueId()))
 			TNEApi.createAccount(player.getUniqueId());
 		
-		Config.getWorlds().forEach(uniqueID->{
+		YmlStorage.getWorlds().forEach(uniqueID->{
 			if (player.getWorld().equals(Bukkit.getWorld(uniqueID))){
 				PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 				if (Validate.isNull(wrapper.getScoreboard())){

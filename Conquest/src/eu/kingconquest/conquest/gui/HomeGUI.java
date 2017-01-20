@@ -7,9 +7,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.database.Config;
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class HomeGUI extends ChestGui{
@@ -75,11 +76,11 @@ public class HomeGUI extends ChestGui{
 
 	private void reloadButton(){
 		setItem(2, new ItemStack(Material.REDSTONE_LAMP_OFF), player -> {
-			if (Config.loadDefault() && Config.loadLanguage()){
-				ChatManager.Chat(player, "{plugin_prefix} &7Config.yml & Language.yml &aSuccessfully reloaded!");
+			if (YmlStorage.loadDefault() && YmlStorage.loadLanguage()){
+				new Message(player, MessageType.CHAT, "{Prefix} &7Config.yml & Language.yml &aSuccessfully to reload!");
 				return;
 			}
-			ChatManager.Chat(player, "{plugin_prefix} &7Config.yml & Language.yml &cFailed to reload!");
+			new Message(player, MessageType.CHAT, "{Prefix} &7Config.yml & Language.yml &cFailed to reload!");
 		}, "&3Reload Config",
 				"&6Affected Files: "
 				+ "\n&7 - Language.yml"

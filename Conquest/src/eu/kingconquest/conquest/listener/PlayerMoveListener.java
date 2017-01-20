@@ -15,7 +15,7 @@ public class PlayerMoveListener implements Listener{
 	 * @param e - Event
 	 * @return void
 	 */
-	@EventHandler (priority = EventPriority.HIGHEST)
+	@EventHandler (priority = EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent e){
 		if (e.getFrom().getPitch() == e.getTo().getPitch() && e.getFrom().getYaw() == e.getTo().getYaw()) {
 			Player player = e.getPlayer();

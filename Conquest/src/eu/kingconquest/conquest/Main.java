@@ -11,7 +11,7 @@ import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.ServerRestartEvent;
 import eu.kingconquest.conquest.hook.Dynmap;
 import eu.kingconquest.conquest.hook.Hooks;
@@ -28,7 +28,8 @@ import eu.kingconquest.conquest.listener.ProximityZoneListener;
 import eu.kingconquest.conquest.listener.ResetListener;
 import eu.kingconquest.conquest.listener.ServerRestartListener;
 import eu.kingconquest.conquest.listener.TrapListener;
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 
 /**
@@ -50,14 +51,14 @@ public class Main extends JavaPlugin implements Listener{
 		new Vault();
 		new Dynmap();
 		
-		Config.load();
-		ChatManager.Console("&6|==============={plugin_prefix}==============|");
-		ChatManager.Console("&6|&2 Version: " + getDescription().getVersion());
-		ChatManager.Console("&6|&2 Hooks:");
+		YmlStorage.load();
+		new Message(null, MessageType.CONSOLE, "&6|==============={Prefix}==============|");
+		new Message(null, MessageType.CONSOLE, "&6|&2 Version: " + getDescription().getVersion());
+		new Message(null, MessageType.CONSOLE, "&6|&2 Hooks:");
 		Hooks.output();
-		ChatManager.Console("&6|&2 Configs:");
-		Config.output();
-		ChatManager.Console("&6|=======================================|");
+		new Message(null, MessageType.CONSOLE, "&6|&2 Configs:");
+		YmlStorage.output();
+		new Message(null, MessageType.CONSOLE, "&6|=======================================|");
 
 		ServerRestartListener srl = new ServerRestartListener();
 		if (Bukkit.getOnlinePlayers().size() > 0){
@@ -109,13 +110,13 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	@Override
 	public void onDisable() {
-		ChatManager.Console("&6|==============={plugin_prefix}==============|");
-		ChatManager.Console("&6| &2Configs:");
-		Config.remove();
-		Config.save();
-		ChatManager.Console("&6|========================================|");
+		new Message(null, MessageType.CONSOLE, "&6|==============={Prefix}==============|");
+		new Message(null, MessageType.CONSOLE, "&6|&2 Configs:");
+		YmlStorage.remove();
+		YmlStorage.save();
+		new Message(null, MessageType.CONSOLE, "&6|=======================================|");
 		
-		Config.clear();
+		YmlStorage.clear();
 		Kingdom.clear();
 		Town.clear();
 		Village.clear();

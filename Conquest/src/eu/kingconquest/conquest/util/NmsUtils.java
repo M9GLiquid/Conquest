@@ -1,11 +1,10 @@
 package eu.kingconquest.conquest.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
-
-import net.minecraft.server.v1_11_R1.Item;
 
 public class NmsUtils{
 	
@@ -24,12 +23,10 @@ public class NmsUtils{
         	Class<?> nmsItemStackClass = getNMSClass("net.minecraft.server", "ItemStack");
             Field nmsItemStackField = nmsItemStackClass.getDeclaredField("item");
             Class<?> nmsItemClass= nmsItemStackClass.getDeclaredMethod("getItem").getReturnType();
-            Item instance = (Item) nmsItemClass.newInstance();
-            Field nmsItemField = nmsItemClass.getDeclaredField("maxStackSize");
-            nmsItemField.setAccessible(true);
-            nmsItemField.setInt(instance, size);
+            Method nmsItemMethod= nmsItemStackClass.getDeclaredMethod("d");
+            nmsItemMethod.invoke(nmsItemClass, size);
             nmsItemStackField.setAccessible(true);
-            nmsItemStackField.set(stack, instance);
+            nmsItemStackField.set(nmsItemStackClass, nmsItemClass);
             return stack;
         }catch(Exception e){
         	e.printStackTrace();

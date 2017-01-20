@@ -14,12 +14,12 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Village extends Objective{
@@ -232,12 +232,12 @@ public class Village extends Objective{
 				if (objective.equals(this))
 					continue;
 				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(player, Config.getStr("ToClose"));
+					new Message(player, MessageType.CHAT, "{ToClose}");
 					return false;
 				}
 			}
 			if (getVillages(getName(), getWorld()).size() > 1) 
-					ChatManager.Chat(player, Config.getStr("AlreadyExists"));
+				new Message(player, MessageType.CHAT, "{AlreadyExists}");
 			
 			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 			setPreOwner(Kingdom.getKingdom("Neutral", getWorld()));
@@ -263,7 +263,7 @@ public class Village extends Objective{
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 
 			Cach.StaticVillage = this;
-			ChatManager.Chat(player, Config.getStr("VillageCreated"));
+			new Message(player, MessageType.CHAT, "{VillageCreated}");
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -298,7 +298,7 @@ public class Village extends Objective{
 			
 
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
-			ChatManager.Chat(player, Config.getStr("VillageDeleted"));
+			new Message(player, MessageType.CHAT, "{VillageDeleted}");
 			removeVillage(this);
 			Marker.remove(this);
 			return true;

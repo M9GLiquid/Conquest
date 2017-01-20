@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.database.Config;
+import eu.kingconquest.conquest.database.YmlStorage;
 
 public class PlayerRespawnListener implements Listener{
 	private static Location deathLocation;
@@ -34,9 +34,9 @@ public class PlayerRespawnListener implements Listener{
 				}else{
 					player.teleport(player.getWorld().getSpawnLocation());
 				}
-				player.setGameMode(GameMode.SURVIVAL);
 			}
-		}, Config.getLong("RespawnDelay", player.getLocation()));
+		}, YmlStorage.getLong("RespawnDelay", player.getLocation()));
+		player.setGameMode(GameMode.SURVIVAL);
 	}
 	
 	public static Location getDeathLocation(){

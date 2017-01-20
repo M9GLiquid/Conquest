@@ -5,8 +5,9 @@ import java.util.UUID;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.database.Config;
-import eu.kingconquest.conquest.util.ChatManager;
+import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class TNEApi{
@@ -150,7 +151,7 @@ public class TNEApi{
 	    		return false;*/
 		}else if (Validate.notNull(Vault.econ)){
 			if (Vault.econ.depositPlayer(player, amount).transactionSuccess()){
-	    		ChatManager.Chat(player, "&3Added " + Config.getDouble("CapCash", player.getLocation()) +"$ to you're account");
+				new Message(player, MessageType.CHAT, "&3Added " + YmlStorage.getDouble("CapCash", player.getLocation()) +"$ to you're account");
 				return true;
 			}else
 				return false;
