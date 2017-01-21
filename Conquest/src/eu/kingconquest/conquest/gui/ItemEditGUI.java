@@ -63,7 +63,7 @@ public class ItemEditGUI extends ChestGui{
 				name = item.getItemMeta().getDisplayName();
 		setItem(slot, item, player -> {
 			if (!item.getType().equals(Material.AIR)){
-				if (getClickType().equals(ClickType.DOUBLE_CLICK)){
+				if (getClickEvent().getClick().equals(ClickType.DOUBLE_CLICK)){
 					kit.removeItem(itemSlot);
 					previous.create();
 					close(player);

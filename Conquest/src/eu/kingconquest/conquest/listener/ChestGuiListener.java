@@ -24,13 +24,12 @@ public class ChestGuiListener implements Listener{
 		UUID inventoryUUID = ChestGui.openInventories.get(p.getUniqueId());
 		if (Validate.notNull(inventoryUUID)){
 			e.setCancelled(true);
-
 			if (Validate.notNull(e.getCurrentItem()))
 				if (Validate.notNull(e.getCurrentItem().getData().getItemType()))
 					if (e.getCurrentItem().getData().getItemType().equals(Material.AIR.name())) // if item is air, return
 						return;
 			ChestGui GUI = ChestGui.getInventoriesByUUID().get(inventoryUUID);
-			GUI.setClickType(e.getClick());
+			GUI.setClickEvent(e);
 			if (Validate.notNull(GUI.getActions().get(e.getSlot()))){
 				ChestGui.onGuiAction action = GUI.getActions().get(e.getSlot());
 				if (Validate.notNull(action))

@@ -54,7 +54,7 @@ public class KitGUI extends ChestGui{
 
 	private void editButton(int slot, Kit kit){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
-			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
+			if (getClickEvent().getClick().equals(ClickType.DOUBLE_CLICK)){
 				Kit.removeKit(kit);
 				previous.create();
 				close(player);

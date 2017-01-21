@@ -35,8 +35,6 @@ public class KitEditGUI extends ChestGui{
 
 		//Slot 0
 		playerInfo(player);
-		//Slot 1
-		addButton();
 		//Slot 3
 		previous(this);
 		//Slot 5
@@ -61,6 +59,7 @@ public class KitEditGUI extends ChestGui{
 		IncreaseCooldownButton(25, 100);
 		
 		itemsButton(40);
+		addButton(49);
 	}
 
 	private void DecreaseCostButton(int slot, int amount){
@@ -111,8 +110,11 @@ public class KitEditGUI extends ChestGui{
 				);
 	}
 	
-	private void addButton(){ //ctrl + click add item to Kit (Add to Slot and on press Save)
-		setItem(1, new ItemStack(Material.ARMOR_STAND), player -> {
+	private void addButton(int slot){ //shift + click add item to Kit (Add to Slot and on press Save)
+		setItem(slot, player.getItemOnCursor(), player -> {
+			if (getClickEvent().getClickedInventory().equals(player.getInventory())){
+				kit.addItem(kit.getItems().size(), getClickEvent().getCurrentItem());
+			}
 			kit.addItem(kit.getItems().size(), player.getInventory().getItemInMainHand());
 		}, "", 
 				"\n&3Ctrl+Click to &aSelect Item &3in your inventory"

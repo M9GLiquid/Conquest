@@ -34,17 +34,17 @@ public class Message{
 
 	private static String translate(String text){
 		try{
-			Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(text);
-			while (m.find()) {
-				System.out.println(text);
-				System.out.println(m.group());
-				text = text.contains(m.group()) 					? text.replace(m.group(), YmlStorage.getStr(m.group().replaceAll("\\{|", "").replaceAll("\\}",""))) 					: text.replace(m.group(), "");
-				m = Pattern.compile("\\{(.*?)\\}").matcher(text);
-				text = text.contains("TeleportDelay") 		? text.replace(m.group(), String.valueOf(Cach.tpDelay)) 																						: text.replace(m.group(), "");
-				text = text.contains("town") 						? text.replace(m.group(), String.valueOf(Cach.StaticTown.getName())) 																: text.replace(m.group(), "");
-				text = text.contains("village") 					? text.replace(m.group(), String.valueOf(Cach.StaticVillage.getName()))															: text.replace(m.group(), "");
-				text = text.contains("kingdom") 				? text.replace(m.group(), String.valueOf(Cach.StaticKingdom.getName())) 														: text.replace(m.group(), "");
-				text = text.contains("color") 						? text.replace(m.group(), Cach.StaticKingdom.getColorSymbol()) 																		: text.replace(m.group(), "");
+			Matcher match = Pattern.compile("\\{(.*?)\\}").matcher(text);
+			while (match.find()) {
+				text = text.contains(match.group().replaceAll("\\{|", "").replaceAll("\\}","")) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replaceAll("\\{|", "").replaceAll("\\}",""))) 					: text.replace(match.group(), "");
+			}
+			match = Pattern.compile("\\{(.*?)\\}").matcher(text);
+			while (match.find()){
+				text = text.contains("TeleportDelay") 		? text.replace(match.group(), String.valueOf(Cach.tpDelay)) 																						: text.replace(match.group(), "");
+				text = text.contains("town") 						? text.replace(match.group(), String.valueOf(Cach.StaticTown.getName())) 																: text.replace(match.group(), "");
+				text = text.contains("village") 					? text.replace(match.group(), String.valueOf(Cach.StaticVillage.getName()))															: text.replace(match.group(), "");
+				text = text.contains("kingdom") 				? text.replace(match.group(), String.valueOf(Cach.StaticKingdom.getName())) 														: text.replace(match.group(), "");
+				text = text.contains("color") 						? text.replace(match.group(), Cach.StaticKingdom.getColorSymbol()) 																		: text.replace(match.group(), "");
 			}
 		}catch(Exception e) {
 			e.printStackTrace();

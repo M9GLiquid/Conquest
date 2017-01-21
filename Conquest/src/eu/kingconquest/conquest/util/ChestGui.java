@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -27,8 +27,8 @@ public abstract class ChestGui extends Pagination{
 	public static Map<UUID, UUID> openInventories = new HashMap<>();
 	private static Map<UUID, Integer> taskID = new HashMap<>();
 	private Map<Integer, onGuiAction> actions = new HashMap<>();
+	private InventoryClickEvent event;
 	private boolean itemFlag = false;
-	private ClickType clickType;
 	private Inventory inventory;
 	private String title = " ";
 	private UUID uniqueID;
@@ -149,9 +149,6 @@ public abstract class ChestGui extends Pagination{
 	public Map<Integer, onGuiAction> getActions() {
 		return actions;
 	}
-	public ClickType getClickType(){
-		return clickType;
-	}
 	public int getSlotSize(){
 		return invSize;
 	}
@@ -173,10 +170,13 @@ public abstract class ChestGui extends Pagination{
 	public void toggleItemFlag(){
 		itemFlag = !itemFlag;
 	}
-	//Setters
-	public void setClickType(ClickType type){
-		clickType = type;
+	public InventoryClickEvent getClickEvent(){
+		return event;
 	}
+	//Setters
+	public void setClickEvent(InventoryClickEvent e){
+		event = e;
+	}	
 	public void setChestSlots(int i){
 		this.invSize = getCorrectSlots(i);
 	}
