@@ -6,9 +6,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.event.ServerResetEvent;
 import eu.kingconquest.conquest.event.WorldResetEvent;
-import eu.kingconquest.conquest.util.ChestGui;
 
 public class ResetGUI extends ChestGui{
 	private boolean saveKingdoms = false;

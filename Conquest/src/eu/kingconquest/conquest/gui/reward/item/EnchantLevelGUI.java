@@ -1,12 +1,14 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.reward.item;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.core.Kit;
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.core.ChestGui;
+import eu.kingconquest.conquest.core.Reward;
+import eu.kingconquest.conquest.gui.HomeGUI;
+import eu.kingconquest.conquest.gui.reward.RewardGUI;
 
 public class EnchantLevelGUI extends ChestGui{
 	private Enchantment enchant;
@@ -16,10 +18,10 @@ public class EnchantLevelGUI extends ChestGui{
 	private Player player;
 	private int level = 1;
 	private int itemSlot;
-	private Kit kit;
+	private Reward kit;
 	
 
-	public EnchantLevelGUI(Player player, Kit kit, ItemStack item, int slot, Enchantment enchant, ChestGui previousGui){
+	public EnchantLevelGUI(Player player, Reward kit, ItemStack item, int slot, Enchantment enchant, ChestGui previousGui){
 		super();
 		this.tempItem = item.clone();
 		this.previous = previousGui;
@@ -65,7 +67,7 @@ public class EnchantLevelGUI extends ChestGui{
 			tempItem.addUnsafeEnchantment(enchant, level--);
 			display();
 		}, "&3<< Previous",
-				"&cClick to Select!");
+				"&bClick to Select!");
 	}
 	private void increaseButton(){
 		setItem(14, new ItemStack(Material.STONE_BUTTON), player -> {
@@ -73,7 +75,7 @@ public class EnchantLevelGUI extends ChestGui{
 			tempItem.addUnsafeEnchantment(enchant, level++);
 			display();
 		}, "&3 Next >>",
-				"&cClick to Select!");
+				"&bClick to Select!");
 	}
 
 
@@ -81,7 +83,7 @@ public class EnchantLevelGUI extends ChestGui{
 		setItem(13, tempItem, player -> {
 			item.removeEnchantment(enchant);
 			item.addUnsafeEnchantment(enchant, level);
-			new KitItemEditGui(player, kit, item, itemSlot, new KitGUI(player, new HomeGUI(player)));
+			new RewardItemEditGui(player, kit, item, itemSlot, new RewardGUI(player, new HomeGUI(player)));
 			close(player);
 		}, "&aSave", "");
 	}

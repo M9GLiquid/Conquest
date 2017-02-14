@@ -1,12 +1,12 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.objective;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
 
@@ -62,7 +62,7 @@ public class KingdomGUI extends ChestGui{
 				continue;
 			}
 			if (Validate.hasPerm(p, ".admin.edit.kingdom")) 
-				kingdoms(i, kingdom);
+				editButton(i, kingdom);
 			else if  (Validate.hasPerm(p, ".basic")){
 				if (wrapper.isInKingdom(p.getWorld())){
 					if (wrapper.getKingdom(p.getWorld()).equals(kingdom))
@@ -76,10 +76,10 @@ public class KingdomGUI extends ChestGui{
 		}
 	}
 
-	private void kingdoms(int i, Kingdom kingdom){
+	private void editButton(int i, Kingdom kingdom){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
 			new EditGUI(player, kingdom, this);
-		},"&aEdit " + kingdom.getColorSymbol() + kingdom.getName()
+		},"&3Edit " + kingdom.getColorSymbol() + kingdom.getName()
 		,displayInfo(kingdom));
 	}
 
@@ -110,8 +110,7 @@ public class KingdomGUI extends ChestGui{
 		setItem(7, new ItemStack(Material.DIAMOND_PICKAXE), player -> {
 			new CreateGUI(player, this);
 			setCurrentItem(0);
-		}, "&4Create new Kingdom!",
-				"&cClick to open the Create manager!"
+		}, "&3Create new Kingdom!", ""
 				);
 	}
 

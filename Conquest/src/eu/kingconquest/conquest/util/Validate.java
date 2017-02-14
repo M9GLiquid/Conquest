@@ -61,7 +61,7 @@ public class Validate{
 
 	public static void notNull(Object object, String error) {
 		if (object != null)
-			throw new NullPointerException(Message.getMessage(error));
+			new Message(null, MessageType.DEBUG, error);
 	}
 
 	public static boolean isNull(Object object){
@@ -72,6 +72,6 @@ public class Validate{
 
 	public static void isNull(Object object, String error){
 		if (object == null)
-			throw new NullPointerException(Message.getMessage(error));
+			new Message(null, MessageType.DEBUG, error);
 	}
 }

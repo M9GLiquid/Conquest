@@ -6,10 +6,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;

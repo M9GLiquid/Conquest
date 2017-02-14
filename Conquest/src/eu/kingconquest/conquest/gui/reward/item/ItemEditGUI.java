@@ -1,30 +1,30 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.reward.item;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.core.Kit;
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.core.ChestGui;
+import eu.kingconquest.conquest.core.Reward;
 import eu.kingconquest.conquest.util.Validate;
 
 public class ItemEditGUI extends ChestGui{
 	private ChestGui previous;
 	private Player player;
-	private Kit kit;
+	private Reward reward;
 
-	public ItemEditGUI(Player player, Kit kit, ChestGui previousGui){
+	public ItemEditGUI(Player player, Reward reward, ChestGui previousGui){
 		this.previous= previousGui;
 		this.player= player;
-		this.kit = kit;
+		this.reward = reward;
 		
 		create();
 	}
 
 	@Override
 	public void create(){
-		createGui(player, "&6Kit Gui", kit.getItems().size());
+		createGui(player, "&6Item Edit Gui", reward.getItems().size());
 		display();
 	}
 
@@ -46,9 +46,9 @@ public class ItemEditGUI extends ChestGui{
 		//Slot MAIN
 		setCurrentItem(0);
 		for(int slot = 9; slot < 54; slot++) {
-			if (getCurrentItem() > (kit.getItems().size()) || kit.getItems().size() < 1)
+			if (getCurrentItem() > (getItems() -1) || getItems() < 1)
 				break;
-			editButton(slot, kit.getItem(getCurrentItem()), getCurrentItem());
+			editButton(slot, reward.getItem(getCurrentItem()), getCurrentItem());
 			setCurrentItem(getCurrentItem() + 1);
 		}
 	}
@@ -63,17 +63,16 @@ public class ItemEditGUI extends ChestGui{
 				name = item.getItemMeta().getDisplayName();
 		setItem(slot, item, player -> {
 			if (!item.getType().equals(Material.AIR)){
-				if (getClickEvent().getClick().equals(ClickType.DOUBLE_CLICK)){
-					kit.removeItem(itemSlot);
+				if (getClickType().equals(ClickType.DOUBLE_CLICK)){
+					reward.removeItem(itemSlot);
 					previous.create();
 					close(player);
 				}else{
-					new KitItemEditGui(player, kit, item, itemSlot, this);
+					new RewardItemEditGui(player, reward, item, itemSlot, this);
 				}
 			}
 		}, name,  
-				"\n&4Warning! &3Double-Click to Remove"
-				+"\n&3Click to Edit");
+				"\n&bDouble-Click to &4Remove (Cannot be undone)"
+				+"\n&bClick to Edit");
 	}
-
 }

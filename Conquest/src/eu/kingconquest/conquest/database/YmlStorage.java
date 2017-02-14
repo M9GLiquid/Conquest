@@ -21,8 +21,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.Kit;
 import eu.kingconquest.conquest.core.PlayerWrapper;
+import eu.kingconquest.conquest.core.Reward;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.util.Message;
@@ -217,6 +217,7 @@ public class YmlStorage extends YamlConfiguration{
 	}
 
 	public static Set<String> getPathSection(YmlStorage c, String path){
+		Validate.isNull(c.getConfigurationSection(path).getKeys(false), "&cPath Section Failure: \n&3" + path);
 		return c.getConfigurationSection(path).getKeys(false);
 	}
 
@@ -317,7 +318,7 @@ public class YmlStorage extends YamlConfiguration{
 	public static boolean loadLanguage(){
 		YmlStorage lang = getConfig("Language");
 
-		try {
+		try{
 			getPathSection(lang, "Language").forEach(path->{
 				getPathSection(lang, "Language." + path).forEach(pathSection->{
 					if (!pathSection.toLowerCase().equals("admin")){
@@ -431,13 +432,13 @@ public class YmlStorage extends YamlConfiguration{
 		    paths.forEach(filePath -> {
 		        if (Files.isRegularFile(filePath)) {
 		    		String kitUUID = filePath.getFileName().toString().replaceAll(".yml", "");
-	    			if (Validate.notNull(Kit.getKit(UUID.fromString(kitUUID), world))) 
+	    			if (Validate.notNull(Reward.getReward(UUID.fromString(kitUUID), world))) 
 	    				return; //Kit already loaded!
 	    			
 		    		YmlStorage config = getConfig(kitUUID);
 		    		if (!config.isSet(world.getName()))
 		    			return;
-		    			Kit kit = new Kit(
+		    			Reward kit = new Reward(
 		    					config.getString(world.getName() + "." + kitUUID + ".Name")
 		    					, world
 		    					, config.getLong(world.getName() + "." + kitUUID + ".Cost")
@@ -544,7 +545,7 @@ public class YmlStorage extends YamlConfiguration{
 		}
 	}
 	private static void saveKits(World world){
-		Kit.getKits(world).forEach(kit ->{
+		Reward.getRewards(world).forEach(kit ->{
 			if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 				return;
 			YmlStorage config = new YmlStorage("Data" + File.separator + "Kits", kit.getUUID().toString() + ".yml");
@@ -571,7 +572,7 @@ public class YmlStorage extends YamlConfiguration{
 		YmlStorage config = getConfig("Kits");
 		//Save Kits
 		try {
-			Kit.getKits(world).forEach(kit ->{
+			Reward.getRewards(world).forEach(kit ->{
 				if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 					return;
 				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
@@ -667,7 +668,7 @@ public class YmlStorage extends YamlConfiguration{
 			return;
 		getPathSection(config, world.getName()).forEach(uniqueID->{
 			//Remove Village from config if removed from game
-			if (Validate.isNull(Kit.getKit(UUID.fromString(uniqueID), world))){
+			if (Validate.isNull(Reward.getReward(UUID.fromString(uniqueID), world))){
 				config.set(world.getName(), null);
 				removeMsg.put("&6| --&3 [&6Kit&3] " + uniqueID  
 						+ " [&6" + world.getName() + "&3]", true);

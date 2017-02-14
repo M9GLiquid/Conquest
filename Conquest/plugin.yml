@@ -3,35 +3,15 @@ main: eu.kingconquest.conquest.Main
 load: POSTWORLD
 depend: [Vault, dynmap]
 softdepend: [TheNewEconomy]
-version: 0.7.2.1
+version: 0.7.3.0
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 
 
 commands:
-  c:
-    description: Main Commmand
-    aliases: [c, kc, kingc, conquest, kingconquest]
-    permission: conquest.basic
-    permission-message: You do not have "conquest.basic"
-  kc:
-    description: Main Commmand
-    aliases: [c, kc, kingc, conquest, kingconquest]
-    permission: conquest.basic
-    permission-message: You do not have "conquest.basic"
-  kingc:
-    description: Main Commmand
-    aliases: [c, kc, kingc, conquest, kingconquest]
-    permission: conquest.basic
-    permission-message: You do not have "conquest.basic"
-  conquest:
-    description: Main Commmand
-    aliases: [c, kc, kingc, conquest, kingconquest]
-    permission: conquest.basic
-    permission-message: You do not have "conquest.basic"
   kingconquest:
     description: Main Commmand
-    aliases: [c, kc, kingc, conquest, kingconquest]
+    aliases: [c, kc, kingc, conquest]
     permission: conquest.basic
     permission-message: You do not have "conquest.basic"
     
@@ -43,8 +23,13 @@ permissions:
        conquest.basic: true
        conquest.basic.leave: true
        conquest.basic.join: true
+       conquest.admin.edit.reward.item: true
+       conquest.admin.edit.reward.item.remove: true
+       conquest.admin.edit.reward: true
+       conquest.admin.edit.reward.remove: true
        conquest.basic.teleport: true
        conquest.admin: true
+       conquest.admin.reward: true
        conquest.admin.create: true
        conquest.admin.remove: true
        conquest.admin.edit: true
@@ -86,6 +71,10 @@ permissions:
      description: Gives access to all the Admin Commands.
      children:
        conquest.admin.reload: true
+       conquest.admin.edit.reward.item: true
+       conquest.admin.edit.reward.item.remove: true
+       conquest.admin.edit.reward: true
+       conquest.admin.edit.reward.remove: true
        conquest.admin.create.kingdom: true
        conquest.admin.remove.kingdom: true
        conquest.admin.edit.kingdom: true
@@ -189,6 +178,10 @@ permissions:
        conquest.admin.edit.kingdom.spawn: true
        conquest.admin.edit.kingdom.teleport: true
        conquest.admin.edit.kingdom.remove: true
+       conquest.admin.edit.reward.item: true
+       conquest.admin.edit.reward.item.remove: true
+       conquest.admin.edit.reward: true
+       conquest.admin.edit.reward.remove: true
        conquest.admin.edit.town: true
        conquest.admin.edit.town.parent: true
        conquest.admin.edit.town.owner: true
@@ -214,4 +207,5 @@ permissions:
        conquest.basic.join: true
        conquest.basic.leave: true
        conquest.basic.teleport: true
+       conquest.basic.reward: true
     

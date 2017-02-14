@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
+import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.hook.TNEApi;
@@ -52,7 +54,7 @@ public class Kingdom extends Objective{
 		Cach.StaticKingdom = this;
 		new Message(player, MessageType.CHAT, "{JoinSuccess}");
 		wrapper.setKingdom(getUUID());
-		wrapper.getScoreboard().KingdomBoard(player);
+		new KingdomBoard(player);
 		addMember(player.getUniqueId());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + player.getName() + " parent add " + getName());
 	}
@@ -73,7 +75,7 @@ public class Kingdom extends Objective{
 		Cach.StaticKingdom = this;
 		new Message(player, MessageType.CHAT, "{LeaveSuccess}");
 		wrapper.setKingdom(null);
-		wrapper.getScoreboard().NeutralBoard(player);
+		new NeutralBoard(player);
 		removeMember(player.getUniqueId());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + player.getName() + " parent remove " + getName());
 	}

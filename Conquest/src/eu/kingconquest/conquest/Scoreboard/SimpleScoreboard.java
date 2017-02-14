@@ -1,4 +1,4 @@
-package eu.kingconquest.conquest.util;
+package eu.kingconquest.conquest.Scoreboard;
 import java.lang.reflect.Constructor;
 import java.util.AbstractMap;
 import java.util.Collections;
@@ -25,10 +25,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.core.Town;
-import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.util.Message;
 
 //Not of own design merly updated/Changed to fit my need
 public class SimpleScoreboard {
@@ -43,9 +40,8 @@ public class SimpleScoreboard {
     private List<Integer> removed;
     private Set<String> updated;
 
-     public SimpleScoreboard(String title) {
+     public SimpleScoreboard() {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        setTitle(title);
         this.scores = new ConcurrentHashMap<>();
         this.teams = Collections.synchronizedList(Lists.newArrayList());
         this.removed = Lists.newArrayList();
@@ -269,93 +265,4 @@ public class SimpleScoreboard {
             return Bukkit.getOfflinePlayer(name);
         }
     }
-
-    private int x;
-	public void KingdomBoard(Player player){
-		int i = 13;
-		x = 0;
-		setTitle("&6[&eKingdom Information&6]");
-		Kingdom kingdom = PlayerWrapper.getWrapper(player).getKingdom(player.getWorld());
-		Village.getVillages().stream().filter(village->village.getOwner().equals(kingdom)).forEach(village->{
-			if (!village.hasParent())
-				x++;
-		});
-		Town.getTowns().stream().filter(town->town.getOwner().equals(kingdom)).forEach(town->{
-			x++;
-		});
-		add(i--, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
-		add(i--, "&6&lKing:" /*+kingdom.getKingName()*/);	
-		add(i--, "&7*Coming Soon*");	
-		add(i--, "&6&lMoney: &r&7");	
-		add(i--, "&7*Coming Soon* " /*+ TNEApi.getBalance(kingdom.getUUID())*/);	
-		add(i--, "&a&lKingdom Specific");	
-		add(i--, "&6Objectives Captured:");	
-		add(i--, "&7" + x);	
-		add(i--, "&6Traps Deployed:");	
-		add(i--, "&7*Coming Soon*  ");		
-		add(i--, " ");		
-		add(i--, "  ");		
-		add(i--, "   ");		
-		send(player);
-	}
-
-	public void CaptureBoard(Player player, Village village){
-		int i = 13;
-		setTitle("&6[&eCapture Information&6]");
-		add(i--, "&a&lName: ");	
-		add(i--, village.getOwner().getColorSymbol() + village.getName());	
-		add(i--, "       ");	
-		add(i--, "&a&lOwner:");
-		add(i--, village.getOwner().getColorSymbol() + village.getOwner().getName());	
-		add(i--, "&a&lParent:");	
-		add(i--, "&e" + (village.hasParent() ? village.getParent().getName() : "&fNone"));	
-		add(i--, "         ");	
-		add(i--, "&a&lCapture Progress:");	
-		add(i--, "&e" + village.getProgress() + "%");	
-		add(i--, "          ");		
-		add(i--, "           ");
-		add(i--, "            ");
-		send(player);
-	}
-	
-	public void PlayerBoard(Player player){
-		int i = 13;
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		Kingdom kingdom = (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()) : Kingdom.getNeutral(player.getWorld()));
-		setTitle("&6[&ePlayer Information&6]");
-		add(i--, "&6&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
-		add(i--, "&6&lMoney:");	
-		add(i--, "&7*Coming Soon*");	
-		add(i--, "&6&lFriends Online:");
-		add(i--, "&7*Coming Soon* ");
-		add(i--, "&6&lRank:");
-		add(i--, "&7*Coming Soon* ");
-		add(i--, "&6Level:");
-		add(i--, "&7*Coming Soon* ");
-		add(i--, "&6&lxp for next lvl:");
-		add(i--, "&7*Coming Soon* ");
-		add(i--, "");
-		add(i--, "&7*Coming Soon* ");
-		send(player);
-	}
-	
-	public void NeutralBoard(Player player){
-		int i = 13;
-		
-		add(i--, "&1Welcome: &r" + player.getName());
-		add(i--, "           ");
-		add(i--, "&6&lNetwork: &rKingConquest");	
-		add(i--, "&6&lServer: &rConquest");	
-		add(i--, "   ");	
-		add(i--, "&1&lTo Join a capital:");	
-		add(i--, "&6Steps:");	
-		add(i--, "&61: &f/kc");	
-		add(i--, "&62: &eInteract! ");		
-		add(i--, "&6For Help: ");	
-		add(i--, "&61: &f/kc ");	
-		add(i--, "&62: &eInteract!");		
-		add(i--, "");
-		send(player);
-		
-	}
 }

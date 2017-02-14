@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.database.YmlStorage;
 
 public class Message{
@@ -15,41 +16,35 @@ public class Message{
 		switch(type){
 		case CHAT:
 			if (Validate.notNull(player))
-				player.sendMessage(getMessage(message));
+				player.sendMessage(getMessage("{Prefix} " + message));
 			else
-				new Message(null, MessageType.CONSOLE, "&4ERROR: Tried to send a chat message without a player to send to");
+				new Message(null, MessageType.DEBUG, "Tried to send a chat message without a player to send to");
 			break;
 		case DEBUG:
-			Bukkit.getLogger().warning(getMessage("{Prefix}&6[&4Debug&6]" + message));
+			Bukkit.getConsoleSender().sendMessage(getMessage("{Prefix}&6[&4Debug&6] " + message));
 			break;
 		case BROADCAST:
-			Bukkit.broadcastMessage(getMessage("&6[&cBroadCast&6]" + message));
+			Main.getInstance().getServer().broadcastMessage(getMessage("&6[&cBroadcast&6] " + message));
 			break;
 		case CONSOLE:
 		default:
-			Bukkit.getConsoleSender().sendMessage(getMessage("{Prefix}" + message));
+			Bukkit.getConsoleSender().sendMessage(getMessage("{Prefix} " + message));
 			break;
 		}
 	}
 
 	private static String translate(String text){
-		try{
-			Matcher match = Pattern.compile("\\{(.*?)\\}").matcher(text);
-			while (match.find()) {
-				text = text.contains(match.group().replaceAll("\\{|", "").replaceAll("\\}","")) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replaceAll("\\{|", "").replaceAll("\\}",""))) 					: text.replace(match.group(), "");
-			}
-			match = Pattern.compile("\\{(.*?)\\}").matcher(text);
-			while (match.find()){
-				text = text.contains("TeleportDelay") 		? text.replace(match.group(), String.valueOf(Cach.tpDelay)) 																						: text.replace(match.group(), "");
-				text = text.contains("town") 						? text.replace(match.group(), String.valueOf(Cach.StaticTown.getName())) 																: text.replace(match.group(), "");
-				text = text.contains("village") 					? text.replace(match.group(), String.valueOf(Cach.StaticVillage.getName()))															: text.replace(match.group(), "");
-				text = text.contains("kingdom") 				? text.replace(match.group(), String.valueOf(Cach.StaticKingdom.getName())) 														: text.replace(match.group(), "");
-				text = text.contains("color") 						? text.replace(match.group(), Cach.StaticKingdom.getColorSymbol()) 																		: text.replace(match.group(), "");
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-			Bukkit.getConsoleSender().sendMessage(getMessage("&4ERROR: &cA placeholder failed!"));
-		}
+
+		Matcher match = Pattern.compile("\\{(.*?)\\}").matcher(text);
+		while (match.find()) 
+			if (Validate.notNull(YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))))
+				text = text.contains(match.group()) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))) 		: text.replace(match.group(), "");
+
+		text = text.contains("{TeleportDelay}") 	? text.replace("{TeleportDelay}", String.valueOf(Cach.tpDelay)) 									: text.replace("{TeleportDelay}", "");
+		text = text.contains("{town}") 					? text.replace("{town}", String.valueOf(Cach.StaticTown.getName())) 						: text.replace("{town}", "");
+		text = text.contains("{village}") 					? text.replace("{village}", String.valueOf(Cach.StaticVillage.getName()))					: text.replace("{village}", "");
+		text = text.contains("{kingdom}") 				? text.replace("{kingdom}", String.valueOf(Cach.StaticKingdom.getName())) 			: text.replace("{kingdom}", "");
+		text = text.contains("{color}") 					? text.replace("{color}", Cach.StaticKingdom.getColorSymbol()) 								: text.replace("{color}", "");
 		return text;
 	}	
 

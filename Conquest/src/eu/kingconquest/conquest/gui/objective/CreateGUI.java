@@ -1,14 +1,16 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.objective;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.chatinteract.NamePrompt;
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.ChatInteract;
 import eu.kingconquest.conquest.util.Validate;
 
 public class CreateGUI extends ChestGui{
@@ -30,40 +32,26 @@ public class CreateGUI extends ChestGui{
 	@Override
 	public void create(){
 		owner  = Kingdom.getNeutral(p.getWorld());
-		createGui(p, "&6Create Gui", 9);
+		createGui(p, "&6Create Gui", 27);
 		display();
 	}
 
-	private int slot = 9;
 	@Override
 	public void display(){
-		clearSlots();
 		init();
-		slot = 9;
 		
-		//Slot 0
 		playerInfo(p);
-		//Slot 1
 		homeButton();
-		//Slot 3
 		previous(this);
-		//Slot 4
-		infoIcon();
-		//Slot 5
+		infoIcon(4);
 		next(this);
 		
-		//Slot 6
-		discardButton();
-		//Slot 7
-		saveButton();
-		//----------------
+		discardButton(7);
+		saveButton(8);
 		
-		//Slot 9
-		nameButton();
-		//Slot 10
-		locationButton();
-		//Slot 11
-		spawnButton();
+		nameButton(13);
+		locationButton(22);
+		spawnButton(31);
 		//Slot 12
 		/*if (previous instanceof TownGUI) {
 			//ownerButton();
@@ -76,25 +64,27 @@ public class CreateGUI extends ChestGui{
 	}
 
 	private void init(){
+		clearSlots();
 		setName();
 	}
 	
-	private void infoIcon(){
-		setItem(4, new ItemStack(Material.PAPER), player -> {
+	private void infoIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
 		},"&aInformation"
 		, displayInfo());		
 	}
 	
-	private void discardButton(){
-		setItem(7, new ItemStack(Material.REDSTONE_BLOCK), player -> {
+	private void discardButton(int slot){
+		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			close(player);
 			previous.create();
 		}, "&4<< Home", 
-				"&cGo back without Saving!\n");
+				"\n"
+				+ "&cGo back without Saving!\n");
 	}
 	
-	private void saveButton(){
-			setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
+	private void saveButton(int slot){
+			setItem(slot, new ItemStack(Material.EMERALD_BLOCK), player -> {
 				if (previous instanceof KingdomGUI) {
 					Kingdom kingdom = new Kingdom(this.name //Name
 							, null //UUID
@@ -132,7 +122,7 @@ public class CreateGUI extends ChestGui{
 
 	private String displayInfo(){
 
-		String str = "\n&aName: &r" + name;
+		String str = "&aName: &r" + name;
 		if (previous instanceof KingdomGUI)
 		str += "\n&aKing: &r" + "None"
 			+ "\n&aMembers: &r0";
@@ -162,42 +152,40 @@ public class CreateGUI extends ChestGui{
 		return str;
 	}
 
-	AlphabetGUI alphabetGUI;
-	private void nameButton(){
+	private NamePrompt prompt;
+	private void nameButton(int slot){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			alphabetGUI = new AlphabetGUI(player, this, "");
-		alphabetGUI.create();
-		slot = 9;
+			new ChatInteract(player, prompt = new NamePrompt(this), "Cancel");
+			player.closeInventory();
+			display();
 	}, "&4Set Name!", 
-				"&cSet name\n");
-	slot++;
+				"\n"
+				+ "\n&bClick to set name");
+	}
+	protected void setName(){
+		if (Validate.notNull(prompt)){
+			name = prompt.getName();
+			prompt = null;
+		}
 	}
 	
-	private void spawnButton(){
+	private void spawnButton(int slot){
 		setItem(slot, new ItemStack(Material.BED), player -> {
 			spawn = player.getLocation().clone();
 			clearSlots();
-			slot = 9;
 			display();
 		}, "&4Set Spawn",
-				"&cSet Spawn\n");
-		slot++;
+				"\n"
+				+ "\n&bClick to set spawn");
 	}
 	
-	private void locationButton(){
+	private void locationButton(int slot){
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
-			slot = 9;
 			loc = player.getLocation().clone();
 			display();
 		}, "&4Set Location",
-				"&cSet location\n");
-		slot++;
+				"\n"
+				+ "\n&bClick to set location");
 	}
 
-	protected void setName(){
-		if (Validate.notNull(alphabetGUI)){
-			name = alphabetGUI.get();
-			alphabetGUI.close(p);
-		}
-	}
 }

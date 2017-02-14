@@ -20,61 +20,60 @@ public class TrapListener implements Listener{
 		Location location = e.getLocation();
 		Bukkit.getOnlinePlayers().stream()
 		.filter(player->Validate.isWithinArea(location, player.getLocation(), e.getTrapDistance(), 20.0d, 10.0d))// If Player within area
-		.filter(player->PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()))
-		.filter(player->Validate.notNull(Kingdom.getKingdom(e.getOwner(), e.getWorld())))
-		.filter(player ->!PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).equals(Kingdom.getKingdom(e.getOwner(), e.getWorld())))// If player don't belong to the trap's owner
-		.forEach(player->{
-			spawnDefensiveEntity(EntityType.ZOMBIE, location, e.getTrapDistance(), 2);
-			spawnDefensiveEntity(EntityType.SKELETON, location, e.getTrapDistance(), 1);
+			.filter(player->PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()))
+				.filter(player->Validate.notNull(Kingdom.getKingdom(e.getOwner(), e.getWorld())))
+					.filter(player ->!PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).equals(Kingdom.getKingdom(e.getOwner(), e.getWorld())))// If player don't belong to the trap's owner
+						.forEach(player->{
+							spawnDefensiveEntity(EntityType.ZOMBIE, location, e.getTrapDistance(), 2);
+							spawnDefensiveEntity(EntityType.SKELETON, location, e.getTrapDistance(), 1);
 		});
 	}
-	
-	
-	
+
 	private static void spawnDefensiveEntity(EntityType entity, Location location, double radius, int rounds){
-		int i = 1, tries = 0;
+		int i = 0, tries = 0;
 		Location loc1 = location.clone();
 		Location loc2 = location.clone();
-		double x = Math.cos(Math.random()*Math.PI*2)*radius;
-		double z = Math.sin(Math.random()*Math.PI*2)*radius;
-		loc1.add(x, 0, z);
-		loc2.add(x, 1, z);
 		while(true){
-			if ((!loc1.getBlock().getType().isSolid() 
-					||  !loc1.getBlock().getType().equals(Material.AIR)) 
-						&& !loc2.getBlock().getType().isSolid() 
-						|| !loc2.getBlock().getType().equals(Material.AIR)){
-				if (i >= rounds)
+			double x = Math.cos(Math.random()*Math.PI*2)*radius;
+			double z = Math.sin(Math.random()*Math.PI*2)*radius;
+			loc1.add(x, 1, z);
+			loc2.add(x, 2, z);
+			if ((!loc1.getBlock().getType().isSolid() ||  loc1.getBlock().getType().equals(Material.AIR)) 
+					&& !loc2.getBlock().getType().isSolid() || loc2.getBlock().getType().equals(Material.AIR)){
+				location.getWorld().spawnEntity(loc2, entity);
+				if (i >= rounds) // If spawned enteties is more or equal to rounds
 					break;
-				location.getWorld().spawnEntity(loc1, entity);
 				i++;
 			}
-			if (tries >= 30)
+			if (tries >= 100) // For Safety
 				break;
 			tries++;
-			loc1.add(0, 1, 0);
-			loc2.add(0, 1, 0);
+			loc1 = location.clone();
+			loc2 = location.clone();
 		}
 	}
 	@SuppressWarnings("unused")
 	private static void spawnDefensiveEntity(LivingEntity entity, Location location, double radius, int rounds){
-		boolean flag = false;
-		int i = 0;
+		int i = 0, tries = 0;
 		Location loc1 = location.clone();
 		Location loc2 = location.clone();
-		double angle = Math.random()*Math.PI*2;
-		double x = Math.cos(angle)*radius;
-		double z = Math.sin(angle)*radius;
-		while(!flag){
-			loc1.add(0, 1, 0);
-			loc2.add(0, 1, 0);
-			if (!loc1.getBlock().getType().isSolid() && !loc2.getBlock().getType().isSolid()){
-				if (i > rounds)
+		while(true){
+			double x = Math.cos(Math.random()*Math.PI*2)*radius;
+			double z = Math.sin(Math.random()*Math.PI*2)*radius;
+			loc1.add(x, 1, z);
+			loc2.add(x, 2, z);
+			if ((!loc1.getBlock().getType().isSolid() ||  loc1.getBlock().getType().equals(Material.AIR)) 
+						&& !loc2.getBlock().getType().isSolid() || loc2.getBlock().getType().equals(Material.AIR)){
+				location.getWorld().spawn(loc2, entity.getClass());
+				if (i >= rounds) // If spawned enteties is more or equal to rounds
 					break;
-				location.getWorld().spawn(new Location(location.getWorld(), x, loc1.getY(), z), entity.getClass());
-				flag = !flag;
 				i++;
 			}
+			if (tries >= 100) // For Safety
+				break;
+			tries++;
+			loc1 = location.clone();
+			loc2 = location.clone();
 		}
 	}
 }

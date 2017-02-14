@@ -1,4 +1,4 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.reward.item;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.core.ChestGui;
 
 public class ItemFlagGUI extends ChestGui{
 	private ArrayList<ItemFlag> targets= new ArrayList<ItemFlag>();
@@ -69,6 +69,6 @@ public class ItemFlagGUI extends ChestGui{
 			item.getItemMeta().addItemFlags(flag);
 			previous.create();
 		}, "&6Set Flag: &f" + flag.name(),
-				"&cClick to Select!");
+				"&bClick to Select!");
 	}
 }

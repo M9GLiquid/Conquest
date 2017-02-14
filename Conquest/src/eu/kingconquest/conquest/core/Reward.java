@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.util.Validate;
 
-public class Kit{
+public class Reward{
 	private HashMap<Integer, ItemStack> items = new HashMap<Integer, ItemStack>();
 	private long cooldown;
 	private UUID owner;
@@ -20,23 +20,23 @@ public class Kit{
 	private UUID uuid;
 	private long cost;
 	
-	public Kit(String name, World world, long cost, long cooldown, UUID owner){
+	public Reward(String name, World world, long cost, long cooldown, UUID owner){
 		this.name = name;
 		newUUID();
 		this.world = world.getUID();
 		this.cost = cost;
 		this.cooldown = cooldown;
 		this.owner = owner;
-		addKit(this);
+		addReward(this);
 	}
-	public Kit(String name, World world, long cost, long cooldown, UUID owner, UUID uuid){
+	public Reward(String name, World world, long cost, long cooldown, UUID owner, UUID uuid){
 		this.name = name;
 		this.uuid = uuid;
 		this.world = world.getUID();
 		this.cost = cost;
 		this.cooldown = cooldown;
 		this.owner = owner;
-		addKit(this);
+		addReward(this);
 	}
 
 	public String getName(){
@@ -91,7 +91,7 @@ public class Kit{
 				items.put(i, temp.clone());
 	}
 	
-	public void addItems(int i, ItemStack[] temp){
+	public void addItems(int i, ArrayList<ItemStack> temp){
 		for (ItemStack item : temp){
 			if (Validate.notNull(item)){
 					items.put(i++, item.clone());
@@ -107,38 +107,38 @@ public class Kit{
 			items.replace(slot, new ItemStack(Material.AIR));
 	}
 	
-	private static ArrayList<Kit> kits = new ArrayList<Kit>();
-	public static ArrayList<Kit> getKits(){
-		return kits;
+	private static ArrayList<Reward> rewards = new ArrayList<Reward>();
+	public static ArrayList<Reward> getRewards(){
+		return rewards;
 	}
-	public static ArrayList<Kit> getKits(World world){
-		ArrayList<Kit> kits = new ArrayList<Kit>();
-		Kit.getKits().stream()
-			.filter(kit->kit.getWorld().equals(world))
-			.forEach(kit->{
-				kits.add(kit);
+	public static ArrayList<Reward> getRewards(World world){
+		ArrayList<Reward> rewards = new ArrayList<Reward>();
+		Reward.getRewards().stream()
+			.filter(reward->reward.getWorld().equals(world))
+			.forEach(reward->{
+				rewards.add(reward);
 			});
-		return kits;
+		return rewards;
 	}
-	public static Kit getKit(UUID uniqueID, World world){
-		for (Kit kit : getKits(world))
-			if (kit.getUUID().equals(uniqueID)
-					&& kit.getWorld().equals(world))
-				return kit;
+	public static Reward getReward(UUID uniqueID, World world){
+		for (Reward reward : getRewards(world))
+			if (reward.getUUID().equals(uniqueID)
+					&& reward.getWorld().equals(world))
+				return reward;
 		return null;
 	}
-	private static void addKit(Kit kit){
-		kits.add(kit);
+	private static void addReward(Reward reward){
+		rewards.add(reward);
 	}
-	public static void removeKit(Kit kit){
-		kits.remove(kit);
+	public static void removeReward(Reward reward){
+		rewards.remove(reward);
 	}
 	
 	public static void clear(){
-		kits.forEach(kit ->{
-			kit.items.clear();
+		rewards.forEach(reward ->{
+			reward.items.clear();
 		});
-		kits.clear();
+		rewards.clear();
 	}
 	
 	private void newUUID(){

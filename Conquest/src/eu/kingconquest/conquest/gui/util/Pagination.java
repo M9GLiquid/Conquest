@@ -1,7 +1,9 @@
-package eu.kingconquest.conquest.util;
+package eu.kingconquest.conquest.gui.util;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import eu.kingconquest.conquest.core.ChestGui;
 
 public class Pagination{
     private int limit = 45;
@@ -45,13 +47,13 @@ public class Pagination{
 	}
 	
 	public void next(ChestGui parent){
-		if (!(getItems() > getOffset()))
+		if (!(getItems() - 9 > getOffset()))
 			return;
 		parent.setItem(5, new ItemStack(Material.CHORUS_FRUIT_POPPED), player -> {
 			setPageNr(getPageNr() + 1);
 			parent.display();
-		}, "§2>>","§1-----------------"
-				+ "\n§4 Page " + (getPageNr() + 1) + " >>"
+		}, "&2>>",""
+				+ "\n&4 Page " + (getPageNr() + 1) + " >>"
 				);
 	}
 	
@@ -62,8 +64,8 @@ public class Pagination{
 			setPageNr(getPageNr() - 1);
     		setCurrentItem(getPageNr() * getLimit());
 			parent.display();
-		}, "§2<<","§1-----------------"
-				+ "\n§4 << Page "+ (getPageNr() - 1) 
+		}, "&2<<",""
+				+ "\n&4 << Page "+ (getPageNr() - 1) 
 				);
 	}
 }

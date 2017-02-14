@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Rocket;
@@ -41,7 +42,7 @@ public class CaptureProgressListener implements Listener{
 		player = e.getPlayer();
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 
-		wrapper.getScoreboard().KingdomBoard(player);
+		new KingdomBoard(player);
 		village.removeCapturing(player);
 		village.setOwner(wrapper.getKingdom(player.getWorld()));
 		village.setPreOwner(wrapper.getKingdom(player.getWorld()));

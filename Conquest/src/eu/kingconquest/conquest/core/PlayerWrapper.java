@@ -8,11 +8,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.util.SimpleScoreboard;
+import eu.kingconquest.conquest.Scoreboard.Board;
+import eu.kingconquest.conquest.Scoreboard.SimpleScoreboard;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerWrapper{
 	private static HashMap<UUID, PlayerWrapper> wrapper = new HashMap<UUID, PlayerWrapper>();
+	private Board boardType;
 
 	public PlayerWrapper(UUID uuid){
 		wrapper.put(uuid, this);
@@ -31,6 +33,16 @@ public class PlayerWrapper{
 	public void addFriends(ArrayList<UUID> friends){
 		this.friends.addAll(friends);
 	}
+	public int getOnlineFriends(){
+		int i = 0;
+		for (Player player : Bukkit.getOnlinePlayers())
+			if (friends.contains(player.getUniqueId()))
+				i++;
+		return i;
+	}
+	public int getNumberOfFriends(){
+		return friends.size();
+	}
 	
 	private UUID kingdom;
 	public void setKingdom(UUID uuid){
@@ -47,6 +59,13 @@ public class PlayerWrapper{
 	
 	public Player getPlayer(UUID uuid){
 		return Bukkit.getPlayer(uuid);
+	}
+	
+	public Board getBoardType(){
+		return boardType;
+	}
+	public void setBoardType(Board board){
+		this.boardType = board;
 	}
 	
 	private SimpleScoreboard scoreboard;

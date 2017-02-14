@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import eu.kingconquest.conquest.commands.HomeCommand;
 import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.Kit;
+import eu.kingconquest.conquest.core.Reward;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.database.YmlStorage;
@@ -69,7 +69,7 @@ public class Main extends JavaPlugin implements Listener{
 	}
 
 	private void setListeners(){
-		this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this);
+		//this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerMoveListener(), this);
 		this.getServer().getPluginManager().registerEvents(new TrapListener(), this);
@@ -88,10 +88,6 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-		this.getCommand("c").setExecutor(new HomeCommand());
-		this.getCommand("kc").setExecutor(new HomeCommand());
-		this.getCommand("kingc").setExecutor(new HomeCommand());
-		this.getCommand("conquest").setExecutor(new HomeCommand());
 		this.getCommand("kingconquest").setExecutor(new HomeCommand());
 		return true;
 	}
@@ -120,7 +116,7 @@ public class Main extends JavaPlugin implements Listener{
 		Kingdom.clear();
 		Town.clear();
 		Village.clear();
-		Kit.clear();
+		Reward.clear();
 		
 		getServer().getServicesManager().unregisterAll(this);
 		Bukkit.getScheduler().cancelTasks(this);

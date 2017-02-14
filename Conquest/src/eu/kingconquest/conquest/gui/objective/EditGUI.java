@@ -1,16 +1,19 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.objective;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import eu.kingconquest.conquest.chatinteract.NamePrompt;
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.gui.PlayerGUI;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.util.ChatInteract;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
@@ -21,103 +24,116 @@ public class EditGUI extends ChestGui{
 	private Objective objective;
 	private Town parent;
 	
-	public EditGUI(Player player, Object objective, Object previousGui){
+	public EditGUI(Player player, Objective objective, Object previousGui){
 		super();
 		this.player = player;
 		this.previous = (ChestGui) previousGui;
-		this.objective = (Objective) objective;
+		this.objective = objective;
 		create();
 	}
 
 	@Override
 	public void create(){
-		createGui(player, "&6Edit Gui", 9);
+		createGui(player, "&6Edit Gui", 54);
 		display();
 	}
 	
-	private int slot = 9;
 	@Override
 	public void display(){
-		clearSlots();
 		init();
-		slot = 9;
 		
-		//Slot 0
 		playerInfo(player);
-		//Slot 1
 		homeButton();
-		//Slot 3
 		previous(this);
-		//Slot 4
-		infoIcon();
-		//Slot 5
+		infoIcon(4);
 		next(this);
-		//Slot 8
 		backButton(previous);
 		
 		//Slot MAIN
 		if (objective instanceof Kingdom){
 			if (Validate.hasPerm(player, ".admin.edit.kingdom")){
 				if (Validate.hasPerm(player, ".admin.edit.kingdom.name"))
-					nameButton();
+					nameButton(13);
 				if (Validate.hasPerm(player, ".admin.edit.kingdom.player"))
-					playerButton();
+					playerButton(22);
 					//childrenButton();
-				if (Validate.hasPerm(player, ".admin.edit.kingdom.spawn"))
-					spawnButton();
+				if (Validate.hasPerm(player, ".admin.edit.kingdom.spawn")){
+					spawnButton(30);
+					if (Validate.hasPerm(player, ".admin.edit.kingdom.location"))
+						locationIcon(31);
+				}
 				if (Validate.hasPerm(player, ".admin.edit.kingdom.location"))
-					locationButton();
+					locationButton(32);
 				if (Validate.hasPerm(player, ".admin.remove.kingdom"))
-					removeButton();
+					removeButton(40);
 			}
 		}if (objective instanceof Town) {
 			if (Validate.hasPerm(player, ".admin.edit.town")){
 				if (Validate.hasPerm(player, ".admin.edit.town.name"))
-					nameButton();
+					nameButton(13);
 				if (Validate.hasPerm(player, ".admin.edit.town.owner"))
-					ownerButton();
+					ownerButton(22);
 				//childrenButton();
-				if (Validate.hasPerm(player, ".admin.edit.town.spawn"))
-					spawnButton();
+				if (Validate.hasPerm(player, ".admin.edit.town.spawn")){
+					spawnButton(30);
+					if (Validate.hasPerm(player, ".admin.edit.town.location"))
+						locationIcon(31);
+				}
 				if (Validate.hasPerm(player, ".admin.edit.town.location"))
-					locationButton();
+					locationButton(32);
 				if (Validate.hasPerm(player, ".admin.remove.town"))
-					removeButton();
+					removeButton(40);
 			}
 		}if (objective instanceof Village) {
 			if (Validate.hasPerm(player, ".admin.edit.village")){
 				if (Validate.hasPerm(player, ".admin.edit.village.name"))
-					nameButton();
-				if (Validate.hasPerm(player, ".admin.edit.village.owner"))
-					ownerButton();
+					nameButton(13);
 				if (Validate.hasPerm(player, ".admin.edit.village.parent"))
-					parentButton();
-				if (Validate.hasPerm(player, ".admin.edit.village.spawn"))
-					spawnButton();
+					parentButton(22);
+				if (Validate.hasPerm(player, ".admin.edit.village.owner")){
+					ownerButton(30);
+					ownerIcon(31);
+					preOwnerButton(32);
+				}
+				if (Validate.hasPerm(player, ".admin.edit.village.spawn")){
+					spawnButton(39);
+					if (Validate.hasPerm(player, ".admin.edit.village.location"))
+						locationIcon(40);
+				}
 				if (Validate.hasPerm(player, ".admin.edit.village.location"))
-					locationButton();
+					locationButton(41);
 				if (Validate.hasPerm(player, ".admin.remove.village"))
-					removeButton();
+					removeButton(49);
 			}
 		}
-		teleportButton();
+		teleportButton(2);
 	}
 
-	private void teleportButton(){
+	private void ownerIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
+		}, "&r&7<< &5&lEdit Owners &7>>", "");
+	}
+	private void locationIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
+		}, "&r&7<< &5&lEdit Locations &7>>", "");
+	}
+
+	private void teleportButton(int slot){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			player.teleport(objective.getLocation());
 		}, "&2Teleport", 
 				"&6Teleport to target");
-		slot++;
 	}
 
 	private void init(){
+		clearSlots();
 		setName();
 		setOwner();
+		setPreOwner();
 		setParent();
 	}
 
-	private void playerButton(){
+	private void playerButton(int slot){
 		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 		SkullMeta skull = (SkullMeta) head.getItemMeta();
 		skull.setOwner(player.getName());
@@ -126,10 +142,9 @@ public class EditGUI extends ChestGui{
         	new PlayerGUI(player ,this, objective);
         }, "&4Manage Members",
         		"");
-		slot++;
 	}
 	
-	private void removeButton(){
+	private void removeButton(int slot){
 			setItem(slot, new ItemStack(Material.BARRIER), player ->{
 				objective.delete(player);
 				if (objective instanceof Kingdom){
@@ -145,19 +160,19 @@ public class EditGUI extends ChestGui{
 				close(player);
 			}, "&4Remove!",  
 					"&4Click to remove!");
-			slot++;
 	}
 
-	public void infoIcon(){
-		setItem(4, new ItemStack(Material.PAPER), player -> {
+	public void infoIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
+			display();
 			},"&3Information"
 			,  displayInfo());
 	}
 	private String displayInfo() {
-		String str = "&1-----------------\n ";
+		String str = "";
 		
 		if (objective instanceof Kingdom) {
-			str	+= "\n&aName: &f" + ((Kingdom)objective).getColorSymbol() + objective.getName();
+			str	= "\n&aName: &f" + ((Kingdom)objective).getColorSymbol() + objective.getName();
 			if(Validate.notNull(((Kingdom)objective).getKing()))
 				str += "\n&aKing: &f" + ((Kingdom)objective).getKing().getName();
 			else
@@ -175,7 +190,7 @@ public class EditGUI extends ChestGui{
 					+ "\n- &cY: &f"+ Math.floor(objective.getSpawn().getY())
 					+ "\n- &cZ: &f"+ Math.floor(objective.getSpawn().getZ());
 		}else if(objective instanceof Town) {
-			str += "\n&aName: &f" + objective.getName();
+			str = "\n&aName: &f" + objective.getName();
 			str += "\n&aOwner: &f" + objective.getOwner().getName();
 			if (Validate.notNull(((Town)objective).getChildren()))
 				str += "\n&aChildren: &f" + ((Town)objective).getChildren().size();
@@ -190,14 +205,14 @@ public class EditGUI extends ChestGui{
 					+ "\n- &cY: &f"+ Math.floor(objective.getSpawn().getY())
 					+ "\n- &cZ: &f"+ Math.floor(objective.getSpawn().getZ());
 		}else if(objective instanceof Village) {
-			str += "\n&aName: &f" + objective.getOwner().getColorSymbol() + objective.getName();
-			str += "\n&aOwner: &f" + objective.getOwner().getName();
+			str = "\n&aName: &f" + objective.getOwner().getColorSymbol() + objective.getName();
+			str += "\n&aOwner: &f" + objective.getOwner().getName()
+					+ "\n&aPre-Owner: &f" + ((Village)objective).getPreOwner().getName();
 			if (Validate.notNull(((Village)objective).getParent()))
 				str += "\n&aParent: &f" + ((Village)objective).getParent().getName();
 			else
 				str += "\n&aParent: &fNone";			
-			str += "\n&aPre-Owner: &f" + ((Village)objective).getPreOwner().getName()
-					+ "\n&aLocation:"
+			str +=  "\n&aLocation:"
 					+ "\n- &cX: &f"+ Math.floor(objective.getLocation().getX())
 					+ "\n- &cY: &f"+ Math.floor(objective.getLocation().getY())
 					+ "\n- &cZ: &f"+ Math.floor(objective.getLocation().getZ())
@@ -208,30 +223,29 @@ public class EditGUI extends ChestGui{
 		}
 		return str;
 	}
-	
-	AlphabetGUI alphabetGUI;
-	private void nameButton(){
+
+	private NamePrompt prompt;
+	private void nameButton(int slot){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			alphabetGUI = new AlphabetGUI(player, this, objective.getName());
-			slot = 9;
-		}, "&4Edit Name!",  
-				"&cClick to edit!");
-		slot++;
+			prompt = new NamePrompt(this);
+			new ChatInteract(player, prompt, "Cancel");
+			player.closeInventory();
+		}, "&5Edit Name!",  
+				"&bClick to edit!");
 	}
-	protected void setName(){
-		if (Validate.notNull(alphabetGUI)){
-			objective.setName(alphabetGUI.get());
-			alphabetGUI.close(player);
+	private void setName(){
+		if (Validate.notNull(prompt)){
+			objective.setName(prompt.getName());
+			prompt = null;
 		}
 	}
 	
-	private void spawnButton(){
+	private void spawnButton(int slot){
 		setItem(slot, new ItemStack(Material.BED), player -> {
 			setSpawn(player);
 			display();
-		}, "&4Edit Spawn Location!",
-				"&cClick to edit!");
-		slot++;
+		}, "&5Edit Spawn Location!",
+				"&bClick to edit!");
 	}
 	private void setSpawn(Player player){
 		objective.setSpawn(player.getLocation());
@@ -247,13 +261,12 @@ public class EditGUI extends ChestGui{
 		}
 	}
 
-	private void locationButton(){
+	private void locationButton(int slot){
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
 			setLocation(player);
 			display();
-		}, "&4Edit Dynmap Location!",
-				"&cClick to edit!");
-		slot++;
+		}, "&5Edit Dynmap Location!",
+				"&bClick to edit!");
 	}
 	private void setLocation(Player player){
 		objective.setSpawn(player.getLocation());
@@ -270,12 +283,11 @@ public class EditGUI extends ChestGui{
 	}
 	
 	private OwnerGUI ownerGui;
-	private void ownerButton(){
+	private void ownerButton(int slot){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			ownerGui = new OwnerGUI(player, this);
-		}, "&4Edit Owner!",
-				"&cClick to edit!");
-		slot++;
+		}, "&5Edit Owner!",
+				"&bClick to edit!");
 	}
 	private void setOwner(){
 		if (Validate.notNull(ownerGui) 
@@ -286,14 +298,33 @@ public class EditGUI extends ChestGui{
 			ownerGui = null;
 		}
 	}
+	
+	private OwnerGUI preOwnerGui;
+	private void preOwnerButton(int slot){
+		setItem(slot, new ItemStack(Material.BEACON), player -> {
+			preOwnerGui = new OwnerGUI(player, this);
+		}, "&5Edit Pre-Owner!",
+				"&bClick to edit!");
+	}
+	private void setPreOwner(){
+		if (Validate.notNull(preOwnerGui) 
+				&& !(objective instanceof Kingdom)){
+				((Village)objective).setPreOwner(preOwnerGui.get());
+				objective.updateGlass();
+				preOwnerGui.close(player);
+				Cach.StaticVillage = (Village) objective;
+				Cach.StaticTown = parent;
+				new Message(player, MessageType.CHAT, "{EditVillagePreParent}");
+				preOwnerGui = null;
+		}
+	}
 
 	private ParentGUI parentGui;
-	private void parentButton(){
+	private void parentButton(int slot){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			parentGui = new ParentGUI(player, objective, this);
-		}, "&4Edit Parent!",
-				"&cClick to edit!");
-		slot++;
+		}, "&5Edit Parent!",
+				"&bClick to edit!");
 	}
 	private void setParent(){
 		if (Validate.notNull(parentGui)){
@@ -303,7 +334,7 @@ public class EditGUI extends ChestGui{
 			parent.addChild((Village) objective);
 			Cach.StaticVillage = (Village) objective;
 			Cach.StaticTown = parent;
-			new Message(player, MessageType.CHAT, "{editVillageParent}");
+			new Message(player, MessageType.CHAT, "{EditVillageParent}");
 			parentGui.close(player);
 			parentGui = null;
 		}

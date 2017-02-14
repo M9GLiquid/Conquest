@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
+import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.core.CaptureProcess;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Village;
@@ -57,8 +59,8 @@ public class ProximityZoneListener implements Listener{
 			village.stop();
 		
 		if (wrapper.isInKingdom(player.getWorld()))
-			wrapper.getScoreboard().KingdomBoard(player);
+			 new KingdomBoard(player);
 		else
-			wrapper.getScoreboard().NeutralBoard(player);
+			new NeutralBoard(player);
 	}
 }

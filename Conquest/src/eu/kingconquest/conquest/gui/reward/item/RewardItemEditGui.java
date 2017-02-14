@@ -1,27 +1,27 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.reward.item;
 
 import java.util.Arrays;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import eu.kingconquest.conquest.core.Kit;
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.core.ChestGui;
+import eu.kingconquest.conquest.core.Reward;
+import eu.kingconquest.conquest.gui.util.AlphabetGUI;
 import eu.kingconquest.conquest.util.Validate;
 
-public class KitItemEditGui extends ChestGui{
+public class RewardItemEditGui extends ChestGui{
 	private ChestGui previous;
 	private ItemStack tempItem;
 	private ItemStack item;
 	private Player player;
 	private int itemSlot;
-	private Kit kit;
-	private int itemSize;
+	private Reward kit;
+	private int itemSize = 1;
 
-	public KitItemEditGui(Player player, Kit kit, ItemStack item, int slot, ChestGui previous){
+	public RewardItemEditGui(Player player, Reward kit, ItemStack item, int slot, ChestGui previous){
 		super();
 		this.tempItem = item.clone();
 		this.previous = previous;
@@ -55,7 +55,6 @@ public class KitItemEditGui extends ChestGui{
 		//Slot 8
 		backButton(previous);
 
-		RemoveButton(4);
 		nameButton(13);
 		loreButton(22);
 		enchantButton(31);
@@ -73,24 +72,13 @@ public class KitItemEditGui extends ChestGui{
 		setLore();
 	}
 
-	private void RemoveButton(int slot){
-		setItem(slot, new ItemStack(Material.BARRIER), player -> {
-			if (getClickEvent().getClick().equals(ClickType.DOUBLE_CLICK)){
-				kit.removeItem(itemSlot);
-				previous.create();
-				close(player);
-			}
-		}, "&4Remove &fItem",  
-				"\n&4WARNING!"
-				+ "\n&3Double Click to &cRemove");
-	}
 	AlphabetGUI nameGUI;
 	private void nameButton(int slot){
 		setItem(slot, tempItem, player -> {
 			nameGUI = new AlphabetGUI(player, this, "");
 			System.out.println(nameGUI);
 		}, "",  
-				"\n&3Click to Edit Title");
+				"\n&bClick to Edit Title");
 	}
 	private void setName(){
 		if (Validate.notNull(nameGUI)){
@@ -107,7 +95,7 @@ public class KitItemEditGui extends ChestGui{
 		setItem(slot, tempItem, player -> {
 			loreGUI = new AlphabetGUI(player, this, "");
 		}, "",  
-				"\n&3Click to Edit Lore");
+				"\n&bClick to Edit Lore");
 	}
 	private void setLore(){
 		if (Validate.notNull(loreGUI)){
@@ -129,15 +117,15 @@ public class KitItemEditGui extends ChestGui{
 	private void enchantButton(int slot){
 		setItem(slot, new ItemStack(Material.ENCHANTED_BOOK), player -> {
 			new EnchantGUI(player, kit, item, itemSlot, this);
-		}, "&3Edit &fEnchantments",  
-				"\n&3Click to Edit");
+		}, "",  
+				"\n&bClick to Edit Enchantments");
 	}
 
 	private void flagButton(int slot){
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
 			new ItemFlagGUI(player, item, this);
-		}, "&3Edit &fItemFlags",  
-				"\n&3Click to Edit");
+		}, "",  
+				"\n&bClick to Edit Flags");
 	}
 
 	private void DecreaseItemButton(int slot, int amount){
@@ -164,7 +152,7 @@ public class KitItemEditGui extends ChestGui{
 	private void IncreaseItemButton(int slot, int amount){
 		tempItem.setAmount(amount);
 		setItem(slot, new ItemStack(Material.STONE_BUTTON, amount), player -> {
-			if ((item.getAmount() + amount) < item.getMaxStackSize())
+			if ((item.getAmount() + amount) > item.getMaxStackSize())
 				itemSize = item.getMaxStackSize();
 			else
 				itemSize = itemSize + amount;

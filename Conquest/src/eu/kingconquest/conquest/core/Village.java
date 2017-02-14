@@ -4,6 +4,7 @@ import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.IRON_BLOCK;
 import static org.bukkit.Material.STEP;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -23,6 +24,10 @@ import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Village extends Objective{
+	private DecimalFormat  format = new DecimalFormat("###.##");  
+	private final static double SPEED = 1.2d;
+	private double progress = 0.0d;
+	
 	public Village(String name, Location loc, Location spawn, Kingdom owner, Kingdom preOwner, Town parent) {
 		this(name
 				, null
@@ -57,10 +62,8 @@ public class Village extends Objective{
 	 * 
 	 * @return double
 	 */
-	private final static double SPEED = 1.2d;
-	private double progress = 0.0d;
 	public double getProgress(){
-		return progress;
+		return Double.valueOf(format.format(progress).replaceAll(",", "."));
 	}
 
 	/**
@@ -102,8 +105,9 @@ public class Village extends Objective{
 	public void setParent(Town parent){
 		this.parent = parent;
 		//If parent owner not same as this owner update parent to neutral
-		if (!parent.getOwner().equals(this))
-			parent.setNeutral();
+		if (Validate.notNull(parent))
+			if (!parent.getOwner().equals(this))
+				parent.setNeutral();
 	}
 	
 	/**

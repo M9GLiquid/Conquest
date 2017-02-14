@@ -1,4 +1,4 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.reward.item;
 
 import java.util.ArrayList;
 
@@ -6,8 +6,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.core.Kit;
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.core.ChestGui;
+import eu.kingconquest.conquest.core.Reward;
 
 public class EnchantGUI extends ChestGui{
 	private ArrayList<Enchantment> targets= new ArrayList<Enchantment>();
@@ -15,9 +15,9 @@ public class EnchantGUI extends ChestGui{
 	private ItemStack item;
 	private Player player;
 	private int itemSlot;
-	private Kit kit;
+	private Reward kit;
 	
-	public EnchantGUI(Player player, Kit kit, ItemStack item, int slot, ChestGui previousGui){
+	public EnchantGUI(Player player, Reward kit, ItemStack item, int slot, ChestGui previousGui){
 		super();
 		previous = previousGui;
 		this.player = player;
@@ -26,7 +26,6 @@ public class EnchantGUI extends ChestGui{
 		this.kit = kit;
 		create();
 	}
-
 
 	@Override
 	public void create(){
@@ -65,6 +64,6 @@ public class EnchantGUI extends ChestGui{
 			new EnchantLevelGUI(player, kit, item, itemSlot, enchant, this);
 			close(player);
 		}, "&6Set Enchant: &f" + enchant.getName(),
-				"&cClick to Select!");
+				"&bClick to Select!");
 	}
 }

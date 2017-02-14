@@ -1,11 +1,11 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.objective;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.util.ChestGui;
 
 public class OwnerGUI extends ChestGui{
 	private Player player;
@@ -30,22 +30,17 @@ public class OwnerGUI extends ChestGui{
 	@Override
 	public void display(){
 		setCurrentItem(0);
-		//Slot 0
 		playerInfo(player);
-		//Slot 3
 		previous(this);
-		//Slot 5
 		next(this);
-		//Slot 8
-		closeButton();
+		backButton(previous);
 
 		for(int i = 9; i < 54; i++) {
 			if (getCurrentItem() > (Kingdom.getKingdoms().size() -1) || getItems() == 0)
 				break;
 			
 			Kingdom kingdom = Kingdom.getKingdoms().get(getCurrentItem());
-			if (!kingdom.getName().equals("Neutral"))
-				ownerButton(i, kingdom);
+			ownerButton(i, kingdom);
 			setCurrentItem(getCurrentItem() + 1);
 		}
 	}
@@ -54,8 +49,8 @@ public class OwnerGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			this.owner = kingdom;
 			previous.create();
-		}, "&6Set " + kingdom.getName() + " as Owner",
-				"&cClick to Select!!");
+		}, kingdom.getColorSymbol() + kingdom.getName(),
+				"&bClick to select as &aOwner!");
 	}
 
 	public Kingdom get(){

@@ -1,4 +1,4 @@
-package eu.kingconquest.conquest.util;
+package eu.kingconquest.conquest.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -18,21 +19,25 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.kingconquest.conquest.Main;
-import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.gui.HomeGUI;
+import eu.kingconquest.conquest.gui.util.Pagination;
 import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.Validate;
 
 public abstract class ChestGui extends Pagination{
-	public static Map<UUID, ChestGui> inventoriesByUUID = new HashMap<>();
-	public static Map<UUID, UUID> openInventories = new HashMap<>();
-	private static Map<UUID, Integer> taskID = new HashMap<>();
-	private Map<Integer, onGuiAction> actions = new HashMap<>();
-	private InventoryClickEvent event;
-	private boolean itemFlag = false;
-	private Inventory inventory;
-	private String title = " ";
-	private UUID uniqueID;
-	private int invSize = 9;
+	public static Map<UUID, ChestGui> 			inventoriesByUUID = new HashMap<>();
+	public static Map<UUID, UUID> 					openInventories = new HashMap<>();
+	private Map<InventoryType, ItemStack> 	inventoryItems = new HashMap<>();
+	private static Map<UUID, Integer> 				taskID = new HashMap<>();
+	private Map<Integer, onGuiAction> 			actions = new HashMap<>();
+	private boolean 											isPlayerInventory = false;
+	private boolean 											itemFlag = false;
+	private Inventory 											inventory;
+	private String 												title = " ";
+	private UUID 													uniqueID;
+	private ClickType 											type;
+	private int 														invSize = 9;
 
 	/**
 	 * Greate a Chest GUI
@@ -48,11 +53,8 @@ public abstract class ChestGui extends Pagination{
 		create(invSize, getTitle());
 	}
 	public void create(int invSize, String invName) {
-		setChestSlots(invSize);
-		generateUUID();
-		inventory = Bukkit.createInventory(null, this.invSize, this.title);
-		//inventory.setMaxStackSize(72); // min -128 max 127
-		inventoriesByUUID.put(getUuid(), this);
+		inventory = Bukkit.createInventory(null, getCorrectSlotSize(invSize), Message.getMessage(invName));
+		inventoriesByUUID.put(generateUUID(), this);
 	}
 
 	public abstract void display();
@@ -66,7 +68,6 @@ public abstract class ChestGui extends Pagination{
 	private static int oldTaskID = 0;
 	public void createGui(Player player, String str, Integer items ){
 		setItems(items);
-		setTitle(str);
 
 		if (Validate.notNull(taskID.get(player.getUniqueId())))
 			oldTaskID = taskID.get(player.getUniqueId()); // Close any old Tasks of the player (Previous ChestGui)
@@ -78,8 +79,10 @@ public abstract class ChestGui extends Pagination{
 				Bukkit.getScheduler().cancelTask(oldTaskID);
 			}
 		}.runTaskLater(Main.getInstance(), 1).getTaskId());
-		create(getItems());
+		create(getItems(), str);
 		clearSlots();
+		
+		display();
 	}
 
 	public void open(Player player){
@@ -95,14 +98,19 @@ public abstract class ChestGui extends Pagination{
 	}
 
 	public void playerInfo(Player player){
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 		SkullMeta skull = (SkullMeta) head.getItemMeta();
 		skull.setOwner(player.getName());
 		head.setItemMeta(skull);
 		setSkullItem(0, head, p ->{
 		}, "&6" + player.getName() + " Information",
-				"\n&7Kingdom: &3" + (PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()) ? PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getName() : "None")
+				"&7ScoreBoard: &3" + (Validate.notNull(wrapper.getBoardType()) ? wrapper.getBoardType().getName() : "" )
+				+ "\n&7Kingdom: &3" + (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()).getName() : "None")
 				+ "\n&7Money: &6" + TNEApi.getBalance(player)
+				+ "\n&7Friends : &a" + wrapper.getOnlineFriends() + "&6/&2" + wrapper.getNumberOfFriends() + " &aOnline"
+				+"\n"
+				+ "\n&bClick for Settings"
 				);
 	}
 	public void homeButton(){
@@ -111,22 +119,21 @@ public abstract class ChestGui extends Pagination{
 			HomeGUI homeGui = new HomeGUI(player);
 			homeGui.create();
 		}, "&4Home",
-				"\n&3Click to go &cHome");
+				"\n&bClick to go &cHome");
 	}
 	public void backButton(ChestGui chestGui){
 		if (Validate.isNull(chestGui))
 			return;
 		setItem(8, new ItemStack(Material.ARROW), player -> {
 			chestGui.create();
-			openInventories.remove(player.getUniqueId());
 		}, "&4<< Back",
-				"\n&3Click to go &cBack");
+				"\n&bClick to go &cBack");
 	}
 	public void closeButton(){
 		setItem(8, new ItemStack(Material.BARRIER), player -> {
 			close(player);
 		}, "&4Close!",
-				"\n&3Click to &cclose!"
+				"\n&bClick to &cclose!"
 				);
 	}
 	public void clearSlots(){
@@ -152,7 +159,7 @@ public abstract class ChestGui extends Pagination{
 	public int getSlotSize(){
 		return invSize;
 	}
-	public int getCorrectSlots(int i) {
+	public int getCorrectSlotSize(int i) {
 		if (i <= 9) {
 			return 18;
 		}else if (i <= 18)
@@ -170,16 +177,14 @@ public abstract class ChestGui extends Pagination{
 	public void toggleItemFlag(){
 		itemFlag = !itemFlag;
 	}
-	public InventoryClickEvent getClickEvent(){
-		return event;
+	public ClickType getClickType(){
+		return type;
 	}
+
 	//Setters
-	public void setClickEvent(InventoryClickEvent e){
-		event = e;
+	public void setClickType(ClickType type){
+		this.type = type;
 	}	
-	public void setChestSlots(int i){
-		this.invSize = getCorrectSlots(i);
-	}
 	public void setItem(int slot, ItemStack item, onGuiAction action, String title, String lore){
 		if (Validate.isNull(item))
 			return;
@@ -206,8 +211,6 @@ public abstract class ChestGui extends Pagination{
 				meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 			stack.setItemMeta(meta);
 		}
-		//NmsUtils.setItemStackSize(inventory.getHolder(), stack, stack.getAmount());
-		//stack.setAmount(72);
 		inventory.setItem(slot, stack);
 		
 		if (Validate.notNull(action))
@@ -248,7 +251,30 @@ public abstract class ChestGui extends Pagination{
 	}
 	
 	//Generator
-	public void generateUUID(){
+	public UUID generateUUID(){
 		uniqueID = UUID.randomUUID();
+		return uniqueID;
+	}
+
+	public Map<InventoryType, ItemStack> getInventoryItems(){
+		return inventoryItems;
+	}
+
+	public void setInventoryItem(InventoryType type, ItemStack item){
+		if (inventoryItems.size() > 2)
+			clearInventoryItems();
+		this.inventoryItems.put(type, item.clone());
+	}
+
+	public void clearInventoryItems(){
+		inventoryItems.clear();
+	}
+
+	
+	public boolean isPlayerInventory(){
+		return isPlayerInventory;
+	}
+	public void setPlayerInventory(boolean b){
+		this.isPlayerInventory = b;
 	}
 }

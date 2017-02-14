@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 import eu.kingconquest.conquest.Main;
+import eu.kingconquest.conquest.Scoreboard.CaptureBoard;
 import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
@@ -21,27 +22,26 @@ public class CaptureProcess{
 	 */
 	public CaptureProcess(Player player, Village village){
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		//Move to Village class
 
 		if (village.getTaskID() > 0)
 			return;
 
 		if(village.getProgress() >= 100.0d 
 				&& village.getAttackers().size() < 1){
-			wrapper.getScoreboard().CaptureBoard(player, village);
+			new CaptureBoard(player, village);
 			return;
 		}
 
 		//If Player is attacking Call Event
 		if (village.getAttackers().containsKey(player.getUniqueId()))
 			pm.callEvent(new CaptureStartEvent(player, village));
-		wrapper.getScoreboard().CaptureBoard(player, village);
+		 	new CaptureBoard(player, village);
 
 		village.setTaskID(Bukkit.getServer().getScheduler()
 				.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable(){
 					@Override
 					public void run(){
-						wrapper.getScoreboard().CaptureBoard(player, village);	
+						new CaptureBoard(player, village);	
 						
 						// On successfull capture call event
 						if (village.getProgress() >= 100.0d

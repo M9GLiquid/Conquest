@@ -1,11 +1,11 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.objective;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.util.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
 public class VillageGUI extends ChestGui{
@@ -49,13 +49,13 @@ public class VillageGUI extends ChestGui{
 				break;
 			
 			if (Validate.hasPerm(p, "admin.edit.village")) 
-				villages(i, Village.getVillages(p.getWorld()).get(getCurrentItem()));
+				editButton(i, Village.getVillages(p.getWorld()).get(getCurrentItem()));
 			
 			setCurrentItem(getCurrentItem()+1);
 		}
 	}
 	
-	private void villages(int i, Village village){
+	private void editButton(int i, Village village){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
 			new EditGUI(player, village, this);
 		},"&aEdit " + village.getOwner().getColorSymbol() + village.getName()
@@ -83,8 +83,7 @@ public class VillageGUI extends ChestGui{
 		setItem(7, new ItemStack(Material.DIAMOND_PICKAXE), player -> {
 			setCurrentItem(0);
 			new CreateGUI(player, this);
-		}, "&4Create new Village!", 
-				"\n&cClick to open the Create manager!"
+		}, "&3Create new Village!",  ""
 				);
 	}
 }

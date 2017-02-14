@@ -1,4 +1,4 @@
-package eu.kingconquest.conquest.gui;
+package eu.kingconquest.conquest.gui.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import eu.kingconquest.conquest.util.ChestGui;
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.util.Validate;
 
 public class AlphabetGUI extends ChestGui{
@@ -104,7 +104,6 @@ public class AlphabetGUI extends ChestGui{
 
 	private void saveButton(){
 		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
-			Bukkit.getWorld(player.getWorld().getUID()).playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3.0F, 1.0F);
 			previous.create();
 		},"&aSave" , "");
 	}

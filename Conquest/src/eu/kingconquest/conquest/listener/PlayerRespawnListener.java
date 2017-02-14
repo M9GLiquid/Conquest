@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -23,20 +24,25 @@ public class PlayerRespawnListener implements Listener{
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent e){
 		Player player = e.getPlayer();
-		e.setRespawnLocation(deathLocation);
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		player.setGameMode(GameMode.SPECTATOR);
-		player.getServer().getScheduler().runTaskLaterAsynchronously(Main.getInstance(), new Runnable(){
-			@Override
-			public void run(){
-				if (wrapper.isInKingdom(player.getWorld())){
-					player.teleport(wrapper.getKingdom(player.getWorld()).getSpawn());
-				}else{
-					player.teleport(player.getWorld().getSpawnLocation());
-				}
+
+		YmlStorage.getWorlds().forEach(uniqueID->{
+			if (player.getWorld().equals(Bukkit.getWorld(uniqueID))){
+				e.setRespawnLocation(deathLocation);
+				PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+				player.setGameMode(GameMode.SPECTATOR);
+				player.getServer().getScheduler().runTaskLaterAsynchronously(Main.getInstance(), new Runnable(){
+					@Override
+					public void run(){
+						if (wrapper.isInKingdom(player.getWorld())){
+							player.teleport(wrapper.getKingdom(player.getWorld()).getSpawn());
+						}else{
+							player.teleport(player.getWorld().getSpawnLocation());
+						}
+					}
+				}, YmlStorage.getLong("RespawnDelay", player.getLocation()));
+				player.setGameMode(GameMode.SURVIVAL);
 			}
-		}, YmlStorage.getLong("RespawnDelay", player.getLocation()));
-		player.setGameMode(GameMode.SURVIVAL);
+		});
 	}
 	
 	public static Location getDeathLocation(){
