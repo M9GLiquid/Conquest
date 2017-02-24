@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>todo.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/todo.txt</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

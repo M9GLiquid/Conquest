@@ -53,25 +53,27 @@ public class Validate{
 		return false; 
 	}
 
-	public static boolean notNull(Object object) {
-		if (object != null)
-			return true;
-		return false;
+	public static boolean notNull(Object reference){
+		if (reference == null)
+			return false;
+		return true;
 	}
 
-	public static void notNull(Object object, String error) {
-		if (object != null)
-			new Message(null, MessageType.DEBUG, error);
+	public static <T> T notNull(T reference, String errorMsg){
+		if (reference == null)
+			throw new NullPointerException(Message.getMessage(errorMsg));
+		return reference;
 	}
 
-	public static boolean isNull(Object object){
-		if (object == null)
-			return  true;
-		return false;
+	public static boolean isNull(Object reference){
+		if (reference != null)
+			return false;
+		return true;
 	}
 
-	public static void isNull(Object object, String error){
-		if (object == null)
-			new Message(null, MessageType.DEBUG, error);
+	public static <T> T isNull(T reference, String errorMsg){
+		if (reference != null)
+			throw new NullPointerException(Message.getMessage(errorMsg));
+		return reference;
 	}
 }

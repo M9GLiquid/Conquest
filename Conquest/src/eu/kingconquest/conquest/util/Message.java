@@ -12,6 +12,7 @@ import eu.kingconquest.conquest.database.YmlStorage;
 
 public class Message{
 
+
 	public Message(Player player, MessageType type, String message){
 		switch(type){
 		case CHAT:
@@ -34,11 +35,12 @@ public class Message{
 	}
 
 	private static String translate(String text){
-
 		Matcher match = Pattern.compile("\\{(.*?)\\}").matcher(text);
+		String matched = "";
+		
 		while (match.find()) 
-			if (Validate.notNull(YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))))
-				text = text.contains(match.group()) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))) 		: text.replace(match.group(), "");
+			 matched = String.valueOf(Validate.notNull(YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))));
+				text = text.contains(matched) 					? text.replace(matched, YmlStorage.getStr(matched.replace("{", "").replace("}", ""))) 		: text.replace(matched, "");
 
 		text = text.contains("{TeleportDelay}") 	? text.replace("{TeleportDelay}", String.valueOf(Cach.tpDelay)) 									: text.replace("{TeleportDelay}", "");
 		text = text.contains("{town}") 					? text.replace("{town}", String.valueOf(Cach.StaticTown.getName())) 						: text.replace("{town}", "");

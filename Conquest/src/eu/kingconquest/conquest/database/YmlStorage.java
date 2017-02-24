@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -211,13 +212,13 @@ public class YmlStorage extends YamlConfiguration{
 			removeUsers(world);
 			removeTowns(world);
 			removeVillages(world);
-			//removeKits(world);
+			removeKits(world);
 		});
 		output();
 	}
 
 	public static Set<String> getPathSection(YmlStorage c, String path){
-		Validate.isNull(c.getConfigurationSection(path).getKeys(false), "&cPath Section Failure: \n&3" + path);
+		Validate.notNull(c.getConfigurationSection(path).getKeys(false), "&cPath Section Failure: \n&3" + path);
 		return c.getConfigurationSection(path).getKeys(false);
 	}
 
@@ -274,6 +275,8 @@ public class YmlStorage extends YamlConfiguration{
 		removeMsg.clear();
 	}
 
+	
+	//LOAD
 	//Config Loads
 	public static boolean loadDefault(){
 		YmlStorage config = getConfig("Config");
@@ -337,7 +340,6 @@ public class YmlStorage extends YamlConfiguration{
 		}
 	}
 	//Data Files
-	//LOAD
 	private static void loadKingdoms(World world){
 		YmlStorage config = getConfig("Kingdoms");
 
@@ -428,7 +430,7 @@ public class YmlStorage extends YamlConfiguration{
 		});
 	}
 	private static void loadKits(World world){
-		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))) {
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))){
 		    paths.forEach(filePath -> {
 		        if (Files.isRegularFile(filePath)) {
 		    		String kitUUID = filePath.getFileName().toString().replaceAll(".yml", "");
@@ -567,32 +569,6 @@ public class YmlStorage extends YamlConfiguration{
 			}
 		});
 	}
-	@SuppressWarnings("unused")
-	private static void saveKitsOld(World world){
-		YmlStorage config = getConfig("Kits");
-		//Save Kits
-		try {
-			Reward.getRewards(world).forEach(kit ->{
-				if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
-					return;
-				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
-				if (Validate.notNull(kit.getOwner()))
-					config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwnerUUID().toString());
-				config.set(world.getName() + "." + kit.getUUID() + ".Cost", kit.getCost());
-				config.set(world.getName() + "." + kit.getUUID() + ".Cooldown", kit.getCooldown());
-				if (kit.getItems().size() < 1)
-					return;
-				kit.getItems().forEach((i, item)->{
-					config.set(world.getName() + "." + kit.getUUID() + ".Slots." + i, item);
-				});
-			});
-			config.saveConfig();
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
 
 
 	//REMOVE
@@ -661,20 +637,27 @@ public class YmlStorage extends YamlConfiguration{
 		});
 		config.saveConfig();
 	}
-	@SuppressWarnings("unused")
 	private static void removeKits(World world){
-		YmlStorage config = getConfig("Kits");
-		if (!config.isSet(world.getName()))
-			return;
-		getPathSection(config, world.getName()).forEach(uniqueID->{
-			//Remove Village from config if removed from game
-			if (Validate.isNull(Reward.getReward(UUID.fromString(uniqueID), world))){
-				config.set(world.getName(), null);
-				removeMsg.put("&6| --&3 [&6Kit&3] " + uniqueID  
-						+ " [&6" + world.getName() + "&3]", true);
-			}
-		});
-		config.saveConfig();
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))){
+		    paths.forEach(filePath -> {
+		        if (Files.isRegularFile(filePath)) {
+		    		String kitUUID = filePath.getFileName().toString().replaceAll(".yml", "");
+	    			if (Validate.isNull(Reward.getReward(UUID.fromString(kitUUID), world))){
+						try{
+							Files.delete(filePath);
+						} catch (NoSuchFileException x) {
+						    System.err.format("%s: no such" + " file or directory%n", filePath);
+						}catch (IOException e){
+							e.printStackTrace();
+						}
+	    			}
+		    		removeMsg.put("&6| --&3 " +  kitUUID + " [&6" + world.getName() + "&3]", true);	
+		        }
+		    });
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		} 
 	} 
 
 	private static ArrayList<UUID> worlds = new ArrayList<UUID>();
@@ -686,7 +669,6 @@ public class YmlStorage extends YamlConfiguration{
 	}
 	public static World getWorld(UUID uuid) {
 		for (UUID uniqueID : worlds){
-			Validate.isNull(Bukkit.getWorld(uniqueID), "Test 1");
 			if (Bukkit.getWorld(uniqueID).getUID().equals(uuid))
 				return Bukkit.getWorld(uniqueID);
 		}
