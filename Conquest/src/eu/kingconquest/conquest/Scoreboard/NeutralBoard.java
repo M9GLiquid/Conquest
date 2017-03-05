@@ -21,6 +21,6 @@ public class NeutralBoard extends Board{
 		board.add(i--, " ");	
 		board.add(i--, " ");	
 		board.add(i--, " ");	
-		board.send(player);
+		board.send(player); // Build Scoreboard then send it to player
 	}
 }

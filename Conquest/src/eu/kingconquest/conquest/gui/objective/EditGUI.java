@@ -40,7 +40,7 @@ public class EditGUI extends ChestGui{
 	
 	@Override
 	public void display(){
-		init();
+		clearSlots();
 		
 		playerInfo(player);
 		homeButton();
@@ -123,14 +123,6 @@ public class EditGUI extends ChestGui{
 			player.teleport(objective.getLocation());
 		}, "&2Teleport", 
 				"&6Teleport to target");
-	}
-
-	private void init(){
-		clearSlots();
-		setName();
-		setOwner();
-		setPreOwner();
-		setParent();
 	}
 
 	private void playerButton(int slot){
@@ -232,54 +224,47 @@ public class EditGUI extends ChestGui{
 			player.closeInventory();
 		}, "&5Edit Name!",  
 				"&bClick to edit!");
-	}
-	private void setName(){
+
 		if (Validate.notNull(prompt)){
-			objective.setName(prompt.getName());
+			objective.setName(prompt.get());
 			prompt = null;
 		}
 	}
 	
 	private void spawnButton(int slot){
 		setItem(slot, new ItemStack(Material.BED), player -> {
-			setSpawn(player);
+			objective.setSpawn(player.getLocation());
+			if (objective instanceof Kingdom) {
+				Cach.StaticKingdom = (Kingdom) objective;
+				new Message(player, MessageType.CHAT, "{editKingdomSpawn}");
+			}if (objective instanceof Town) {
+				Cach.StaticTown = (Town) objective;
+				new Message(player, MessageType.CHAT, "{editTownSpawn}");
+			}if (objective instanceof Village) {
+				Cach.StaticVillage = (Village) objective;
+				new Message(player, MessageType.CHAT, "{editVillageSpawn}");
+			}
 			display();
 		}, "&5Edit Spawn Location!",
 				"&bClick to edit!");
 	}
-	private void setSpawn(Player player){
-		objective.setSpawn(player.getLocation());
-		if (objective instanceof Kingdom) {
-			Cach.StaticKingdom = (Kingdom) objective;
-			new Message(player, MessageType.CHAT, "{editKingdomSpawn}");
-		}if (objective instanceof Town) {
-			Cach.StaticTown = (Town) objective;
-			new Message(player, MessageType.CHAT, "{editTownSpawn}");
-		}if (objective instanceof Village) {
-			Cach.StaticVillage = (Village) objective;
-			new Message(player, MessageType.CHAT, "{editVillageSpawn}");
-		}
-	}
 
 	private void locationButton(int slot){
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
-			setLocation(player);
+			objective.setSpawn(player.getLocation());
+			if (objective instanceof Kingdom) {
+				Cach.StaticKingdom = (Kingdom) objective;
+				new Message(player, MessageType.CHAT, "{editKingdomLocation}");
+			}if (objective instanceof Town) {
+				Cach.StaticTown = (Town) objective;
+				new Message(player, MessageType.CHAT, "{editTownLocation}");
+			}if (objective instanceof Village) {
+				Cach.StaticVillage = (Village) objective;
+				new Message(player, MessageType.CHAT, "{editVillageLocation}");
+			}
 			display();
 		}, "&5Edit Dynmap Location!",
 				"&bClick to edit!");
-	}
-	private void setLocation(Player player){
-		objective.setSpawn(player.getLocation());
-		if (objective instanceof Kingdom) {
-			Cach.StaticKingdom = (Kingdom) objective;
-			new Message(player, MessageType.CHAT, "{editKingdomLocation}");
-		}if (objective instanceof Town) {
-			Cach.StaticTown = (Town) objective;
-			new Message(player, MessageType.CHAT, "{editTownLocation}");
-		}if (objective instanceof Village) {
-			Cach.StaticVillage = (Village) objective;
-			new Message(player, MessageType.CHAT, "{editVillageLocation}");
-		}
 	}
 	
 	private OwnerGUI ownerGui;
@@ -288,8 +273,7 @@ public class EditGUI extends ChestGui{
 			ownerGui = new OwnerGUI(player, this);
 		}, "&5Edit Owner!",
 				"&bClick to edit!");
-	}
-	private void setOwner(){
+
 		if (Validate.notNull(ownerGui) 
 				&& !(objective instanceof Kingdom)){
 				objective.setOwner(ownerGui.get());
@@ -305,8 +289,7 @@ public class EditGUI extends ChestGui{
 			preOwnerGui = new OwnerGUI(player, this);
 		}, "&5Edit Pre-Owner!",
 				"&bClick to edit!");
-	}
-	private void setPreOwner(){
+
 		if (Validate.notNull(preOwnerGui) 
 				&& !(objective instanceof Kingdom)){
 				((Village)objective).setPreOwner(preOwnerGui.get());
@@ -325,8 +308,7 @@ public class EditGUI extends ChestGui{
 			parentGui = new ParentGUI(player, objective, this);
 		}, "&5Edit Parent!",
 				"&bClick to edit!");
-	}
-	private void setParent(){
+
 		if (Validate.notNull(parentGui)){
 			if (parentGui.get() instanceof Town)
 			parent = (Town) parentGui.get();

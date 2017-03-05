@@ -95,19 +95,19 @@ public class RewardCreateGUI extends ChestGui{
 		IncreaseItemButton(51, 64);
 	}
 
-	private NamePrompt prompt;
+	private NamePrompt namePrompt;
 	private void nameButton(int slot){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			prompt = new NamePrompt(this);
-			new ChatInteract(player, prompt, "Cancel");
+			namePrompt = new NamePrompt(this);
+			new ChatInteract(player, namePrompt, "Cancel");
 			player.closeInventory();
 		}, "&5Edit Name!",  
 				"&bClick to edit!");
 	}
 	private void setName(){
-		if (Validate.notNull(prompt)){
-			name = prompt.getName();
-			prompt = null;
+		if (Validate.notNull(namePrompt)){
+			name = namePrompt.get();
+			namePrompt = null;
 		}
 	}
 
@@ -225,17 +225,17 @@ public class RewardCreateGUI extends ChestGui{
 	}
 	private void itemButton(int slot){ //shift + click add item to Kit (Add to Slot and on press Save)
 		if (getInventoryItems().containsKey(InventoryType.PLAYER))
-			item = getInventoryItems().get(InventoryType.PLAYER).clone();
+			item = getInventoryItems().get(InventoryType.PLAYER);
 
 		setItem(slot, item, player -> {
 			if (getClickType().equals(ClickType.LEFT)){
-				items.add(item);
+				items.add(item.clone());
 				item  = new ItemStack(Material.ARMOR_STAND);
-			}else if  (getClickType().equals(ClickType.RIGHT))
+			}else if (getClickType().equals(ClickType.RIGHT))
 				new RewardItemsGUI(player, this, items);
 			display();
 		}, "", 
-				"\n&bClick an item in your inventory to add it then..."
+				"\n&bClick item in your inventory, add it, then..."
 						+"\n&bLeft-Click this to &aSave &3item to kit or..."
 						+"\n&bRight-Click this to &dSee &3items selected");
 	}

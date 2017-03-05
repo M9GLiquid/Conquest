@@ -1,22 +1,19 @@
 package eu.kingconquest.conquest.listener;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
+import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.database.YmlStorage;
-import eu.kingconquest.conquest.event.ServerRestartEvent;
 import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.Validate;
 
-public class ServerRestartListener implements Listener{
+public class ServerRestartListener{
 
-	@EventHandler
-	public void onServerRestart(ServerRestartEvent event){
+	public static void onServerRestart(){
 		Bukkit.getServer().getOnlinePlayers().forEach(player->{ 
 			if (!Validate.hasPerm(player, "conquest.basic.*"))
 				Vault.perms.playerAdd(player, "conquest.basic.*");
@@ -35,6 +32,20 @@ public class ServerRestartListener implements Listener{
 					}
 				}
 			});
+		});
+	}
+
+	public static void createNeutralKingdom(){
+		YmlStorage.getWorlds().forEach(uniqueID->{
+			if (Validate.isNull(Kingdom.getKingdom("Neutral", Bukkit.getWorld(uniqueID))))
+				new Kingdom(
+						"Neutral", 
+						null, 
+						Bukkit.getWorld(uniqueID).getSpawnLocation(), 
+						-1);
+			System.out.println("Test 1: " + Bukkit.getWorld(uniqueID));
+			System.out.println("Test 2: " + Kingdom.getKingdom("Neutral", Bukkit.getWorld(uniqueID)));
+			System.out.println("Test 3: " + Validate.isNull(Kingdom.getKingdom("Neutral", Bukkit.getWorld(uniqueID))));
 		});
 	}
 }

@@ -77,7 +77,7 @@ public class ConflictGUI extends ChestGui{
 
 	private void tpButton(int i){
 		setItem(i, new ItemStack(Material.ENDER_PEARL), player -> {
-			new Teleport(player, targets.get(getCurrentItem() -1).getLocation().clone());
+			new Teleport(player, targets.get(getCurrentItem()).getLocation().clone());
 			targets.clear();
 		},"&1Teleport to: &f" + targets.get(getCurrentItem()).getName(),
 				"&aSpawn Location: "
@@ -86,5 +86,4 @@ public class ConflictGUI extends ChestGui{
 				+ "\n -&1Z: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getZ())
 				);
 	}
-
 }

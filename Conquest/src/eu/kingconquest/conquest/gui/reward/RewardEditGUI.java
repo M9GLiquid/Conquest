@@ -40,7 +40,8 @@ public class RewardEditGUI extends ChestGui{
 
 	@Override
 	public void display(){
-		init();
+		clearSlots();
+		setCurrentItem(0);
 		//Slot 0
 		playerInfo(player);
 		//Slot 3
@@ -73,14 +74,6 @@ public class RewardEditGUI extends ChestGui{
 		itemsButton(40);
 		addButton(49);
 	}
-	
-	private void init(){
-		clearSlots();
-		setCurrentItem(0);
-		setName();
-		//setParent();
-		//setItems();
-	}
 
 	private void displayInfo(int slot){
 		setItem(4, new ItemStack(Material.PAPER), player -> {
@@ -103,10 +96,9 @@ public class RewardEditGUI extends ChestGui{
 				(name != "" ? "&7Name: &3" + name + "\n" : name)
 				+  "&aClick to Select!"
 				);
-	}
-	protected void setName(){
+
 		if (Validate.notNull(namePrompt)){
-			name = namePrompt.getName();
+			name = namePrompt.get();
 			namePrompt = null;
 		}
 	}

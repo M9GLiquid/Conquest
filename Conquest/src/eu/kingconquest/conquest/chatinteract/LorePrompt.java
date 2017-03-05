@@ -20,27 +20,30 @@ public class LorePrompt extends StringPrompt{
 
 	@Override
 	public Prompt acceptInput(ConversationContext context, String answer){
+		context.getForWhom().sendRawMessage(Message.getMessage("{Prefix} &7Lore: "));
+		lore.forEach(text->{
+			context.getForWhom().sendRawMessage(Message.getMessage(text));
+		});
+		
 		if (answer.equalsIgnoreCase("SAVE")){
 			if (Validate.notNull(gui))
 				gui.create();
 				return null;
 		}else
-			addLore(answer);
+			lore.add(answer);
 		return this;
 	}
 
 	@Override
 	public String getPromptText(ConversationContext context){
 		context.getForWhom().sendRawMessage(Message.getMessage("&6---- [ &dChat Interaction &6] ----"));
-		context.getForWhom().sendRawMessage(Message.getMessage("&6Add Lore or exit with &cCancel&6, save by typing &aSave"));
+		context.getForWhom().sendRawMessage(Message.getMessage("&6Add Lore or exit the interaction with &cCancel&6 or save by &aSave"));
 		context.getForWhom().sendRawMessage(Message.getMessage(" "));
 		return "";
 	}
 
-	private void addLore(String answer){
-		lore.add(answer);
-	}
-	public ArrayList<String> getLore(){
+	public ArrayList<String> get(){
 		return lore;
 	}
+
 }

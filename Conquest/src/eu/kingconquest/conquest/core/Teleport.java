@@ -12,7 +12,7 @@ import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 
 public class Teleport{
-	private static int taskID;
+	private int taskID;
 
 	public Teleport(Player player, Location loc){
 		Cach.tpDelay = YmlStorage.getLong("TeleportDelay", loc);
@@ -25,7 +25,7 @@ public class Teleport{
 				player.teleport(loc);
 				startFall(player);
 			}
-		}, YmlStorage.getLong("TeleportDelay", loc));
+		}, Cach.tpDelay);
 	}
 
 	/**
@@ -34,10 +34,10 @@ public class Teleport{
 	 * @return void
 	 */
 	private void startFall(Player player){
+		player.setFlying(false);
 		taskID = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){
-			player.setFlying(false);
 			if (player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR)
 				stopFall(player);
 			}

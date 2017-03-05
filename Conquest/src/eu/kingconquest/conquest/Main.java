@@ -12,7 +12,6 @@ import eu.kingconquest.conquest.core.Reward;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.database.YmlStorage;
-import eu.kingconquest.conquest.event.ServerRestartEvent;
 import eu.kingconquest.conquest.hook.Dynmap;
 import eu.kingconquest.conquest.hook.Hooks;
 import eu.kingconquest.conquest.hook.TNEApi;
@@ -60,16 +59,15 @@ public class Main extends JavaPlugin implements Listener{
 		YmlStorage.output();
 		new Message(null, MessageType.CONSOLE, "&6|=======================================|");
 
-		ServerRestartListener srl = new ServerRestartListener();
-		if (Bukkit.getOnlinePlayers().size() > 0){
-			//Bukkit.getServer().getPluginManager().callEvent(new ServerRestartEvent());
-			srl.onServerRestart(new ServerRestartEvent());
-		}
+		if (Bukkit.getOnlinePlayers().size() > 0)
+			ServerRestartListener.onServerRestart();
+		ServerRestartListener.createNeutralKingdom();
 		setListeners();
+		
 	}
 
 	private void setListeners(){
-		//this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this);
+		//this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this); // Not Working
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerMoveListener(), this);
 		this.getServer().getPluginManager().registerEvents(new TrapListener(), this);

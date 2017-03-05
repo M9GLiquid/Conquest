@@ -20,7 +20,7 @@ public class NamePrompt extends StringPrompt{
 	public Prompt acceptInput(ConversationContext context, String answer){
 		context.getForWhom().sendRawMessage(Message.getMessage("{Prefix} &7Name: " + answer));
 		
-		setName(answer);
+		set(answer);
 		if (Validate.notNull(gui))
 			gui.create();
 		
@@ -35,10 +35,10 @@ public class NamePrompt extends StringPrompt{
 		return "";
 	}
 
-	private void setName(String answer){
+	private void set(String answer){
 		this.name = answer;
 	}
-	public String getName(){
+	public String get(){
 		return name;
 	}
 }

@@ -26,6 +26,8 @@ public class CreateGUI extends ChestGui{
 		super();
 		p = player;
 		previous = previousGui;
+		owner = Kingdom.getKingdom("Neutral", p.getWorld());
+		System.out.println(Kingdom.getKingdom("Neutral", p.getWorld()));
 		create();
 	}
 
@@ -65,7 +67,6 @@ public class CreateGUI extends ChestGui{
 
 	private void init(){
 		clearSlots();
-		setName();
 	}
 	
 	private void infoIcon(int slot){
@@ -161,10 +162,9 @@ public class CreateGUI extends ChestGui{
 	}, "&4Set Name!", 
 				"\n"
 				+ "\n&bClick to set name");
-	}
-	protected void setName(){
+
 		if (Validate.notNull(prompt)){
-			name = prompt.getName();
+			name = prompt.get();
 			prompt = null;
 		}
 	}

@@ -1,15 +1,15 @@
 package eu.kingconquest.conquest.gui.reward.item;
 
-import java.util.Arrays;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import eu.kingconquest.conquest.chatinteract.LorePrompt;
+import eu.kingconquest.conquest.chatinteract.NamePrompt;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Reward;
-import eu.kingconquest.conquest.gui.util.AlphabetGUI;
+import eu.kingconquest.conquest.util.ChatInteract;
 import eu.kingconquest.conquest.util.Validate;
 
 public class RewardItemEditGui extends ChestGui{
@@ -42,7 +42,6 @@ public class RewardItemEditGui extends ChestGui{
 	public void display(){
 		setCurrentItem(0);
 		clearSlots();
-		init();
 		//Slot 0
 		playerInfo(player);
 		//Slot 1
@@ -67,50 +66,39 @@ public class RewardItemEditGui extends ChestGui{
 		IncreaseItemButton(51, 10);
 	}
 	
-	private void init(){
-		setName();
-		setLore();
-	}
-
-	AlphabetGUI nameGUI;
+	private NamePrompt namePrompt;
 	private void nameButton(int slot){
-		setItem(slot, tempItem, player -> {
-			nameGUI = new AlphabetGUI(player, this, "");
-			System.out.println(nameGUI);
+		setItem(slot, new ItemStack(Material.BOOK), player -> {
+			namePrompt = new NamePrompt(this);
+			new ChatInteract(player, namePrompt, "Cancel");
+			player.closeInventory();
 		}, "",  
-				"\n&bClick to Edit Title");
-	}
-	private void setName(){
-		if (Validate.notNull(nameGUI)){
+				"\n&bClick to Edit/Set Displayname");
+
+		if (Validate.notNull(namePrompt)){
 			ItemMeta meta = item.getItemMeta();
-			meta.setDisplayName(nameGUI.get());
+			meta.setDisplayName(namePrompt.get());
 			item.setItemMeta(meta);
 			tempItem = item.clone();
-			nameGUI.close(player);
+			namePrompt = null;
 		}
 	}
 
-	AlphabetGUI loreGUI;
+	private LorePrompt lorePrompt;
 	private void loreButton(int slot){
 		setItem(slot, tempItem, player -> {
-			loreGUI = new AlphabetGUI(player, this, "");
+			lorePrompt = new LorePrompt(this);
+			new ChatInteract(player, lorePrompt, "Cancel");
+			player.closeInventory();
 		}, "",  
-				"\n&bClick to Edit Lore");
-	}
-	private void setLore(){
-		if (Validate.notNull(loreGUI)){
+				"\n&bClick to Edit/Set Lore");
+		
+		if (Validate.notNull(lorePrompt)){
 			ItemMeta meta = item.getItemMeta();
-			/*List<String> lore = new ArrayList<String>();
-			String temp = loreGUI.get();
-			String[] a = temp.split("[NEW LINE]");
-			for (int i= 0; i < a.length; i++){
-				lore.add(ChatManager.Format(a[i]));
-			}*/
-			meta.setLore(Arrays.asList(loreGUI.get().split("[NEW LINE]")));
-			
+			meta.setLore(lorePrompt.get());
 			item.setItemMeta(meta);
 			tempItem = item.clone();
-			loreGUI.close(player);
+			namePrompt = null;
 		}
 	}
 	
