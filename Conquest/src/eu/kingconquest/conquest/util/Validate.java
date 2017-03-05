@@ -59,10 +59,9 @@ public class Validate{
 		return true;
 	}
 
-	public static <T> T notNull(T reference, String errorMsg){
+	public static void notNull(Object reference, String errorMsg){
 		if (reference == null)
-			throw new NullPointerException(Message.getMessage(errorMsg));
-		return reference;
+			new Message(null, MessageType.ERROR, errorMsg);
 	}
 
 	public static boolean isNull(Object reference){
@@ -71,9 +70,8 @@ public class Validate{
 		return true;
 	}
 
-	public static <T> T isNull(T reference, String errorMsg){
+	public static void isNull(Object reference, String errorMsg){
 		if (reference != null)
-			throw new NullPointerException(Message.getMessage(errorMsg));
-		return reference;
+			new Message(null, MessageType.ERROR, errorMsg);
 	}
 }

@@ -93,11 +93,10 @@ public class RewardEditGUI extends ChestGui{
 				);
 	}
 
-
-	private NamePrompt prompt;
+	private NamePrompt namePrompt;
 	private void nameButton(int slot){
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			new ChatInteract(player, prompt = new NamePrompt(this), "Cancel");
+			new ChatInteract(player, namePrompt = new NamePrompt(this), "Cancel");
 			player.closeInventory();
 			display();
 	}, "&4Set Name!", 
@@ -106,9 +105,9 @@ public class RewardEditGUI extends ChestGui{
 				);
 	}
 	protected void setName(){
-		if (Validate.notNull(prompt)){
-			name = prompt.getName();
-			prompt = null;
+		if (Validate.notNull(namePrompt)){
+			name = namePrompt.getName();
+			namePrompt = null;
 		}
 	}
 	
@@ -173,7 +172,7 @@ public class RewardEditGUI extends ChestGui{
 				items.add(item);
 				display();
 		}, "", 
-				"\n&bClick an item in your inventory to add it then..."
+				"\n&bClick item in your inventory to add, then..."
 				+"\n&bClick this to &aSave &3item to kit");
 	}
 

@@ -192,8 +192,8 @@ public class YmlStorage extends YamlConfiguration{
 	}
 	public static void load(){
 		registerFiles();
-		loadDefault();
 		loadLanguage();
+		loadDefault();
 		getWorlds().forEach(aWorld->{
 			World world = Bukkit.getWorld(aWorld);
 			headerMsg = "&6| - &aLoaded:";
@@ -676,7 +676,7 @@ public class YmlStorage extends YamlConfiguration{
 	}
 	public static boolean isActiveWorld(String name) {
 		for (UUID uniqueID : worlds){
-			Validate.isNull(Bukkit.getWorld(uniqueID), "Not a known world UUID");
+			Validate.notNull(Bukkit.getWorld(uniqueID), "Not a known world UUID" + uniqueID);
 			if (Bukkit.getWorld(uniqueID).getName().equals(name))
 				return true;
 		}

@@ -225,7 +225,7 @@ public class RewardCreateGUI extends ChestGui{
 	}
 	private void itemButton(int slot){ //shift + click add item to Kit (Add to Slot and on press Save)
 		if (getInventoryItems().containsKey(InventoryType.PLAYER))
-			item = getInventoryItems().get(InventoryType.PLAYER);
+			item = getInventoryItems().get(InventoryType.PLAYER).clone();
 
 		setItem(slot, item, player -> {
 			if (getClickType().equals(ClickType.LEFT)){

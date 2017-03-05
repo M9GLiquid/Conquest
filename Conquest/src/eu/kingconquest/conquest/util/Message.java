@@ -19,28 +19,31 @@ public class Message{
 			if (Validate.notNull(player))
 				player.sendMessage(getMessage("{Prefix} " + message));
 			else
-				new Message(null, MessageType.DEBUG, "Tried to send a chat message without a player to send to");
+				new Message(null, MessageType.ERROR, "Tried to send a chat message without a player to send to");
 			break;
 		case DEBUG:
-			Bukkit.getConsoleSender().sendMessage(getMessage("{Prefix}&6[&4Debug&6] " + message));
+			Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} &6[&c"+ type.getName() +"&6] &7" + message));
+			break;
+		case ERROR:
+			Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} &6[&c"+ type.getName() +"&6] &4" + message));
 			break;
 		case BROADCAST:
-			Main.getInstance().getServer().broadcastMessage(getMessage("&6[&cBroadcast&6] " + message));
+			Main.getInstance().getServer().broadcastMessage(getMessage("&6[&c"+ type.getName() +"&6] " + message));
 			break;
 		case CONSOLE:
 		default:
-			Bukkit.getConsoleSender().sendMessage(getMessage("{Prefix} " + message));
+			Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} " + message));
 			break;
 		}
 	}
 
 	private static String translate(String text){
 		Matcher match = Pattern.compile("\\{(.*?)\\}").matcher(text);
-		String matched = "";
 		
-		while (match.find()) 
-			 matched = String.valueOf(Validate.notNull(YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))));
-				text = text.contains(matched) 					? text.replace(matched, YmlStorage.getStr(matched.replace("{", "").replace("}", ""))) 		: text.replace(matched, "");
+		while (match.find()) {
+			 if (Validate.notNull(YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))))
+			 text = text.contains(match.group()) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))) 		: text.replace(match.group(), "");
+		}
 
 		text = text.contains("{TeleportDelay}") 	? text.replace("{TeleportDelay}", String.valueOf(Cach.tpDelay)) 									: text.replace("{TeleportDelay}", "");
 		text = text.contains("{town}") 					? text.replace("{town}", String.valueOf(Cach.StaticTown.getName())) 						: text.replace("{town}", "");

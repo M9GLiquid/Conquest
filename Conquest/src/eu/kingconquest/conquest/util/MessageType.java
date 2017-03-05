@@ -2,6 +2,7 @@ package eu.kingconquest.conquest.util;
 
 public enum MessageType{
 	CHAT("Chat"),
+	ERROR("Error"),
 	DEBUG("Debug"),
 	CONSOLE("Console"),
 	BROADCAST("Broadcast");

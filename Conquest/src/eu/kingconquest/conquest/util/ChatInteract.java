@@ -11,12 +11,12 @@ import eu.kingconquest.conquest.Main;
 public class ChatInteract{
 	private ConversationFactory cf = new ConversationFactory(Main.getInstance());
 
-	public ChatInteract(Player player, Prompt c, String escape){
+	public ChatInteract(Player player, Prompt promptClass, String escapeChar){
 				cf
-				.withFirstPrompt(c)
+				.withFirstPrompt(promptClass)
 				.withLocalEcho(false)
 				.withTimeout(60)
-				.withEscapeSequence(escape)
+				.withEscapeSequence(escapeChar)
 				.addConversationAbandonedListener(new ChatExit())
 				.buildConversation(player)
 				.begin();
