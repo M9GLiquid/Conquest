@@ -1,53 +1,46 @@
 package eu.kingconquest.conquest.gui;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.Objective;
+import eu.kingconquest.conquest.core.PlayerWrapper;
+import eu.kingconquest.conquest.gui.objective.KingdomGUI;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerActionGUI extends ChestGui{
-	private ArrayList<Kingdom> targets= new ArrayList<Kingdom>();
-	private Objective objective;
+	private PlayerWrapper wrapper;
+	private Kingdom kingdom;
 	private ChestGui previous;
 	private Player target;
-	private Player p;
+	private Player player;
 
-	public PlayerActionGUI(Player player, Player targetPlayer, Object objective, Object previousGui){
+	public PlayerActionGUI(Player player, Player targetPlayer, ChestGui previousGui){
 		super();
-		this.p = player;
+		this.player = player;
 		this.target = targetPlayer;
-		this.objective = (Kingdom) objective;
-		this.previous = (ChestGui)  previousGui;
-
+		this.previous = previousGui;
+		wrapper = PlayerWrapper.getWrapper(target);
+		if (wrapper.isInKingdom(target.getWorld()))
+			kingdom = wrapper.getKingdom(target.getWorld());
 		create();
 	}
-	
+
 	@Override
 	public void create(){
-		targets.clear();
-		if (!(objective instanceof Kingdom)){
-			for (Kingdom kingdom : Kingdom.getKingdoms())
-				targets.add(kingdom);
-		}
-		createGui(p, "&6Player", 9);
+		createGui(player, "&6Player", 54);
 		display();
 	}
-	
-	private int slot;
+
 	@Override
 	public void display(){
 		clearSlots();
-		slot = 9;
-		
+
 		//Slot 0
 		playerInfo(target);
 		//Slot 1
@@ -55,109 +48,99 @@ public class PlayerActionGUI extends ChestGui{
 		//Slot 3
 		previous(this);
 		//Slot 4
-			infoIcon();
+		infoIcon();
 		//Slot 5
 		next(this);
 		//Slot 8
 		backButton(previous);
-		
-		
+
+
 		//Slot MAIN
-		if (objective instanceof Kingdom){
-			Kingdom kingdom = (Kingdom) objective;
-			if (kingdom.hasMember(target.getUniqueId())){
-				//Remove from current kingdom
-				removeButton();
-				if (Validate.isNull(kingdom.getKing())){
-					//Promote within the kingdom
-					promoteButton();
-				}else{
-					if (kingdom.getKing().getUniqueId().equals(target.getUniqueId())){
-						//Demote within the kingdom
-						demoteButton();
-					}
-				}
-			}else{
-				//Move to current kingdom
-				moveToButton();
+		if (Validate.hasPerm(player, ".admin.edit.player.*")){
+			if (Validate.notNull(wrapper.isInKingdom(target.getWorld()))){
+				if (!player.equals(target)) 
+					kickButton(10);
+				if (Validate.isNull(kingdom.getKing()))
+					promoteButton(12);
+				else if (kingdom.getKing().getUniqueId().equals(target.getUniqueId()))
+					demoteButton(12);
 			}
+			moveToButton(14);
 		}else{
-			kingdomButton();
+			if (Validate.notNull(wrapper.isInKingdom(target.getWorld()))){
+				if (player.equals(target)) 
+					leaveButton(13);
+			}else
+				if (player.equals(target)) 
+					joinButton(13);
 		}
 	}
 
-	private void kingdomButton(){
-		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (targets.size() -1) || getItems() == 0)
-				break;
-
-			setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
-				objective = targets.get(getCurrentItem());
-				display();
-			}, "&4Choose Kingdom", 
-					"&cGo back without Saving!\n");
-		}
-		slot++;
+	private void joinButton(int slot){
+		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
+			new KingdomGUI(player, this);
+		}, "&2Join a kingdom", 
+				"\n&c");
 	}
-	
+
 	/**
 	 * Rank up in the Kingdom Hierchy
 	 */
-	private void promoteButton(){
-		//Promote to Count 		-> 	King
-		//Promote to Baron 		-> 	Count
-		//Promote to Knight		->	Baron
-		//Promote to Squire		->	Knight
-
-		//slot++;
+	private void promoteButton(int slot){
+		setItem(slot, new ItemStack(Material.GOLD_INGOT), player -> {
+			
+		}, "&2Promote &f" + target.getDisplayName(), 
+				"&cComing Soon");
+		//Promote Count/Countess 		-> 	King/Queen
+		//Promote Baron/Baronesss 		-> 	Count/Countess
+		//Promote Knight						->	Baron/Baronesss
+		//Promote Squire						->	Knight
 	}
 
 	/**
 	 * Rank down in the Kingdom Hierchy
 	 */
-	private void demoteButton(){
-		//Demote from King 			-> 	Count
-		//Demote from Count 		-> 	Baron
-		//Demote from Baron		->	Knight
-		//Demote from Knight		->	Squire
-
-		//slot++;
+	private void demoteButton(int slot){
+		setItem(slot, new ItemStack(Material.IRON_INGOT), player -> {
+			
+		}, "&4Demote &f" + target.getDisplayName(), 
+				"&cComing Soon");
+		//Demote King/Queen				-> 	Count/Countess
+		//Demote Count/Countess 		-> 	Baron/Baroness
+		//Demote Baron/Baronesss		->	Knight
+		//Demote Knight						->	Squire
 	}
 
-	private void removeButton(){
-		if (objective instanceof Kingdom){
-			Kingdom kingdom = (Kingdom) objective;
-			setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
-				kingdom.leave(target);
-				Cach.StaticKingdom = kingdom;
-				Cach.StaticPlayer = target;
-				new Message(player, MessageType.CHAT, "{AdminMoveSuccess}");
-				new Message(player, MessageType.CHAT, "{RemoveSuccess}");
-				display();
-			}, "&4Remove from " +kingdom.getColorSymbol() + kingdom.getName(), 
-					"\n&c\n");
-			slot++;
-		}
+	private void kickButton(int slot){
+		setItem(slot, new ItemStack(Material.GOLD_AXE), player -> {
+			Cach.StaticPlayer = target;
+			Cach.StaticKingdom = kingdom;
+			new Message(player, MessageType.CHAT, "{AdminMoveSuccess}");
+			Cach.StaticPlayer = player;
+			new Message(player, MessageType.CHAT, "{RemoveSuccess}");
+			kingdom.leave(target);
+			display();
+		}, "&4Kick " +target.getDisplayName() + " from " + kingdom.getColorSymbol() + kingdom.getName(), 
+				"\n&c\n");
 	}
-	
-	private void moveToButton(){
-		if (objective instanceof Kingdom){
-			Kingdom kingdom = (Kingdom) objective;
-			setItem(slot, new ItemStack(Material.EMERALD_BLOCK), player -> {
-				kingdom.join(target);
-				Cach.StaticKingdom = kingdom;
-				new Message(player, MessageType.CHAT, "{AdminMoveSuccess}");
-				new Message(player, MessageType.CHAT, "{MoveSuccess}");
-				display();
-			}, "&4Move to " + kingdom.getName(),
-					"");
-			slot++;
-		}
+
+	private void leaveButton(int slot){
+		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
+			Cach.StaticKingdom = kingdom;
+			new Message(target, MessageType.CHAT, "{LeaveSuccess}");
+			kingdom.leave(target);
+			display();
+		}, "&4Leave " + kingdom.getColorSymbol() + kingdom.getName(), 
+				"\n&c\n");
+	}
+
+	private void moveToButton(int slot){
+		setItem(slot, new ItemStack(Material.EYE_OF_ENDER), player -> {
+		}, "&4Move to diffrent kingdom",
+				"&dOBS! &3This will teleport player to new kingdom"
+				+ "\n&cComing Soon");
 	}
 
 	private void infoIcon(){
-
-		//slot++;
 	}
-
 }

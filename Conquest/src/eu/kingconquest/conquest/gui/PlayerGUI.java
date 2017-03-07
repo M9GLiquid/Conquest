@@ -84,7 +84,7 @@ public class PlayerGUI extends ChestGui{
 		skull.setOwner(targetPlayer.getName());
 		head.setItemMeta(skull);
         setSkullItem(slot, head, player ->{
-			new PlayerActionGUI(player, targetPlayer, objective, this);
+			new PlayerActionGUI(player, targetPlayer, this);
 		}, "§4" + targetPlayer.getName(),
         		"\n§cClick to get into Player specific GUI"
 				+ "\n"

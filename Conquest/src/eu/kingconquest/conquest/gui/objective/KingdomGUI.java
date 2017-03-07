@@ -67,7 +67,7 @@ public class KingdomGUI extends ChestGui{
 				if (wrapper.isInKingdom(p.getWorld())){
 					if (wrapper.getKingdom(p.getWorld()).equals(kingdom))
 						if (Validate.hasPerm(p, ".basic.leave"))
-						leave(kingdom);
+						leave(13, kingdom);
 				}else 
 					if (Validate.hasPerm(p, ".basic.join"))
 					join(i, kingdom);
@@ -114,8 +114,8 @@ public class KingdomGUI extends ChestGui{
 				);
 	}
 
-	private void join(int i, Kingdom kingdom){
-		setItem(i, new ItemStack(Material.EMERALD_BLOCK), player -> {
+	private void join(int slot, Kingdom kingdom){
+		setItem(slot, new ItemStack(Material.EMERALD_BLOCK), player -> {
 			setCurrentItem(0);
 			kingdom.join(player);
 			create();
@@ -123,7 +123,7 @@ public class KingdomGUI extends ChestGui{
 		, displayInfo(kingdom));
 	}
 
-	private void leave(Kingdom kingdom) {
+	private void leave(int slot, Kingdom kingdom) {
 		setItem(9, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			setCurrentItem(0);
 			kingdom.leave(player);

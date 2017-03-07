@@ -3,7 +3,7 @@ main: eu.kingconquest.conquest.Main
 load: POSTWORLD
 depend: [Vault, dynmap]
 softdepend: [TheNewEconomy]
-version: 0.7.3.3
+version: 0.7.3.4
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 

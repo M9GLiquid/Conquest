@@ -105,9 +105,9 @@ public class RewardEditGUI extends ChestGui{
 	
 	private void DecreaseCostButton(int slot, int amount){
 		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
-			cost = cost - amount;
+			cost = cost + amount; // (+- = -)
 			display();
-		},"&3Decrease&6(&c- " + amount +"&6)" , 
+		},"&3Decrease&6(&c " + amount +"&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
@@ -129,9 +129,9 @@ public class RewardEditGUI extends ChestGui{
 
 	private void DecreaseCooldownButton(int slot, int amount){
 		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
-				cooldown = cooldown - amount;
+				cooldown = cooldown + amount; // (+- = -)
 			display();
-		},"&3Decrease&6(&c- " + amount +"&6)" , 
+		},"&3Decrease&6(&c " + amount +"&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
@@ -165,7 +165,7 @@ public class RewardEditGUI extends ChestGui{
 				display();
 		}, "", 
 				"\n&bClick item in your inventory to add, then..."
-				+"\n&bClick this to &aSave &3item to kit");
+				+"\n&bClick to &aSave &3item to kit");
 	}
 
 	private void itemsButton(int slot){

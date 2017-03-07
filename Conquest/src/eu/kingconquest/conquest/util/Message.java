@@ -13,11 +13,11 @@ import eu.kingconquest.conquest.database.YmlStorage;
 public class Message{
 
 
-	public Message(Player player, MessageType type, String message){
+	public Message(Player target, MessageType type, String message){
 		switch(type){
 		case CHAT:
-			if (Validate.notNull(player))
-				player.sendMessage(getMessage("{Prefix} " + message));
+			if (Validate.notNull(target))
+				target.sendMessage(getMessage("{Prefix} " + message));
 			else
 				new Message(null, MessageType.ERROR, "Tried to send a chat message without a player to send to");
 			break;
@@ -50,6 +50,7 @@ public class Message{
 		text = text.contains("{village}") 					? text.replace("{village}", String.valueOf(Cach.StaticVillage.getName()))					: text.replace("{village}", "");
 		text = text.contains("{kingdom}") 				? text.replace("{kingdom}", String.valueOf(Cach.StaticKingdom.getName())) 			: text.replace("{kingdom}", "");
 		text = text.contains("{color}") 					? text.replace("{color}", Cach.StaticKingdom.getColorSymbol()) 								: text.replace("{color}", "");
+		text = text.contains("{user}") 						? text.replace("{user}", Cach.StaticPlayer.getDisplayName())	 									: text.replace("{user}", "");
 		return text;
 	}	
 

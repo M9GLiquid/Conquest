@@ -20,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.gui.HomeGUI;
+import eu.kingconquest.conquest.gui.PlayerActionGUI;
 import eu.kingconquest.conquest.gui.util.Pagination;
 import eu.kingconquest.conquest.hook.TNEApi;
 import eu.kingconquest.conquest.util.Message;
@@ -104,6 +105,7 @@ public abstract class ChestGui extends Pagination{
 		skull.setOwner(player.getName());
 		head.setItemMeta(skull);
 		setSkullItem(0, head, p ->{
+			new PlayerActionGUI(p, p, this);
 		}, "&6" + player.getName() + " Information",
 				"&7ScoreBoard: &3" + (Validate.notNull(wrapper.getBoardType()) ? wrapper.getBoardType().getName() : "" )
 				+ "\n&7Kingdom: &3" + (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()).getName() : "None")

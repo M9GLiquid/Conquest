@@ -62,19 +62,25 @@ public class RewardGUI extends ChestGui{
 	private void buyButton(int slot, Reward reward){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			if (getClickType().equals(ClickType.RIGHT)){ // Buy
-				ItemStack[] items = player.getInventory().getContents();
-				if (reward.getItems().size() > (player.getInventory().getSize() - items.length))
+				int i = 0;
+				for (ItemStack item : player.getInventory().getContents())
+					if (Validate.isNull(item))
+						i++;
+				if (i < reward.getItems().size()){
 					new Message(player, MessageType.CHAT, "{NoInventoryRoom}");
-				Vault.econ.withdrawPlayer(player, reward.getCost());
-				reward.getItems().forEach((i, item)->{
-					player.getInventory().addItem(item);
-					player.getInventory().firstEmpty();
-				});
+				}else{
+					if (!Vault.econ.has(player, reward.getCost()))
+						new Message(player, MessageType.CHAT, "{NotEnoughMoney}");
+					Vault.econ.withdrawPlayer(player, reward.getCost());
+					reward.getItems().forEach((inventorySlot, item)->{
+						player.getInventory().setItem(player.getInventory().firstEmpty(), item);
+					});
+				}
 				close(player);
 			}else if (getClickType().equals(ClickType.LEFT)){ // View
 				new RewardItemsGUI(player, this, reward);
 			}
-		},"&6Kit Information" , 
+		},"&6Reward Information" , 
 				"&7Name: &3" + reward.getName()
 				+ "\n&7Owner: &3" + (Validate.notNull(reward.getOwner()) ? reward.getOwner().getName(): "")
 				+ "\n&7Cost: &3" + reward.getCost()
@@ -94,7 +100,7 @@ public class RewardGUI extends ChestGui{
 			}else{
 				new RewardEditGUI(player, this, kit);
 			}
-		},"&6Kit Information" , 
+		},"&6Reward Information" , 
 				"&7Name: &3" + kit.getName()
 				+ "\n&7Owner: &3" + (Validate.notNull(kit.getOwner()) ? kit.getOwner().getName(): "None")
 				+ "\n&7Cost: &3" + kit.getCost()
@@ -108,7 +114,7 @@ public class RewardGUI extends ChestGui{
 	private void createButton(){
 		setItem(7, new ItemStack(Material.ENDER_CHEST), player -> {
 			new RewardCreateGUI(player, this, null);
-		},"&3Create New Kit", 
+		},"&3Create New Reward", 
 				"");
 	}
 

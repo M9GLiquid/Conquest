@@ -43,9 +43,6 @@ public class ServerRestartListener{
 						null, 
 						Bukkit.getWorld(uniqueID).getSpawnLocation(), 
 						-1);
-			System.out.println("Test 1: " + Bukkit.getWorld(uniqueID));
-			System.out.println("Test 2: " + Kingdom.getKingdom("Neutral", Bukkit.getWorld(uniqueID)));
-			System.out.println("Test 3: " + Validate.isNull(Kingdom.getKingdom("Neutral", Bukkit.getWorld(uniqueID))));
 		});
 	}
 }

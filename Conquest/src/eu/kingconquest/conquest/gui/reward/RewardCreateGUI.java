@@ -113,11 +113,11 @@ public class RewardCreateGUI extends ChestGui{
 
 	private void DecreaseCooldownButton(int slot, int amount){
 		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
-			cooldown = cooldown - amount;
-			if (cost < 0)
-				cost = 0;
+			cooldown = cooldown + amount; // (+- = -)
+			if (cooldown < 0)
+				cooldown = 0;
 			display();
-		},"&3Decrease&6(&c- " + amount +"&6)" , 
+		},"&3Decrease&6(&c " + amount +"&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
@@ -130,19 +130,19 @@ public class RewardCreateGUI extends ChestGui{
 		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
 			cooldown = cooldown + amount;
 			display();
-		},"&3Increase&6(&c+ " + amount +"&6)" , 
+		},"&3Increase&6(&c +" + amount +"&6)" , 
 				"&aClick to Increase!"
 				);
 	}
 
 	private void DecreaseCostButton(int slot, int amount){
 		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
-			if ((cost - amount) >= 0)
-				cost = cost - amount;
+			if ((cost + amount) >= 0)
+				cost = cost + amount; // (+- = -)
 			else
 				cost = 0;
 			display();
-		},"&3Decrease&6(&c- " + amount +"&6)" , 
+		},"&3Decrease&6(&c " + amount +"&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
@@ -155,7 +155,7 @@ public class RewardCreateGUI extends ChestGui{
 		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
 			cost = cost + amount;
 			display();
-		},"&3Increase&6(&c+ " + amount +"&6)" , 
+		},"&3Increase&6(&c +" + amount +"&6)" , 
 				"&aClick to Increase!"
 				);
 	}

@@ -64,14 +64,6 @@ public class HomeGUI extends ChestGui{
 		//Friends Gui
 		//friendsButton();
 
-		if (PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld())){
-			spawnButton();
-			if (Validate.hasPerm(player, ".basic.teleport"))
-				conflictButton();
-			if (Validate.hasPerm(player, ".basic.reward"))
-				rewardButton();
-		}
-
 		kingdomButton();
 
 		if (Validate.hasPerm(player, ".admin")){
@@ -82,6 +74,14 @@ public class HomeGUI extends ChestGui{
 			if (Validate.hasPerm(player, ".admin.reset"))
 				resetButton();
 			reloadButton();
+		}else{
+			if (PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld())){
+				spawnButton();
+				if (Validate.hasPerm(player, ".basic.teleport"))
+					conflictButton();
+				if (Validate.hasPerm(player, ".basic.reward"))
+					rewardButton();
+			}
 		}
 	}
 
