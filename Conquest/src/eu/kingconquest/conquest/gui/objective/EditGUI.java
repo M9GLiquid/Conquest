@@ -31,7 +31,7 @@ public class EditGUI extends ChestGui{
 		this.objective = objective;
 		create();
 	}
-
+	
 	@Override
 	public void create(){
 		createGui(player, "&6Edit Gui", 54);
@@ -56,7 +56,7 @@ public class EditGUI extends ChestGui{
 					nameButton(13);
 				if (Validate.hasPerm(player, ".admin.edit.kingdom.player"))
 					playerButton(22);
-					//childrenButton();
+				//childrenButton();
 				if (Validate.hasPerm(player, ".admin.edit.kingdom.spawn")){
 					spawnButton(30);
 					if (Validate.hasPerm(player, ".admin.edit.kingdom.location"))
@@ -67,7 +67,7 @@ public class EditGUI extends ChestGui{
 				if (Validate.hasPerm(player, ".admin.remove.kingdom"))
 					removeButton(40);
 			}
-		}if (objective instanceof Town) {
+		}else if (objective instanceof Town) {
 			if (Validate.hasPerm(player, ".admin.edit.town")){
 				if (Validate.hasPerm(player, ".admin.edit.town.name"))
 					nameButton(13);
@@ -84,7 +84,7 @@ public class EditGUI extends ChestGui{
 				if (Validate.hasPerm(player, ".admin.remove.town"))
 					removeButton(40);
 			}
-		}if (objective instanceof Village) {
+		}else if (objective instanceof Village) {
 			if (Validate.hasPerm(player, ".admin.edit.village")){
 				if (Validate.hasPerm(player, ".admin.edit.village.name"))
 					nameButton(13);
@@ -108,7 +108,7 @@ public class EditGUI extends ChestGui{
 		}
 		teleportButton(2);
 	}
-
+	
 	private void ownerIcon(int slot){
 		setItem(slot, new ItemStack(Material.PAPER), player -> {
 		}, "&r&7<< &5&lEdit Owners &7>>", "");
@@ -117,48 +117,48 @@ public class EditGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.PAPER), player -> {
 		}, "&r&7<< &5&lEdit Locations &7>>", "");
 	}
-
+	
 	private void teleportButton(int slot){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			player.teleport(objective.getLocation());
 		}, "&2Teleport", 
 				"&6Teleport to target");
 	}
-
+	
 	private void playerButton(int slot){
 		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 		SkullMeta skull = (SkullMeta) head.getItemMeta();
 		skull.setOwner(player.getName());
 		head.setItemMeta(skull);
-        setSkullItem(slot, head, player ->{
-        	new PlayerGUI(player ,this, objective);
-        }, "&4Manage Members",
-        		"");
+		setSkullItem(slot, head, player ->{
+			new PlayerGUI(player ,this, objective);
+		}, "&4Manage Members",
+				"");
 	}
 	
 	private void removeButton(int slot){
-			setItem(slot, new ItemStack(Material.BARRIER), player ->{
-				objective.delete(player);
-				if (objective instanceof Kingdom){
-					KingdomGUI kingdomGUI = new KingdomGUI(player, this);
-					kingdomGUI.create();
-				}else if  (objective instanceof Town){
-					TownGUI townGUI = new TownGUI(player, this);
-					townGUI.create();
-				}else if (objective instanceof Village){
-					VillageGUI villageGUI = new VillageGUI(player, this);
-					villageGUI.create();
-				}
-				close(player);
-			}, "&4Remove!",  
-					"&4Click to remove!");
+		setItem(slot, new ItemStack(Material.BARRIER), player ->{
+			objective.delete(player);
+			if (objective instanceof Kingdom){
+				KingdomGUI kingdomGUI = new KingdomGUI(player, this);
+				kingdomGUI.create();
+			}else if  (objective instanceof Town){
+				TownGUI townGUI = new TownGUI(player, this);
+				townGUI.create();
+			}else if (objective instanceof Village){
+				VillageGUI villageGUI = new VillageGUI(player, this);
+				villageGUI.create();
+			}
+			close(player);
+		}, "&4Remove!",  
+				"&4Click to remove!");
 	}
-
+	
 	public void infoIcon(int slot){
 		setItem(slot, new ItemStack(Material.PAPER), player -> {
 			display();
-			},"&3Information"
-			,  displayInfo());
+		},"&3Information"
+				,  displayInfo());
 	}
 	private String displayInfo() {
 		String str = "";
@@ -215,7 +215,7 @@ public class EditGUI extends ChestGui{
 		}
 		return str;
 	}
-
+	
 	private NamePrompt namePrompt;
 	private void nameButton(int slot){
 		if (Validate.notNull(namePrompt)){
@@ -237,31 +237,31 @@ public class EditGUI extends ChestGui{
 			objective.setSpawn(player.getLocation());
 			if (objective instanceof Kingdom) {
 				Cach.StaticKingdom = (Kingdom) objective;
-				new Message(player, MessageType.CHAT, "{editKingdomSpawn}");
+				new Message(player, MessageType.CHAT, "{AdminEditKingdomSpawn}");
 			}if (objective instanceof Town) {
 				Cach.StaticTown = (Town) objective;
-				new Message(player, MessageType.CHAT, "{editTownSpawn}");
+				new Message(player, MessageType.CHAT, "{AdminEditTownSpawn}");
 			}if (objective instanceof Village) {
 				Cach.StaticVillage = (Village) objective;
-				new Message(player, MessageType.CHAT, "{editVillageSpawn}");
+				new Message(player, MessageType.CHAT, "{AdminEditVillageSpawn}");
 			}
 			display();
 		}, "&5Edit Spawn Location!",
 				"&bClick to edit!");
 	}
-
+	
 	private void locationButton(int slot){
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
 			objective.setSpawn(player.getLocation());
 			if (objective instanceof Kingdom) {
 				Cach.StaticKingdom = (Kingdom) objective;
-				new Message(player, MessageType.CHAT, "{editKingdomLocation}");
+				new Message(player, MessageType.CHAT, "{AdminEditKingdomLocation}");
 			}if (objective instanceof Town) {
 				Cach.StaticTown = (Town) objective;
-				new Message(player, MessageType.CHAT, "{editTownLocation}");
+				new Message(player, MessageType.CHAT, "{AdminEditTownLocation}");
 			}if (objective instanceof Village) {
 				Cach.StaticVillage = (Village) objective;
-				new Message(player, MessageType.CHAT, "{editVillageLocation}");
+				new Message(player, MessageType.CHAT, "{AdminEditVillageLocation}");
 			}
 			display();
 		}, "&5Edit Dynmap Location!",
@@ -274,11 +274,11 @@ public class EditGUI extends ChestGui{
 			ownerGui = new OwnerGUI(player, this);
 		}, "&5Edit Owner!",
 				"&bClick to edit!");
-
+		
 		if (Validate.notNull(ownerGui) 
 				&& !(objective instanceof Kingdom)){
-				objective.setOwner(ownerGui.get());
-				objective.updateGlass();
+			objective.setOwner(ownerGui.get());
+			objective.updateGlass();
 			ownerGui.close(player);
 			ownerGui = null;
 		}
@@ -290,34 +290,44 @@ public class EditGUI extends ChestGui{
 			preOwnerGui = new OwnerGUI(player, this);
 		}, "&5Edit Pre-Owner!",
 				"&bClick to edit!");
-
+		
 		if (Validate.notNull(preOwnerGui) 
 				&& !(objective instanceof Kingdom)){
-				((Village)objective).setPreOwner(preOwnerGui.get());
-				objective.updateGlass();
-				preOwnerGui.close(player);
-				Cach.StaticVillage = (Village) objective;
-				Cach.StaticTown = parent;
-				new Message(player, MessageType.CHAT, "{EditVillagePreParent}");
-				preOwnerGui = null;
+			((Village)objective).setPreOwner(preOwnerGui.get());
+			objective.updateGlass();
+			preOwnerGui.close(player);
+			
+			Cach.StaticVillage = (Village) objective;
+			Cach.StaticTown = parent;
+			new Message(player, MessageType.CHAT, "{AdminEditVillagePreParent}");
+			preOwnerGui = null;
 		}
 	}
-
+	
 	private ParentGUI parentGui;
 	private void parentButton(int slot){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			parentGui = new ParentGUI(player, objective, this);
 		}, "&5Edit Parent!",
 				"&bClick to edit!");
-
+		
 		if (Validate.notNull(parentGui)){
 			if (parentGui.get() instanceof Town)
-			parent = (Town) parentGui.get();
-			((Village) objective).setParent(parent);
-			parent.addChild((Village) objective);
+				parent = (Town) parentGui.get();
+			
+			
+			if (Validate.notNull(objective)){
+				parent.addChild((Village) objective);
+				((Village) objective).setParent(parent);
+			}else {
+				parent.removeChild((Village) objective);
+				((Village) objective).removeParent();
+			}
+			
 			Cach.StaticVillage = (Village) objective;
 			Cach.StaticTown = parent;
-			new Message(player, MessageType.CHAT, "{EditVillageParent}");
+			new Message(player, MessageType.CHAT, "{AdminEditVillageParent}");
+			
 			parentGui.close(player);
 			parentGui = null;
 		}

@@ -75,7 +75,18 @@ public class Village extends Objective{
 	public Town getParent(){
 		return parent;
 	}
-
+	public void setParent(Town parent){
+		this.parent = parent;
+		//If parent owner not same as this owner update parent to neutral
+		if (Validate.notNull(parent))
+			if (!parent.getOwner().equals(this))
+				parent.setNeutral();
+	}
+	public void removeParent(){
+		this.parent.removeChild(this);
+		this.parent = null;
+	}
+	
 	private Kingdom preOwner = null;
 	public Kingdom getPreOwner(){
 		if (Validate.isNull(preOwner))
@@ -96,19 +107,6 @@ public class Village extends Objective{
 			this.progress = 100.0d;
 	}
 
-	/**
-	 * Set Village Parent
-	 * 
-	 * @param parent - Objective
-	 * @return void
-	 */
-	public void setParent(Town parent){
-		this.parent = parent;
-		//If parent owner not same as this owner update parent to neutral
-		if (Validate.notNull(parent))
-			if (!parent.getOwner().equals(this))
-				parent.setNeutral();
-	}
 	
 	/**
 	 * Set Village as Neutral
@@ -267,6 +265,7 @@ public class Village extends Objective{
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 
 			Cach.StaticVillage = this;
+			Cach.StaticKingdom = this.getOwner();
 			new Message(player, MessageType.CHAT, "{VillageCreated}");
 			return true;
 		}catch (Exception e){
