@@ -315,18 +315,21 @@ public class EditGUI extends ChestGui{
 			if (parentGui.get() instanceof Town)
 				parent = (Town) parentGui.get();
 			
-			
-			if (Validate.notNull(objective)){
+
+			Cach.StaticVillage = (Village) objective;
+			if (Validate.notNull(parent)){
 				parent.addChild((Village) objective);
 				((Village) objective).setParent(parent);
-			}else {
-				parent.removeChild((Village) objective);
+				
+				Cach.StaticTown = parent;
+				new Message(player, MessageType.CHAT, "{AdminEditVillageParent}");
+			}else{
+				((Village) objective).getParent().removeChild((Village) objective);
 				((Village) objective).removeParent();
+				
+				new Message(player, MessageType.CHAT, "{AdminRemoveVillageParent}");
 			}
 			
-			Cach.StaticVillage = (Village) objective;
-			Cach.StaticTown = parent;
-			new Message(player, MessageType.CHAT, "{AdminEditVillageParent}");
 			
 			parentGui.close(player);
 			parentGui = null;

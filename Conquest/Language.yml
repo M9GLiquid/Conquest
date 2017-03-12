@@ -33,6 +33,7 @@ Language:
     TownCreated: '&7Town &f{town} &awas successfully created!'
     TownDeleted: '&7Town &f{town} &cwas successfully deleted!'
     Admin:
+      RemoveTownChild: '{color}{town}s &7Child (&f{village} &7was &cremoved'
       EditTownName: '&7Towns Name Changed to {town}'
       EditTownOwner: '{color}{town}s Owner Changed to {color}{kingdom}'
       EditTownChildren: '{color}{town}s &7children successfully Changed'
@@ -43,6 +44,7 @@ Language:
     VillageCreated: 'Village {color}{village} &7was successfully &aCreated!'
     VillageDeleted: 'Village {color}{village} &7was successfully &cDeleted!'
     Admin:
+      RemoveVillageParent: '&f{village}s &7Parent was &cremoved'
       EditVillageName: '&7Village Name Changed to &f{village}'
       EditVillageOwner: '&f{village}s &7Owner Changed to {color}{kingdom}'
       EditVillagePreParent: '&f{village}s &7Pre-Parent Changed to &f{town}'
