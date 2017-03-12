@@ -95,20 +95,21 @@ public class RewardCreateGUI extends ChestGui{
 		IncreaseItemButton(51, 64);
 	}
 
-	private NamePrompt namePrompt;
+	private NamePrompt namePrompt = null;
 	private void nameButton(int slot){
+		if (Validate.notNull(namePrompt)){
+			name = namePrompt.get();
+			namePrompt = null;
+			display();
+		}
+		
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
 			namePrompt = new NamePrompt(this);
 			new ChatInteract(player, namePrompt, "Cancel");
 			player.closeInventory();
-		}, "&5Edit Name!",  
-				"&bClick to edit!");
-	}
-	private void setName(){
-		if (Validate.notNull(namePrompt)){
-			name = namePrompt.get();
-			namePrompt = null;
-		}
+	}, "&4Set Name!", 
+				"\n"
+				+ "\n&bClick to set name");
 	}
 
 	private void DecreaseCooldownButton(int slot, int amount){
@@ -117,20 +118,20 @@ public class RewardCreateGUI extends ChestGui{
 			if (cooldown < 0)
 				cooldown = 0;
 			display();
-		},"&3Decrease&6(&c " + amount +"&6)" , 
+		},"&3Decrease&6(&c " + amount +" &3minutes&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
 	private void cooldownDisplayButton(int slot){
 		setItem(slot, new ItemStack(Material.WATCH), player -> {
-		},"&3Cooldown: &6" + cooldown , ""
+		},"&3Cooldown: &6" + cooldown + " minutes" , ""
 				);
 	}
 	private void IncreaseCooldownButton(int slot, int amount){
 		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
 			cooldown = cooldown + amount;
 			display();
-		},"&3Increase&6(&c +" + amount +"&6)" , 
+		},"&3Increase&6(&c +" + amount +" &3minutes&6)" , 
 				"&aClick to Increase!"
 				);
 	}
@@ -168,28 +169,18 @@ public class RewardCreateGUI extends ChestGui{
 				(Validate.notNull(parent) ? "&7Parent: &3" + parent.getName() + "\n" : "")
 				+ "&aClick to Select!"
 				);
-	}
-	private void setParent(){
+
 		if (Validate.notNull(parentGui)){
 			parent = parentGui.get();
 			parentGui.close(player);
 			parentGui = null;
+			display();
 		}
 	}
 
 	private void init(){
 		clearSlots();
 		setCurrentItem(0);
-		setName();
-		setParent();
-		setItems();
-	}
-
-	private void setItems(){
-		/*if (Validate.notNull(rewardItemsGui)){
-			//items = rewardItemsGui.getItemStackItems();
-			rewardItemsGui.close(player);
-		}*/
 	}
 
 	private void displayInfo(){

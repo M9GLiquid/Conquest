@@ -107,7 +107,7 @@ public abstract class ChestGui extends Pagination{
 		setSkullItem(0, head, p ->{
 			new PlayerActionGUI(p, p, this);
 		}, "&6" + player.getName() + " Information",
-				"&7ScoreBoard: &3" + (Validate.notNull(wrapper.getBoardType()) ? wrapper.getBoardType().getName() : "" )
+				"&7ScoreBoard: &3" + (Validate.notNull(wrapper.getBoardType()) ? wrapper.getBoardType() : "" )
 				+ "\n&7Kingdom: &3" + (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()).getName() : "None")
 				+ "\n&7Money: &6" + TNEApi.getBalance(player)
 				+ "\n&7Friends : &a" + wrapper.getOnlineFriends() + "&6/&2" + wrapper.getNumberOfFriends() + " &aOnline"

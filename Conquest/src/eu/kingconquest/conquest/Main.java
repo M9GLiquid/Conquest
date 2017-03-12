@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import eu.kingconquest.conquest.commands.HomeCommand;
 import eu.kingconquest.conquest.core.Kingdom;
+import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Reward;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
@@ -59,15 +60,12 @@ public class Main extends JavaPlugin implements Listener{
 		YmlStorage.output();
 		new Message(null, MessageType.CONSOLE, "&6|=======================================|");
 
-		if (Bukkit.getOnlinePlayers().size() > 0)
-			ServerRestartListener.onServerRestart();
-		ServerRestartListener.createNeutralKingdom();
+		ServerRestartListener.onServerRestart(Bukkit.getOnlinePlayers());
 		setListeners();
 		
 	}
 
 	private void setListeners(){
-		//this.getServer().getPluginManager().registerEvents(new ServerRestartListener(), this); // Not Working
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerMoveListener(), this);
 		this.getServer().getPluginManager().registerEvents(new TrapListener(), this);
@@ -115,6 +113,7 @@ public class Main extends JavaPlugin implements Listener{
 		Town.clear();
 		Village.clear();
 		Reward.clear();
+		PlayerWrapper.clear();
 		
 		getServer().getServicesManager().unregisterAll(this);
 		Bukkit.getScheduler().cancelTasks(this);

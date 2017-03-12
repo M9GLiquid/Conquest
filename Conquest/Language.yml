@@ -10,6 +10,7 @@ Language:
     LeaveSuccess: '&7You have left {color}{kingdom}.'
     MoveSuccess: '&7Admin {user} has &amoved &7you to kingdom: {color}{kingdom}'
     RemoveSuccess: '&7Admin {user} has &ckickec &7you from kingdom: {color}{kingdom}'
+    RewardBaught: '&7You have baught {reward} &7for &6{cost}$'
     Teleported: '&7You have been &asuccessfully &7teleported!'
     StartTP: '&7You will be teleported in &b{tpDelay} &7seconds'
     UnBindSuccess: '&7You have Successfully unbound &a{village} &7from &a{town}'
@@ -52,6 +53,7 @@ Language:
     AlreadyExists: '&4OBS!&c, Name exist, perhaps choose another?!'
     ToClose: '&4Error&c, To close to another Objective!'
     NoInventoryRoom: '&4Error&c, Not enought space in inventory!'
+    RewardNotReady: '&7Reward Box ready in &c{cooldownLeft} &7seconds'
   Broadcast:
     WarnDistress: '{color}{village} &cis currently under attack!'
     WarnNeutral: '{color}{village} &7is now &fNeutral!'

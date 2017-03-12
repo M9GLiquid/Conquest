@@ -45,12 +45,17 @@ public class Message{
 			 text = text.contains(match.group()) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))) 		: text.replace(match.group(), "");
 		}
 
-		text = text.contains("{TeleportDelay}") 	? text.replace("{TeleportDelay}", String.valueOf(Cach.tpDelay)) 									: text.replace("{TeleportDelay}", "");
-		text = text.contains("{town}") 					? text.replace("{town}", String.valueOf(Cach.StaticTown.getName())) 						: text.replace("{town}", "");
-		text = text.contains("{village}") 					? text.replace("{village}", String.valueOf(Cach.StaticVillage.getName()))					: text.replace("{village}", "");
-		text = text.contains("{kingdom}") 				? text.replace("{kingdom}", String.valueOf(Cach.StaticKingdom.getName())) 			: text.replace("{kingdom}", "");
-		text = text.contains("{color}") 					? text.replace("{color}", Cach.StaticKingdom.getColorSymbol()) 								: text.replace("{color}", "");
-		text = text.contains("{user}") 						? text.replace("{user}", Cach.StaticPlayer.getDisplayName())	 									: text.replace("{user}", "");
+		text = text.contains("{RewardNotReady}") 	? text.replace("{RewardNotReady}"	, Cach.StaticCooldownLeft.toString())										: text.replace("{RewardNotReady}", "");
+		text = text.contains("{TeleportDelay}") 		? text.replace("{TeleportDelay}"		, Cach.tpDelay.toString())															: text.replace("{TeleportDelay}", "");
+		text = text.contains("{kingdom}") 					? text.replace("{kingdom}"					, Cach.StaticKingdom.getName()) 												: text.replace("{kingdom}", "");
+		text = text.contains("{village}") 						? text.replace("{village}"						, Cach.StaticVillage.getName())													: text.replace("{village}", "");
+		text = text.contains("{reward}") 					? text.replace("{reward}"					, Cach.StaticReward.getName())	 												: text.replace("{reward}", "");
+		text = text.contains("{town}") 						? text.replace("{town}"						, Cach.StaticTown.getName()) 													: text.replace("{town}", "");
+		text = text.contains("{color}") 						? text.replace("{color}"						, Cach.StaticKingdom.getColorSymbol()) 									: text.replace("{color}", "");
+		text = text.contains("{user}") 							? text.replace("{user}"							, Cach.StaticPlayer.getDisplayName())	 									: text.replace("{user}", "");
+		text = text.contains("{cost}") 							? text.replace("{cost}"							, Cach.StaticReward.getCost().toString())	 								: text.replace("{cost}", "");
+		
+		Cach.nullify();
 		return text;
 	}	
 

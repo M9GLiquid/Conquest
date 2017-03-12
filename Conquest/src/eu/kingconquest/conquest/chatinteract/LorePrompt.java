@@ -26,9 +26,11 @@ public class LorePrompt extends StringPrompt{
 		});
 		
 		if (answer.equalsIgnoreCase("SAVE")){
-			if (Validate.notNull(gui))
+			if (Validate.notNull(gui)){
 				gui.create();
-				return null;
+				gui.display();
+			}
+			return null;
 		}else
 			lore.add(answer);
 		return this;

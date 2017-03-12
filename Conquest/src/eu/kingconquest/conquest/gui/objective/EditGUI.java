@@ -216,19 +216,20 @@ public class EditGUI extends ChestGui{
 		return str;
 	}
 
-	private NamePrompt prompt;
+	private NamePrompt namePrompt;
 	private void nameButton(int slot){
+		if (Validate.notNull(namePrompt)){
+			objective.setName(namePrompt.get());
+			namePrompt = null;
+			display();
+		}
+		
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			prompt = new NamePrompt(this);
-			new ChatInteract(player, prompt, "Cancel");
+			namePrompt = new NamePrompt(this);
+			new ChatInteract(player, namePrompt, "Cancel");
 			player.closeInventory();
 		}, "&5Edit Name!",  
 				"&bClick to edit!");
-
-		if (Validate.notNull(prompt)){
-			objective.setName(prompt.get());
-			prompt = null;
-		}
 	}
 	
 	private void spawnButton(int slot){

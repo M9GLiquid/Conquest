@@ -7,8 +7,8 @@ import eu.kingconquest.conquest.core.Village;
 public class CaptureBoard extends Board{
 
 	public CaptureBoard(Player player, Village village){
-		setName("Capture");
-		SimpleScoreboard board = getBoard(player);
+		setType(BoardType.CAPTUREBOARD);
+		SimpleScoreboard board = new SimpleScoreboard();
 		
 		int i = 13;
 		board.setTitle("&6[&eCapture Information&6]");
@@ -22,9 +22,6 @@ public class CaptureBoard extends Board{
 		board.add(i--, "  ");	
 		board.add(i--, "&a&lCapture Progress:");	
 		board.add(i--, "&e" + village.getProgress() + "%");	
-		board.add(i--, " ");		
-		board.add(i--, " ");
-		board.add(i--, " ");
 		board.send(player); // Build Scoreboard then send it to player
 	}
 }

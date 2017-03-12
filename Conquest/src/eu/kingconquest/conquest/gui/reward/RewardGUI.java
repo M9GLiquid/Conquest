@@ -6,8 +6,10 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import eu.kingconquest.conquest.core.ChestGui;
+import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Reward;
 import eu.kingconquest.conquest.hook.Vault;
+import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
@@ -62,21 +64,30 @@ public class RewardGUI extends ChestGui{
 	private void buyButton(int slot, Reward reward){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			if (getClickType().equals(ClickType.RIGHT)){ // Buy
-				int i = 0;
-				for (ItemStack item : player.getInventory().getContents())
-					if (Validate.isNull(item))
-						i++;
-				if (i < reward.getItems().size()){
-					new Message(player, MessageType.CHAT, "{NoInventoryRoom}");
+				if (PlayerWrapper.getWrapper(player).isRewardReady(reward)){
+					int i = 0;
+					for (ItemStack item : player.getInventory().getContents())
+						if (Validate.isNull(item))
+							i++;
+					if (i < reward.getItems().size()){
+						new Message(player, MessageType.CHAT, "{NoInventoryRoom}");
+					}else{
+						if (!Vault.econ.has(player, reward.getCost()))
+							new Message(player, MessageType.CHAT, "{NotEnoughMoney}");
+						
+						Vault.econ.withdrawPlayer(player, reward.getCost());
+						reward.getItems().forEach((inventorySlot, item)->{
+							player.getInventory().addItem(item);
+						});
+						PlayerWrapper.getWrapper(player).setRewardCooldown(reward);
+						Cach.StaticReward = reward;
+						new Message(player, MessageType.CHAT, "{RewardBaught}");
+					}
+					close(player);
 				}else{
-					if (!Vault.econ.has(player, reward.getCost()))
-						new Message(player, MessageType.CHAT, "{NotEnoughMoney}");
-					Vault.econ.withdrawPlayer(player, reward.getCost());
-					reward.getItems().forEach((inventorySlot, item)->{
-						player.getInventory().setItem(player.getInventory().firstEmpty(), item);
-					});
+					Cach.StaticCooldownLeft = PlayerWrapper.getWrapper(player).getRewardCooldown(reward);
+					new Message(player, MessageType.CHAT, "{RewardNotReady}");
 				}
-				close(player);
 			}else if (getClickType().equals(ClickType.LEFT)){ // View
 				new RewardItemsGUI(player, this, reward);
 			}

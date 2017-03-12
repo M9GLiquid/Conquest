@@ -65,6 +65,7 @@ public class CaptureProgressListener implements Listener{
 			Cach.StaticTown = village.getParent();
 			village.getParent().setOwner(village.getOwner());
 			village.getParent().updateGlass();
+			new Rocket(village.getLocation(), true, true, 2, 45, village.getOwner().getColor()); // Rocket on Success
 			new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
 			village.getParent().getChildren().forEach(child->{
 				new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success

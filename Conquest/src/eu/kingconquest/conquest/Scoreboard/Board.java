@@ -6,21 +6,24 @@ import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Board{
-	private String name = "";
 	
 	public String getName(){
-		return name;
+		return type.getName();
 	}
 	
-	public void setName(String name){
-		this.name = name;
+	private BoardType type;
+	public void setType(BoardType type){
+		this.type = type;
+	}
+	public BoardType getType(){
+		return type;
 	}
 	
 	public SimpleScoreboard getBoard(Player player){
 		PlayerWrapper wrapper = getWrapper(player);
 		if (Validate.isNull(wrapper.getScoreboard())){
 			wrapper.setScoreboard(new SimpleScoreboard());
-			wrapper.setBoardType(new NeutralBoard(player));
+			wrapper.setBoardType(BoardType.NEUTRALBOARD);
 		}
 		return wrapper.getScoreboard();
 	}

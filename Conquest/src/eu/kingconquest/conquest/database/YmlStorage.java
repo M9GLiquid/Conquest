@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -56,7 +57,7 @@ public class YmlStorage extends YamlConfiguration{
 		String pathway = (path == null) 
 				? Main.getInstance().getDataFolder() + File.separator + fileName 
 						: Main.getInstance().getDataFolder() + File.separator + path + File.separator + fileName;
-		
+
 		try{
 			file = new File(pathway);
 			reload();
@@ -97,12 +98,14 @@ public class YmlStorage extends YamlConfiguration{
 				saveConfig();
 				return true;
 			}
-		}catch (IOException exception){
+		}catch (IOException e){
 			Main.getInstance().getLogger().severe("Error while loading file " + file.getName());
+			e.printStackTrace();
 			return false;
-
-		}catch (InvalidConfigurationException exception){
+		}
+		catch (InvalidConfigurationException e){
 			Main.getInstance().getLogger().severe("Error while loading file " + file.getName());
+			e.printStackTrace();
 			return false;
 		}
 		return false;
@@ -172,7 +175,7 @@ public class YmlStorage extends YamlConfiguration{
 						saveTowns(world);
 						saveVillages(world);
 						saveUsers(world);
-						saveKits(world);
+						saveRewards(world);
 					});
 					saveMsg.clear();
 				}
@@ -185,7 +188,7 @@ public class YmlStorage extends YamlConfiguration{
 				saveTowns(world);
 				saveVillages(world);
 				saveUsers(world);
-				saveKits(world);
+				saveRewards(world);
 				output();
 			});
 		}
@@ -201,18 +204,18 @@ public class YmlStorage extends YamlConfiguration{
 			loadUsers(world);
 			loadTowns(world);
 			loadVillages(world);
-			loadKits(world);
+			loadRewards(world);
 		});
 	}
 	public static void remove(){
 		headerMsg = "&6| - &cRemoved:";
 		worlds.forEach(uniqueID->{
 			World world = Bukkit.getWorld(uniqueID);
+			removeRewards(world);
 			removeKingdoms(world);
 			removeUsers(world);
 			removeTowns(world);
 			removeVillages(world);
-			removeKits(world);
 		});
 		output();
 	}
@@ -275,7 +278,7 @@ public class YmlStorage extends YamlConfiguration{
 		removeMsg.clear();
 	}
 
-	
+
 	//LOAD
 	//Config Loads
 	public static boolean loadDefault(){
@@ -343,81 +346,65 @@ public class YmlStorage extends YamlConfiguration{
 	private static void loadKingdoms(World world){
 		YmlStorage config = getConfig("Kingdoms");
 
-		if (!config.isSet(world.getName()))
+		if (!config.isSet(world.getUID().toString()))
 			return;
-		for (String uniqueID : getPathSection(config, world.getName())){
+		for (String uniqueID : getPathSection(config, world.getUID().toString())){
 			if (Validate.notNull(Kingdom.getKingdom(UUID.fromString(uniqueID), world))) 
 				return; //Kingdom already loaded!
-			new Kingdom(config.getString(world.getName() + "." + uniqueID + ".Name"),
-					config.getString(world.getName() + "." + uniqueID + ".King"),
+			Kingdom kingdom = new Kingdom(config.getString(world.getUID().toString() + "." + uniqueID + ".Name"),
+					config.getString(world.getUID().toString() + "." + uniqueID + ".King"),
 					uniqueID,
-					config.getLocation(world, world.getName() + "." + uniqueID + ".Location"),
-					config.getLocation(world, world.getName() + "." + uniqueID + ".Spawn"),
-					config.getInt(world.getName() + "." + uniqueID + ".Color"));
+					config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Location"),
+					config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Spawn"),
+					config.getInt(world.getUID().toString() + "." + uniqueID + ".Color"));
+			config.getStringList(world.getUID().toString() + "." + uniqueID + ".Members").forEach(uUUID->{
+				if (Validate.notNull(Bukkit.getOfflinePlayer(UUID.fromString(uUUID)))){
+					PlayerWrapper wrapper = new PlayerWrapper(UUID.fromString(uUUID));
+					wrapper.setKingdom(kingdom.getUUID());
+					kingdom.addMember(UUID.fromString(uUUID));
+				}
+			});
 		}
 		if (Validate.isNull(Kingdom.getKingdom("Neutral", world))){
 			Kingdom kingdom = new Kingdom("Neutral", null, world.getSpawnLocation().clone(), -1);
 			kingdom.create(null);
 		}
 	}
-	private static void loadUsers(World world){
-		YmlStorage config = getConfig("Users");
-
-		if (!config.isSet(world.getName()))
-			return;
-		Kingdom.getKingdoms(world).forEach(kingdom->{
-			getPathSection(config, world.getName()).forEach(kUUID->{
-				if (kUUID.equals(kingdom.getUUID().toString())){
-					if (!config.isSet(world.getName() + "." + kUUID))
-						return;
-					getPathSection(config, world.getName() + "." + kUUID).forEach(uUUID->{
-						if (Validate.notNull(Bukkit.getOfflinePlayer(UUID.fromString(uUUID)))){
-							PlayerWrapper wrapper = new PlayerWrapper(UUID.fromString(uUUID));
-							wrapper.setKingdom(kingdom.getUUID());
-							kingdom.addMember(UUID.fromString(uUUID));
-						}
-					});
-				}
-			});
-		});
-	}
 	private static void loadTowns(World world){
 		YmlStorage config = getConfig("Towns");
 
-		if (!config.isSet(world.getName()))
+		if (!config.isSet(world.getUID().toString()))
 			return;
-		getPathSection(config, world.getName()).forEach(uniqueID ->{
+		getPathSection(config, world.getUID().toString()).forEach(uniqueID ->{
 			if (Validate.notNull(Town.getTown(UUID.fromString(uniqueID), world)))
 				return; //Town already loaded!
 
-			new Town(config.getString(world.getName() + "." + uniqueID + ".Name")
+			new Town(config.getString(world.getUID().toString() + "." + uniqueID + ".Name")
 					,uniqueID
-					,config.getLocation(world, world.getName() + "." + uniqueID + ".Location")
-					,config.getLocation(world, world.getName() + "." + uniqueID + ".Spawn")
-					,Kingdom.getKingdom(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".Owner")), world));
+					,config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Location")
+					,config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Spawn")
+					,Kingdom.getKingdom(UUID.fromString(config.getString(world.getUID().toString() + "." + uniqueID + ".Owner")), world));
 
 		});
 	}
 	private static void loadVillages(World world){
 		YmlStorage config = getConfig("Villages");
-
-
-		if (!config.isSet(world.getName()))
+		if (!config.isSet(world.getUID().toString()))
 			return;
-		getPathSection(config, world.getName()).forEach(uniqueID->{
+		getPathSection(config, world.getUID().toString()).forEach(uniqueID->{
 			Town parent = null;
 			if (Validate.notNull(Village.getVillage(UUID.fromString(uniqueID), world))) 
 				return; //Village already loaded!
-			if (config.isSet((world.getName() + "." + uniqueID + ".Parent")))
-				parent = Town.getTown(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".Parent")), world);
+			if (config.isSet((world.getUID().toString() + "." + uniqueID + ".Parent")))
+				parent = Town.getTown(UUID.fromString(config.getString(world.getUID().toString() + "." + uniqueID + ".Parent")), world);
 
 			Village village = new Village(
-					config.getString(world.getName() + "." + uniqueID + ".Name"),
+					config.getString(world.getUID().toString() + "." + uniqueID + ".Name"),
 					uniqueID, 
-					config.getLocation(world, world.getName() + "." + uniqueID + ".Location"),
-					config.getLocation(world, world.getName() + "." + uniqueID + ".Spawn"),
-					Kingdom.getKingdom(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".Owner")), world),
-					Kingdom.getKingdom(UUID.fromString(config.getString(world.getName() + "." + uniqueID + ".PreOwner")), world),
+					config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Location"),
+					config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Spawn"),
+					Kingdom.getKingdom(UUID.fromString(config.getString(world.getUID().toString() + "." + uniqueID + ".Owner")), world),
+					Kingdom.getKingdom(UUID.fromString(config.getString(world.getUID().toString() + "." + uniqueID + ".PreOwner")), world),
 					parent);
 
 			//Add Child to Parent
@@ -429,40 +416,57 @@ public class YmlStorage extends YamlConfiguration{
 					village.setProgress(100.0d);
 		});
 	}
-	private static void loadKits(World world){
-		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))){
-		    paths.forEach(filePath -> {
-		        if (Files.isRegularFile(filePath)) {
-		    		String kitUUID = filePath.getFileName().toString().replaceAll(".yml", "");
-	    			if (Validate.notNull(Reward.getReward(UUID.fromString(kitUUID), world))) 
-	    				return; //Kit already loaded!
-	    			
-		    		YmlStorage config = getConfig(kitUUID);
-		    		if (!config.isSet(world.getName()))
-		    			return;
-		    			Reward kit = new Reward(
-		    					config.getString(world.getName() + "." + kitUUID + ".Name")
-		    					, world
-		    					, config.getLong(world.getName() + "." + kitUUID + ".Cost")
-		    					, config.getLong(world.getName() + "." + kitUUID + ".Cooldown")
-		    					, UUID.fromString(config.getString(world.getName() + "." + kitUUID + ".Owner"))
-		    					, UUID.fromString(kitUUID));
-		    			//Get each type
-		    			if (config.isSet(world.getName() + "." + kitUUID + ".Slots")){
-		    				getPathSection(config, world.getName() + "." + kitUUID + ".Slots")
-		    				.forEach(slot->{
-		    					kit.addItem(kit.getItems().size() + 1, config.getItemStack(world.getName() + "." + kitUUID + ".Slots." + slot));	
-		    				});
-		    			}
-		    		loadMsg.put("&6| --&3 " +  config.getName() + " [&6" + world.getName() + "&3]", true);	
-		        }
-		    });
-		}
-		catch (IOException e){
-			e.printStackTrace();
-		} 
+	private static void loadUsers(World world){
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Users"))){
+			paths.forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+					String userUUID = filePath.getFileName().toString().replaceAll(".yml", "");
+					YmlStorage config = getConfig(userUUID);
+					if (Validate.notNull(config)){
+						if (!config.isSet(world.getUID().toString()))
+							return;
+						PlayerWrapper wrapper = new PlayerWrapper(UUID.fromString(userUUID));
+						wrapper.setBoardType(config.getString(world.getUID() + "." + userUUID + ".Scoreboard"));
+						wrapper.setKingdom(UUID.fromString(config.getString(world.getUID() + "." + userUUID + ".Kingdom")));
+						getPathSection(config, world.getUID() + "." + userUUID + ".Rewards").forEach(rewardUUID->{
+							wrapper.setRewardCooldown(UUID.fromString(rewardUUID), config.getLong(world.getUID() + "." + userUUID + ".Rewards." + rewardUUID + ".Cooldown"));
+						});;
+					}
+				}
+			});
+		}catch (IOException e){	} 
 	}
+	private static void loadRewards(World world){
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Rewards"))){
+			paths.forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+					String rewardUUID = filePath.getFileName().toString().replaceAll(".yml", "");
+					if (Validate.notNull(Reward.getReward(UUID.fromString(rewardUUID), world))) 
+						return; //Reward already loaded!
 
+					YmlStorage config = getConfig(rewardUUID);
+					if (Validate.notNull(config)){
+						if (!config.isSet(world.getUID().toString()))
+							return;
+						Reward reward = new Reward(
+								config.getString(world.getUID().toString() + "." + rewardUUID + ".Name")
+								, world
+								, config.getLong(world.getUID().toString() + "." + rewardUUID + ".Cost")
+								, config.getLong(world.getUID().toString() + "." + rewardUUID + ".Cooldown")
+								, UUID.fromString(config.getString(world.getUID().toString() + "." + rewardUUID + ".Owner"))
+								, UUID.fromString(rewardUUID));
+						//Get each type
+						if (config.isSet(world.getUID().toString() + "." + rewardUUID + ".Slots")){
+							getPathSection(config, world.getUID().toString() + "." + rewardUUID + ".Slots")
+							.forEach(slot->{
+								reward.addItem(reward.getItems().size() + 1, config.getItemStack(world.getUID().toString() + "." + rewardUUID + ".Slots." + slot));	
+							});
+						}
+					}
+				}
+			});
+		}catch (IOException e){	} 
+	}
 
 	//SAVE
 	private static void saveKingdoms(World world){
@@ -471,29 +475,16 @@ public class YmlStorage extends YamlConfiguration{
 			Kingdom.getKingdoms().forEach(kingdom->{
 				if (!kingdom.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 					return;
-				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Name", kingdom.getName());
+				config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Name", kingdom.getName());
 				if (Validate.notNull(kingdom.getKing()))
-					config.set(world.getName() + "." + kingdom.getUUID().toString() + ".King", kingdom.getKing().getUniqueId().toString());
-				config.set(world.getName() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getColor());
-				config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Location", kingdom.getLocation());
-				config.setLocation(world.getName() + "." + kingdom.getUUID().toString() + ".Spawn", kingdom.getSpawn());
+					config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".King", kingdom.getKing().getUniqueId().toString());
+				config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getColor());
+				config.setLocation(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Location", kingdom.getLocation());
+				config.setLocation(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Spawn", kingdom.getSpawn());
+				List<String> members = new ArrayList<String>();
+				kingdom.getMembers().forEach(member->{  members.add(member.toString());  });
+				config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Members", members);
 				config.saveConfig();
-			});
-			saveMsg.put("&6| --&3 " + config.getName(), true);
-		}catch(Exception e){
-			e.printStackTrace();
-			saveMsg.put("&6| --&3 " + config.getName(), false);
-		}
-	}
-	private static void saveUsers(World world){
-		YmlStorage config = getConfig("Users");
-
-		try {
-			Kingdom.getKingdoms(world).forEach(kingdom->{
-				kingdom.getMembers().forEach(user->{
-					config.createSection(world.getName() + "." + kingdom.getUUID().toString() + "." + user.toString());
-					config.saveConfig();
-				});
 			});
 			saveMsg.put("&6| --&3 " + config.getName(), true);
 		}catch(Exception e){
@@ -507,15 +498,15 @@ public class YmlStorage extends YamlConfiguration{
 			Town.getTowns(world).forEach(town->{
 				if (!town.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 					return;
-				config.set(world.getName() + "." + town.getUUID().toString() + ".Name", town.getName());
-				config.set(world.getName() + "." + town.getUUID().toString() + ".Owner", town.getOwner().getUUID().toString());
+				config.set(world.getUID().toString() + "." + town.getUUID().toString() + ".Name", town.getName());
+				config.set(world.getUID().toString() + "." + town.getUUID().toString() + ".Owner", town.getOwner().getUUID().toString());
 				if (town.hasChildren()){
 					town.getChildren().forEach(child->{
-						config.createSection(world.getName() + "." + town.getUUID().toString() + ".Children." + child.getUUID().toString());
+						config.createSection(world.getUID().toString() + "." + town.getUUID().toString() + ".Children." + child.getUUID().toString());
 					});
 				}
-				config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Location", town.getLocation());
-				config.setLocation(world.getName() + "." + town.getUUID().toString() + ".Spawn", town.getSpawn());
+				config.setLocation(world.getUID().toString() + "." + town.getUUID().toString() + ".Location", town.getLocation());
+				config.setLocation(world.getUID().toString() + "." + town.getUUID().toString() + ".Spawn", town.getSpawn());
 				config.saveConfig();
 			});
 			saveMsg.put("&6| --&3 " + config.getName(), true);
@@ -530,14 +521,14 @@ public class YmlStorage extends YamlConfiguration{
 			Village.getVillages(world).forEach(village->{
 				if (!village.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
 					return;
-				config.set(world.getName() + "." + village.getUUID().toString() + ".Name", village.getName());
-				config.set(world.getName() + "." + village.getUUID().toString() + ".Owner", village.getOwner().getUUID().toString());
+				config.set(world.getUID().toString() + "." + village.getUUID().toString() + ".Name", village.getName());
+				config.set(world.getUID().toString() + "." + village.getUUID().toString() + ".Owner", village.getOwner().getUUID().toString());
 				if (Validate.notNull(village.getPreOwner()))
-					config.set(world.getName() + "." + village.getUUID().toString() + ".PreOwner", village.getPreOwner().getUUID().toString());
+					config.set(world.getUID().toString() + "." + village.getUUID().toString() + ".PreOwner", village.getPreOwner().getUUID().toString());
 				if (village.hasParent())
-					config.set(world.getName() + "." + village.getUUID().toString() + ".Parent", village.getParent().getUUID().toString());
-				config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Location", village.getLocation());
-				config.setLocation(world.getName() + "." + village.getUUID().toString() + ".Spawn", village.getSpawn());
+					config.set(world.getUID().toString() + "." + village.getUUID().toString() + ".Parent", village.getParent().getUUID().toString());
+				config.setLocation(world.getUID().toString() + "." + village.getUUID().toString() + ".Location", village.getLocation());
+				config.setLocation(world.getUID().toString() + "." + village.getUUID().toString() + ".Spawn", village.getSpawn());
 				config.saveConfig();
 			});
 			saveMsg.put("&6| --&3 " + config.getName(), true);
@@ -546,23 +537,39 @@ public class YmlStorage extends YamlConfiguration{
 			saveMsg.put("&6| --&3 " + config.getName(), false);
 		}
 	}
-	private static void saveKits(World world){
-		Reward.getRewards(world).forEach(kit ->{
-			if (!kit.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
-				return;
-			YmlStorage config = new YmlStorage("Data" + File.separator + "Kits", kit.getUUID().toString() + ".yml");
+	private static void saveUsers(World world){ // Update so each Player has it's own file
+		PlayerWrapper.Wrappers().forEach((uuid, wrapper)->{
+			YmlStorage config = new YmlStorage("Data" + File.separator + "Users", uuid + ".yml");
 			try {
-				config.set(world.getName() + "." + kit.getUUID() + ".Name", kit.getName());
-				config.set(world.getName() + "." + kit.getUUID() + ".Owner", kit.getOwnerUUID().toString());
-				config.set(world.getName() + "." + kit.getUUID() + ".Cost", kit.getCost());
-				config.set(world.getName() + "." + kit.getUUID() + ".Cooldown", kit.getCooldown());
-				if (kit.getItems().size() < 1)
+				config.set(world.getUID().toString() + "." + uuid + ".Scoreboard", wrapper.getBoardType());
+				if (wrapper.isInKingdom(world))
+					config.set(world.getUID().toString() + "." + uuid + ".Kingdom", wrapper.getKingdom(world).getUUID().toString());
+				wrapper.getRewardCooldowns().forEach((rUUID, cooldown)->{
+					config.set(world.getUID().toString() + "." + uuid +  ".Rewards." + rUUID + ".Cooldown", cooldown);
+					config.saveConfig();
+				});
+			}catch(Exception e){
+				e.printStackTrace();
+				saveMsg.put("&6| --&3 " + config.getName(), false);
+			}
+		});
+	}
+	private static void saveRewards(World world){
+		Reward.getRewards(world).forEach(reward ->{
+			if (!reward.getWorld().equals(world))// Proceed to save only if world is equal to objectives world
+				return;
+			YmlStorage config = new YmlStorage("Data" + File.separator + "Rewards", reward.getUUID().toString() + ".yml");
+			try {
+				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Name", reward.getName());
+				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Owner", reward.getOwnerUUID().toString());
+				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Cost", reward.getCost());
+				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Cooldown", reward.getCooldown());
+				if (reward.getItems().size() < 1)
 					return;
-				kit.getItems().forEach((i, item)->{
-					config.set(world.getName() + "." + kit.getUUID() + ".Slots." + i, item);
+				reward.getItems().forEach((i, item)->{
+					config.set(world.getUID().toString() + "." + reward.getUUID() + ".Slots." + i, item);
 				});
 				config.saveConfig();
-				saveMsg.put("&6| --&3 " + config.getName(), true);
 			}catch(Exception e){
 				e.printStackTrace();
 				saveMsg.put("&6| --&3 " + config.getName(), false);
@@ -570,16 +577,15 @@ public class YmlStorage extends YamlConfiguration{
 		});
 	}
 
-
 	//REMOVE
 	private static void removeKingdoms(World world){
 		YmlStorage config = getConfig("Kingdoms");
-		if (!config.isSet(world.getName()))
+		if (!config.isSet(world.getUID().toString()))
 			return;
-		getPathSection(config, world.getName()).forEach(kingdomUUID->{
+		getPathSection(config, world.getUID().toString()).forEach(kingdomUUID->{
 			//Remove Kingdom from config if removed from game
 			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))){
-				config.set(world.getName(), null);
+				config.set(world.getUID().toString(), null);
 				removeMsg.put("&6| --&3 [&6Kingdom&3] " + kingdomUUID
 						+ " [&6" + world.getName() + "&3]", true);
 			}
@@ -588,12 +594,12 @@ public class YmlStorage extends YamlConfiguration{
 	}
 	private static void removeTowns(World world){
 		YmlStorage config = getConfig("Towns");
-		if (!config.isSet(world.getName()))
+		if (!config.isSet(world.getUID().toString()))
 			return;
-		getPathSection(config, world.getName()).forEach(townUUID->{
+		getPathSection(config, world.getUID().toString()).forEach(townUUID->{
 			//Remove Town from config if removed from game
 			if (Validate.isNull(Town.getTown(UUID.fromString(townUUID), world))){
-				config.set(world.getName(), null);
+				config.set(world.getUID().toString(), null);
 				removeMsg.put("&6| --&3 [&6Town&3] " +  townUUID 
 						+ " [&6" + world.getName() + "&3]", true);
 			}
@@ -602,12 +608,12 @@ public class YmlStorage extends YamlConfiguration{
 	}
 	private static void removeVillages(World world){
 		YmlStorage config = getConfig("Villages");
-		if (!config.isSet(world.getName()))
+		if (!config.isSet(world.getUID().toString()))
 			return;
-		getPathSection(config, world.getName()).forEach(villageUUID->{
+		getPathSection(config, world.getUID().toString()).forEach(villageUUID->{
 			//Remove Village from config if removed from game
 			if (Validate.isNull(Village.getVillage(UUID.fromString(villageUUID), world))){
-				config.set(world.getName(), null);
+				config.set(world.getUID().toString(), null);
 				removeMsg.put("&6| --&3 [&6Village&3] " + villageUUID  
 						+ " [&6" + world.getName() + "&3]", true);
 			}
@@ -615,49 +621,36 @@ public class YmlStorage extends YamlConfiguration{
 		config.saveConfig();
 	} 
 	private static void removeUsers(World world){
-		YmlStorage config = getConfig("Users");
-		if (!config.isSet(world.getName()))
-			return;
-		getPathSection(config, world.getName()).forEach(kingdomUUID ->{
-			if (Validate.isNull(Kingdom.getKingdom(UUID.fromString(kingdomUUID), world))) {
-				config.set(world.getName() + "." + kingdomUUID, null);
-				config.saveConfig();
-				removeMsg.put("&6| --&3 [&6User|Kingdom&3] " + kingdomUUID 
-						+ " [&6" + world.getName() + "&3]", true);
-				return;
-			}
-			getPathSection(config, world.getName() + "." + kingdomUUID).forEach(playerrUUID ->{
-				if (!Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).hasMember(UUID.fromString(playerrUUID)) 
-						|| Kingdom.getKingdom(UUID.fromString(kingdomUUID), world).getMembers().size() == 0){
-					config.set(world.getName() + "." + kingdomUUID + "." + playerrUUID, null);
-					removeMsg.put("&6| --&3 [&6User&3] " + playerrUUID 
-							+ " [&6" + world.getName() + "&3]", true);
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Users"))){
+			paths.forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+					try{
+						Files.delete(filePath);
+					} catch (NoSuchFileException x) {
+						System.err.format("%s: no such file or directory%n", filePath);
+					}catch (IOException e){
+						e.printStackTrace();
+					}
 				}
 			});
-		});
-		config.saveConfig();
-	}
-	private static void removeKits(World world){
-		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))){
-		    paths.forEach(filePath -> {
-		        if (Files.isRegularFile(filePath)) {
-		    		String kitUUID = filePath.getFileName().toString().replaceAll(".yml", "");
-	    			if (Validate.isNull(Reward.getReward(UUID.fromString(kitUUID), world))){
-						try{
-							Files.delete(filePath);
-						} catch (NoSuchFileException x) {
-						    System.err.format("%s: no such" + " file or directory%n", filePath);
-						}catch (IOException e){
-							e.printStackTrace();
-						}
-	    			}
-		    		removeMsg.put("&6| --&3 " +  kitUUID + " [&6" + world.getName() + "&3]", true);	
-		        }
-		    });
 		}
-		catch (IOException e){
-			e.printStackTrace();
-		} 
+		catch (IOException e){} 
+	}
+	private static void removeRewards(World world){
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Rewards"))){
+			paths.forEach(filePath -> {
+				if (Files.isRegularFile(filePath)){
+					try{
+						Files.delete(filePath);
+					} catch (NoSuchFileException e) {
+						System.err.format("%s: no such file or directory%n", filePath);
+					}catch (IOException e){
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		catch (IOException e){} 
 	} 
 
 	private static ArrayList<UUID> worlds = new ArrayList<UUID>();
@@ -752,18 +745,23 @@ public class YmlStorage extends YamlConfiguration{
 		new YmlStorage("Data", "Kingdoms.yml");
 		new YmlStorage("Data", "Towns.yml");
 		new YmlStorage("Data", "Villages.yml");
-		new YmlStorage("Data", "Users.yml");
 
-		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Kits"))) {
-		    paths.forEach(filePath -> {
-		        if (Files.isRegularFile(filePath)) {
-		    		new YmlStorage("Data" + File.separator + "Kits", filePath.getFileName().toString());
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Users"))) {
+			paths.forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+					new YmlStorage("Data" + File.separator + "Users", filePath.getFileName().toString());
 					loadMsg.put("&6| --&3 " +  filePath.getFileName().toString(), true);		
-		        }
-		    });
-		}
-		catch (IOException e){
-			new Message(null, MessageType.CONSOLE, "&6| --&3 No Kits");
-		}
+				}
+			});
+		}catch (IOException e){}
+
+		try(Stream<Path> paths = Files.walk(Paths.get(Main.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "Rewards"))) {
+			paths.forEach(filePath -> {
+				if (Files.isRegularFile(filePath)) {
+					new YmlStorage("Data" + File.separator + "Rewards", filePath.getFileName().toString());
+					loadMsg.put("&6| --&3 " +  filePath.getFileName().toString(), true);		
+				}
+			});
+		}catch (IOException e){}
 	}
 }

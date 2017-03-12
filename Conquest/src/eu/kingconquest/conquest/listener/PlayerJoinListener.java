@@ -11,11 +11,9 @@ import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.database.YmlStorage;
-import eu.kingconquest.conquest.hook.TNEApi;
-import eu.kingconquest.conquest.hook.Vault;
-import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerJoinListener implements Listener{
+	private static PlayerWrapper wrapper;
 
 	/**
 	 * Player Join Event (First Time + Every Time)
@@ -25,22 +23,27 @@ public class PlayerJoinListener implements Listener{
 	@EventHandler 
 	public void onPlayerJoin(PlayerJoinEvent e){
 		Player player = e.getPlayer();
-
 		YmlStorage.getWorlds().forEach(uniqueID->{
+			
 			if (player.getWorld().equals(Bukkit.getWorld(uniqueID))){
-				if (!Validate.hasPerm(player, "conquest.basic.*"))
-					Vault.perms.playerAdd(player, "conquest.basic.*");
-				PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-				if (!TNEApi.accountExist(player.getUniqueId()))
-					TNEApi.createAccount(player.getUniqueId());
-				if (wrapper.isInKingdom(player.getWorld())){
-					if(wrapper.getBoardType() instanceof KingdomBoard
-							|| Validate.isNull(wrapper.getBoardType()))
-						new KingdomBoard(player);
-					if(wrapper.getBoardType() instanceof PlayerBoard)
-						new PlayerBoard(player);
-				}else{
+				wrapper = PlayerWrapper.getWrapper(player);
+				if (!wrapper.isInKingdom(Bukkit.getWorld(uniqueID))){
 					new NeutralBoard(player);
+					return;
+				}
+				switch(wrapper.getBoardType()){
+					case KINGDOMBOARD:
+						new KingdomBoard(player);
+					break;
+					/*case TRAPBOARD:
+							new TrapBoard(player);
+					break;*/
+					case PLAYERBOARD:
+						new PlayerBoard(player);
+					break;
+					default:
+						new KingdomBoard(player);
+					break;
 				}
 			}
 		});

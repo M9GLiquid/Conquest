@@ -153,20 +153,21 @@ public class CreateGUI extends ChestGui{
 		return str;
 	}
 
-	private NamePrompt prompt;
+	private NamePrompt namePrompt = null;
 	private void nameButton(int slot){
-		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			new ChatInteract(player, prompt = new NamePrompt(this), "Cancel");
-			player.closeInventory();
+		if (Validate.notNull(namePrompt)){
+			name = namePrompt.get();
+			namePrompt = null;
 			display();
+		}
+		
+		setItem(slot, new ItemStack(Material.BOOK), player -> {
+			namePrompt = new NamePrompt(this);
+			new ChatInteract(player, namePrompt, "Cancel");
+			player.closeInventory();
 	}, "&4Set Name!", 
 				"\n"
 				+ "\n&bClick to set name");
-
-		if (Validate.notNull(prompt)){
-			name = prompt.get();
-			prompt = null;
-		}
 	}
 	
 	private void spawnButton(int slot){

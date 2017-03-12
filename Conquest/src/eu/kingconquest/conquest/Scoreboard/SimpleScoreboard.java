@@ -32,13 +32,13 @@ public class SimpleScoreboard {
 
     private static Map<String, OfflinePlayer> cache = new HashMap<>();
 
-    private Scoreboard scoreboard;
-    private String title;
-    private Map<String, Integer> scores;
-    private Objective objective;
-    private List<Team> teams;
-    private List<Integer> removed;
-    private Set<String> updated;
+    private Scoreboard				 	scoreboard;
+    private String								title;
+    private Map<String, Integer> 	scores;
+    private Objective 						objective;
+    private List<Team> 					teams;
+    private List<Integer> 				removed;
+    private Set<String> 					updated;
 
      public SimpleScoreboard() {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();

@@ -65,41 +65,43 @@ public class RewardItemEditGui extends ChestGui{
 		IncreaseItemButton(50, 1);
 		IncreaseItemButton(51, 10);
 	}
-	
+
 	private NamePrompt namePrompt;
 	private void nameButton(int slot){
-		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			namePrompt = new NamePrompt(this);
-			new ChatInteract(player, namePrompt, "Cancel");
-			player.closeInventory();
-		}, "",  
-				"\n&bClick to Edit/Set Displayname");
-
 		if (Validate.notNull(namePrompt)){
 			ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName(namePrompt.get());
 			item.setItemMeta(meta);
 			tempItem = item.clone();
 			namePrompt = null;
+			display();
 		}
+		
+		setItem(slot, new ItemStack(Material.BOOK), player -> {
+			namePrompt = new NamePrompt(this);
+			new ChatInteract(player, namePrompt, "Cancel");
+			player.closeInventory();
+		}, "",  
+				"\n&bClick to Edit/Set Displayname");
 	}
 
 	private LorePrompt lorePrompt;
 	private void loreButton(int slot){
-		setItem(slot, tempItem, player -> {
-			lorePrompt = new LorePrompt(this);
-			new ChatInteract(player, lorePrompt, "Cancel");
-			player.closeInventory();
-		}, "",  
-				"\n&bClick to Edit/Set Lore");
-		
 		if (Validate.notNull(lorePrompt)){
 			ItemMeta meta = item.getItemMeta();
 			meta.setLore(lorePrompt.get());
 			item.setItemMeta(meta);
 			tempItem = item.clone();
 			namePrompt = null;
+			display();
 		}
+		
+		setItem(slot, tempItem, player -> {
+			lorePrompt = new LorePrompt(this);
+			new ChatInteract(player, lorePrompt, "Cancel");
+			player.closeInventory();
+		}, "",  
+				"\n&bClick to Edit/Set Lore");
 	}
 	
 	private void enchantButton(int slot){

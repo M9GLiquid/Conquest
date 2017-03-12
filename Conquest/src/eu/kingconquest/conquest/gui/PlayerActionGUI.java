@@ -4,6 +4,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import eu.kingconquest.conquest.Scoreboard.BoardType;
+import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
+import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
@@ -67,6 +70,7 @@ public class PlayerActionGUI extends ChestGui{
 			}
 			moveToButton(14);
 		}else{
+			scoreboardButton(10);
 			if (Validate.notNull(wrapper.isInKingdom(target.getWorld()))){
 				if (player.equals(target)) 
 					leaveButton(13);
@@ -76,6 +80,35 @@ public class PlayerActionGUI extends ChestGui{
 		}
 	}
 
+	private void scoreboardButton(int slot){
+		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
+			PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+			switch(wrapper.getBoardType()){ //Make it possible to switch between more scoreboards
+				/*case TRAPBOARD: // if PlayerBoard witch to next in line
+					new TrapBoard(player);
+					wrapper.setBoardType(BoardType.PLAYERBOARD);
+					break;*/
+				case PLAYERBOARD: // if PlayerBoard witch to next in line
+					new KingdomBoard(player);
+					wrapper.setBoardType(BoardType.KINGDOMBOARD);
+					break;
+				case KINGDOMBOARD:// if KingdomBoard witch to next in line
+				default:
+					new PlayerBoard(player);
+					wrapper.setBoardType(BoardType.PLAYERBOARD); //When TrapBoard Implemented Change to it
+					break;
+				
+			}
+		}, "&2Switch your Scoreboard", 
+				"\n&6Scoreboards:"
+				+ "\n &6- &3KingdomBoard &6(Default)"
+				+ "\n &6- &3PlayerBoard"
+				+ "\n &6&m- &3&mTrapBoard"
+				+ "\n"
+				+ "\n&bClick to Switch"
+						);
+	}
+
 	private void joinButton(int slot){
 		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			new KingdomGUI(player, this);
@@ -83,6 +116,16 @@ public class PlayerActionGUI extends ChestGui{
 				"\n&c");
 	}
 
+	private void leaveButton(int slot){
+		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
+			Cach.StaticKingdom = kingdom;
+			new Message(target, MessageType.CHAT, "{LeaveSuccess}");
+			kingdom.leave(target);
+			display();
+		}, "&4Leave " + kingdom.getColorSymbol() + kingdom.getName(), 
+				"\n&c\n");
+	}
+	
 	/**
 	 * Rank up in the Kingdom Hierchy
 	 */
@@ -124,15 +167,6 @@ public class PlayerActionGUI extends ChestGui{
 				"\n&c\n");
 	}
 
-	private void leaveButton(int slot){
-		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
-			Cach.StaticKingdom = kingdom;
-			new Message(target, MessageType.CHAT, "{LeaveSuccess}");
-			kingdom.leave(target);
-			display();
-		}, "&4Leave " + kingdom.getColorSymbol() + kingdom.getName(), 
-				"\n&c\n");
-	}
 
 	private void moveToButton(int slot){
 		setItem(slot, new ItemStack(Material.EYE_OF_ENDER), player -> {

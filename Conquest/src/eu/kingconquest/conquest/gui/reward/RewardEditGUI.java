@@ -86,21 +86,22 @@ public class RewardEditGUI extends ChestGui{
 				);
 	}
 
-	private NamePrompt namePrompt;
+	private NamePrompt namePrompt = new NamePrompt(this);
 	private void nameButton(int slot){
+		if (Validate.notNull(namePrompt)){
+			name = namePrompt.get();
+			namePrompt = null;
+			display();
+		}
+		
 		setItem(slot, new ItemStack(Material.BOOK), player -> {
-			new ChatInteract(player, namePrompt = new NamePrompt(this), "Cancel");
+			new ChatInteract(player, namePrompt, "Cancel");
 			player.closeInventory();
 			display();
 	}, "&4Set Name!", 
 				(name != "" ? "&7Name: &3" + name + "\n" : name)
 				+  "&aClick to Select!"
 				);
-
-		if (Validate.notNull(namePrompt)){
-			name = namePrompt.get();
-			namePrompt = null;
-		}
 	}
 	
 	private void DecreaseCostButton(int slot, int amount){
@@ -131,14 +132,14 @@ public class RewardEditGUI extends ChestGui{
 		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
 				cooldown = cooldown + amount; // (+- = -)
 			display();
-		},"&3Decrease&6(&c " + amount +"&6)" , 
+		},"&3Decrease&6(&c " + amount +" &3minutes&6)" , 
 				"&cClick to Decrease!"
 				);
 	}
 	private void cooldownDisplayButton(int slot){
 		setItem(slot, new ItemStack(Material.WATCH), player -> {
 			kit.setCooldown(cooldown);
-		},"&3Cooldown: &6" + kit.getCooldown() , 
+		},"&3Cooldown: &6" + kit.getCooldown() + " &3minutes" , 
 				"\n&aClick to Save"
 				);
 	}
@@ -146,7 +147,7 @@ public class RewardEditGUI extends ChestGui{
 		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
 			cooldown = cooldown + amount;
 			display();
-		},"&3Increase&6(&c+ " + amount +"&6)" , 
+		},"&3Increase&6(&c+ " + amount +" &3minutes&6)" , 
 				"&aClick to Increase!"
 				);
 	}

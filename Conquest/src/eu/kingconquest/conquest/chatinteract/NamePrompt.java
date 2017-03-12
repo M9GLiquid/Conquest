@@ -21,9 +21,10 @@ public class NamePrompt extends StringPrompt{
 		context.getForWhom().sendRawMessage(Message.getMessage("{Prefix} &7Name: " + answer));
 		
 		set(answer);
-		if (Validate.notNull(gui))
+		if (Validate.notNull(gui)){
 			gui.create();
-		
+			gui.display();
+		}
 		return null;
 	}
 

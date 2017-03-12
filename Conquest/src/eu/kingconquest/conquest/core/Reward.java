@@ -51,7 +51,7 @@ public class Reward{
 		return Bukkit.getWorld(world);
 	}
 	
-	public long getCost(){
+	public Long getCost(){
 		return cost;
 	}
 	
@@ -66,7 +66,7 @@ public class Reward{
 		return owner;
 	}
 	
-	public long getCooldown(){
+	public Long getCooldown(){
 		return cooldown;
 	}
 	

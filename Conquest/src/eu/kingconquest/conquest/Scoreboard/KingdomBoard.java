@@ -11,8 +11,8 @@ import eu.kingconquest.conquest.util.Validate;
 public class KingdomBoard extends Board{
 	
 	public KingdomBoard(Player player){
-		setName("Kingdom");
-		SimpleScoreboard board = getBoard(player);
+		setType(BoardType.KINGDOMBOARD);
+		SimpleScoreboard board = new SimpleScoreboard();
 		
 		int x = 0;
 		Kingdom kingdom = getWrapper(player).getKingdom(player.getWorld());
@@ -35,11 +35,7 @@ public class KingdomBoard extends Board{
 		board.add(i--, "&c&lPoints Captured:");	
 		board.add(i--, "&7" + x);	
 		board.add(i--, "&c&lTraps Deployed:");	
-		board.add(i--, "&7*Coming Soon*  ");		
-		board.add(i--, " ");	
-		board.add(i--, " ");	
-		board.add(i--, " ");	
-		board.add(i--, " ");	
+		board.add(i--, "&7*Coming Soon*  ");
 		board.send(player); // Build Scoreboard then send it to player
 	}
 }
