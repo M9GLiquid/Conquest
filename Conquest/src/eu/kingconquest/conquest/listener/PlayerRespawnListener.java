@@ -30,17 +30,18 @@ public class PlayerRespawnListener implements Listener{
 				e.setRespawnLocation(deathLocation);
 				PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 				player.setGameMode(GameMode.SPECTATOR);
+				player.setCanPickupItems(false);
 				player.getServer().getScheduler().runTaskLaterAsynchronously(Main.getInstance(), new Runnable(){
 					@Override
 					public void run(){
-						if (wrapper.isInKingdom(player.getWorld())){
+						if (wrapper.isInKingdom(player.getWorld()))
 							player.teleport(wrapper.getKingdom(player.getWorld()).getSpawn());
-						}else{
+						else
 							player.teleport(player.getWorld().getSpawnLocation());
-						}
+						player.setGameMode(GameMode.SURVIVAL);
+						player.setCanPickupItems(false);
 					}
 				}, YmlStorage.getLong("RespawnDelay", player.getLocation()));
-				player.setGameMode(GameMode.SURVIVAL);
 			}
 		});
 	}

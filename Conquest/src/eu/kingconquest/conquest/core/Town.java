@@ -168,6 +168,7 @@ public class Town extends Objective{
 					continue;
 				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
 					new Message(player, MessageType.CHAT, "{ToClose}");
+					removeTown(this);
 					return false;
 				}
 			}

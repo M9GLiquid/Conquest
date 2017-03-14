@@ -7,6 +7,8 @@ import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 public class CreateListener implements Listener{
 	
@@ -18,6 +20,7 @@ public class CreateListener implements Listener{
 			Kingdom kingdom = (Kingdom) event.getObjective();
 			TNEApi.createAccount(kingdom.getUUID());
 			TNEApi.createBank(kingdom.getUUID(), kingdom.getLocation().getWorld());
+			new Message(null, MessageType.CONSOLE, "{KingdomCreated}");
 		}
 		/**
 		 * Code to add to Objective on Creation

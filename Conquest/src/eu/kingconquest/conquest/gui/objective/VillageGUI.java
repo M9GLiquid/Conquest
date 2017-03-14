@@ -22,12 +22,12 @@ public class VillageGUI extends ChestGui{
 	@Override
 	public void create(){
 		createGui(p, "&6Village Gui", Village.getVillages(p.getWorld()).size());
+		setCurrentItem(0);
 		display();
 	}
 
 	@Override
 	public void display() {
-		setCurrentItem(0);
 		clearSlots();
 		//Slot 0
 		playerInfo(p);

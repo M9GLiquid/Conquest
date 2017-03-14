@@ -15,11 +15,14 @@ import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class RewardGUI extends ChestGui{
+	private PlayerWrapper wrapper;
 	private ChestGui previous;
+	private Reward reward;
 	private Player player;
 	
 	public RewardGUI(Player player, ChestGui previous){
 		super();
+		this.wrapper = PlayerWrapper.getWrapper(player);
 		this.previous = previous;
 		this.player = player;
 		create();
@@ -52,15 +55,16 @@ public class RewardGUI extends ChestGui{
 		for(int slot = 9; slot < 54; slot++) {
 			if (getCurrentItem() > (getItems() -1) || getItems() == 0)
 				break;
+			reward = Reward.getRewards(player.getWorld()).get(getCurrentItem());
 			if (Validate.hasPerm(player, ".admin.kit"))
-				editButton(slot, Reward.getRewards(player.getWorld()).get(getCurrentItem()));
-			else
-				buyButton(slot, Reward.getRewards(player.getWorld()).get(getCurrentItem()));
+				editButton(slot, reward);
+			else if (reward.getOwner().equals(wrapper.getKingdom(player.getWorld())))
+				buyButton(slot, reward);
 			setCurrentItem(getCurrentItem() + 1);
 		}
 		
 	}
-
+	
 	private void buyButton(int slot, Reward reward){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			if (getClickType().equals(ClickType.RIGHT)){ // Buy
@@ -102,20 +106,20 @@ public class RewardGUI extends ChestGui{
 				);
 	}
 
-	private void editButton(int slot, Reward kit){
+	private void editButton(int slot, Reward reward){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			if (getClickType().equals(ClickType.SHIFT_LEFT)){
-				Reward.removeReward(kit);
+				Reward.removeReward(reward);
 				previous.create();
 				close(player);
 			}else{
-				new RewardEditGUI(player, this, kit);
+				new RewardEditGUI(player, this, reward);
 			}
 		},"&6Reward Information" , 
-				"&7Name: &3" + kit.getName()
-				+ "\n&7Owner: &3" + (Validate.notNull(kit.getOwner()) ? kit.getOwner().getName(): "None")
-				+ "\n&7Cost: &3" + kit.getCost()
-				+ "\n&7Cooldown: &3" + kit.getCooldown()
+				"&7Name: &3" + reward.getName()
+				+ "\n&7Owner: &3" + (Validate.notNull(reward.getOwner()) ? reward.getOwner().getName(): "None")
+				+ "\n&7Cost: &3" + reward.getCost()
+				+ "\n&7Cooldown: &3" + reward.getCooldown()
 				+ "\n"
 				+"\n&bClick to Edit"
 				+ "\n&bShift-Right Click to &4Remove (Cannot be undone)"

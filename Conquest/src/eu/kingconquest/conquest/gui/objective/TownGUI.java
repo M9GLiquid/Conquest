@@ -22,12 +22,12 @@ public class TownGUI extends ChestGui{
 	@Override
 	public void create(){
 		createGui( p, "&6Town Gui", Town.getTowns().size());
+		setCurrentItem(0);
 		display();
 	}
 	
 	@Override
 	public void display() {
-		setCurrentItem(0);
 		clearSlots();
 		//Slot 0
 		playerInfo(p);

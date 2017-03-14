@@ -235,6 +235,7 @@ public class Village extends Objective{
 					continue;
 				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
 					new Message(player, MessageType.CHAT, "{ToClose}");
+					removeVillage(this);
 					return false;
 				}
 			}

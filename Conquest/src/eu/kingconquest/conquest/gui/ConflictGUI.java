@@ -49,12 +49,12 @@ public class ConflictGUI extends ChestGui{
 		if (targets.size() < 1)
 			return;
 		createGui(player, "&6Teleport Gui", targets.size());
+		setCurrentItem(0);
 		display();
 	}
 	
 	@Override
 	public void display(){
-		setCurrentItem(0);
 		clearSlots();
 
 		//Slot 0
@@ -68,22 +68,22 @@ public class ConflictGUI extends ChestGui{
 
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (getItems() -1) || getItems() < 1)
+			if (getCurrentItem() > getItems() -1 || getItems() < 1)
 				break;
-			tpButton(i);
+			tpButton(i, targets.get(getCurrentItem()));
 			setCurrentItem(getCurrentItem()+1);
 		}
 	}
 
-	private void tpButton(int i){
-		setItem(i, new ItemStack(Material.ENDER_PEARL), player -> {
-			new Teleport(player, targets.get(getCurrentItem()).getLocation().clone());
+	private void tpButton(int slot, Objective target){
+		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
+			new Teleport(player, target.getLocation().clone());
 			targets.clear();
-		},"&1Teleport to: &f" + targets.get(getCurrentItem()).getName(),
+		},"&1Teleport to: &f" + target.getName(),
 				"&aSpawn Location: "
-				+ "\n -&1X: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getX())
-				+ "\n -&1Y: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getY())
-				+ "\n -&1Z: &f" + Math.floor(targets.get(getCurrentItem()).getLocation().getZ())
+				+ "\n -&1X: &f" + Math.floor(target.getLocation().getX())
+				+ "\n -&1Y: &f" + Math.floor(target.getLocation().getY())
+				+ "\n -&1Z: &f" + Math.floor(target.getLocation().getZ())
 				);
 	}
 }

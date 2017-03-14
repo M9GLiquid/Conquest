@@ -12,7 +12,7 @@ public class NeutralBoard extends Board{
 		board.add(i--, "&6Welcome: &3" + player.getName());
 		board.add(i--, "  ");	
 		board.add(i--, "&6Guide/Help");	
-		board.add(i--, " &6&l# &r&7Run command: &4/kc");	
+		board.add(i--, " &6&l# &r&7Run command: &4/c");	
 		board.add(i--, " &6&l# &r&7Interact with Menu");	
 		board.add(i--, " &6&l# &r&7Join the Fun!");
 		board.send(player); // Build Scoreboard then send it to player

@@ -330,7 +330,7 @@ public class Kingdom extends Objective{
 	}
 	@Override
 	public boolean delete(Player player){
-		new Message(player, MessageType.CHAT, "|KingdomDeleted|");
+		new Message(player, MessageType.CHAT, "[KingdomDeleted]");
 		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions removegroup " + getName());
 		removeKingdom(this);

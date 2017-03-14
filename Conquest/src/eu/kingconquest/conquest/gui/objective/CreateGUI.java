@@ -92,8 +92,7 @@ public class CreateGUI extends ChestGui{
 							, loc //Fixed location
 							, spawn //Spawn location
 							);
-					if (!kingdom.create(player))
-						Kingdom.removeKingdom(kingdom);
+					kingdom.create(player);
 					
 				} else if (previous instanceof TownGUI) {
 					Town town = new Town(
@@ -102,8 +101,7 @@ public class CreateGUI extends ChestGui{
 							, spawn //Spawn location
 							, owner //Owner
 							); 
-					if (!town.create(player))
-						Town.removeTown(town);
+					town.create(player);
 				}else if (previous instanceof VillageGUI) {
 					Village village = new Village(
 							this.name //Name
@@ -113,8 +111,7 @@ public class CreateGUI extends ChestGui{
 							, Kingdom.getKingdom("Neutral", loc.getWorld()) //Pre Owner
 							, null //Parent
 							);
-					if (!village.create(player))
-						Village.removeVillage(village);
+					village.create(player);
 				}
 				close(player);
 				previous.create();

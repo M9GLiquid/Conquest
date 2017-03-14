@@ -47,7 +47,7 @@ public class Pagination{
 	}
 	
 	public void next(ChestGui parent){
-		if (!(getItems() - 9 > getOffset()))
+		if (!(getItems() > getOffset()))
 			return;
 		parent.setItem(5, new ItemStack(Material.CHORUS_FRUIT_POPPED), player -> {
 			setPageNr(getPageNr() + 1);
