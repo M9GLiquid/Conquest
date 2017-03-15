@@ -2,6 +2,7 @@ package eu.kingconquest.conquest.core;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 
 import eu.kingconquest.conquest.Main;
@@ -47,8 +48,12 @@ public class CaptureProcess{
 						if (village.getProgress() >= 100.0d
 								&& village.getAttackers().size() > 0 
 								&& village.getPreOwner().equals(Kingdom.getNeutral(village.getWorld()))){
-							pm.callEvent(new CaptureCompleteEvent(player, village));
-							return;
+							for (int i = 0; i < 10; i++){
+								try{
+									callEvent(new CaptureCompleteEvent(player, village));
+									return;
+								}catch(IllegalStateException e){}
+							}
 						}
 
 						// Defending
@@ -79,5 +84,8 @@ public class CaptureProcess{
 						}
 					}
 				}, 0, YmlStorage.getLong("CaptureRate", village.getLocation())));
+	}
+	private void callEvent(Event event) throws IllegalStateException{
+		pm.callEvent(event);
 	}
 }

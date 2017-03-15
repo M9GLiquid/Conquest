@@ -20,36 +20,6 @@
 # |     <CaptureAboveHeight>:	Amount of Blocks above the outpost you can be to capture it (Y).
 # |     <CaptureBelowHeight>:	Amount of Blocks below the outpost you can be to capture it (Y).
 # ========================================================
-# |                                                        Example
-# | Database:
-# |   AutoSaveInterval: 5 #Minutes
-# |   Backend: SqlLite
-# |   MySql:
-# |     Host: localhost
-# |     User: root
-# |     Password: root
-# |     Database: Conquest
-# |     Port: 21
-# |   SqlLite:
-# |   FlatFile:
-# | ActiveWorlds:
-# |   world:
-# |     General:
-# |       Debug: false
-# |       RespawnDelay: 10
-# |       TeleportDelay: 10
-# |     Income:
-# |       CapCash: 120
-# |       IncomeDelay: 20000
-# |       TownBaseValue: 0.2
-# |       VillageBaseValue: 0.3
-# |     Combat:
-# |       CaptureRate: 0.3
-# |       CaptureDistance: 5.0
-# |       CaptureMaxY: 5.0
-# |       CaptureMinY: 1.0
-# ========================================================
-#
 Database:
   Backend: FlatFile
   MySql:

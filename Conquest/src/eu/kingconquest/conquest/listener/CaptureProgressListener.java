@@ -25,23 +25,27 @@ import eu.kingconquest.conquest.util.MessageType;
 
 public class CaptureProgressListener implements Listener{
 	private Player player;
-
+	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureStart(CaptureStartEvent e){
 		Village village = (Village) e.getObjective();
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getOwner();
-		new Message(null, MessageType.BROADCAST, "{WarnDistress}");
 		
 		//Run Mob Spawns as defence if objective owner isn't Neutral
+		if (!village.getPreOwner().equals(Kingdom.getKingdom("Neutral", village.getWorld()))){
+			Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
+			new Message(null, MessageType.BROADCAST, "{WarnDistress}");
+		}
 	}
-
+	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureSuccess(CaptureCompleteEvent e){
 		Village village = (Village) e.getObjective();
 		player = e.getPlayer();
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-
+		
 		new KingdomBoard(player);
 		village.removeCapturing(player);
 		village.setOwner(wrapper.getKingdom(player.getWorld()));
@@ -52,7 +56,7 @@ public class CaptureProgressListener implements Listener{
 		Cach.StaticVillage = village;
 		Marker.update(village);
 		village.updateGlass();
-
+		
 		boolean FullCapture = true;
 		if (village.hasParent()){
 			for (Village v : village.getParent().getChildren()){
@@ -62,18 +66,18 @@ public class CaptureProgressListener implements Listener{
 				}
 			}
 			if (FullCapture){ // Towns children all got the same Owner
-			Cach.StaticTown = village.getParent();
-			village.getParent().setOwner(village.getOwner());
-			village.getParent().updateGlass();
-			new Rocket(village.getLocation(), true, true, 2, 45, village.getOwner().getColor()); // Rocket on Success
-			new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
-			village.getParent().getChildren().forEach(child->{
-				new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
-				TNEApi.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each 
-			});
-			new Message(player, MessageType.CHAT, "{CaptureTownSuccess}");
-			new Message(player, MessageType.CHAT, "{TownCaptured}");
-			TNEApi.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
+				Cach.StaticTown = village.getParent();
+				village.getParent().setOwner(village.getOwner());
+				village.getParent().updateGlass();
+				new Rocket(village.getLocation(), true, true, 2, 45, village.getOwner().getColor()); // Rocket on Success
+				new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
+				village.getParent().getChildren().forEach(child->{
+					new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
+					TNEApi.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each 
+				});
+				new Message(player, MessageType.CHAT, "{CaptureTownSuccess}");
+				new Message(player, MessageType.CHAT, "{TownCaptured}");
+				TNEApi.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
 			new Message(player, MessageType.CHAT, "{CaptureVillageSuccess}");
@@ -82,11 +86,11 @@ public class CaptureProgressListener implements Listener{
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
 		new Message(null, MessageType.BROADCAST, "{Captured}");
-	if (village.getAttackers().size() < 1)
-		village.stop();
-	village.addDefender(player);
+		if (village.getAttackers().size() < 1)
+			village.stop();
+		village.addDefender(player);
 	}
-
+	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureNeutral(CaptureNeutralEvent e){
 		Village village = (Village) e.getObjective();
@@ -97,7 +101,7 @@ public class CaptureProgressListener implements Listener{
 		village.setNeutral();
 		if (village.hasParent())
 			village.getParent().setNeutral();
-
+		
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getPreOwner();
 		new Message(null, MessageType.BROADCAST, "{WarnNeutral}");

@@ -14,14 +14,15 @@ public class Validate{
 	 * @param loc
 	 * @return
 	 */
-	public static boolean isWithinArea(Location loc1, Location loc2, double radius, double maxY, double minY){
-		if (!loc1.getWorld().equals(loc2.getWorld()))
+	public static boolean isWithinArea(Location location1, Location location2, double radius, double maxY, double minY){
+		if (!location1.getWorld().equals(location2.getWorld()))
 			return false;
-		double dx = Math.abs(loc1.getX() - loc2.getX());
-		double dz = Math.abs(loc1.getZ() - loc2.getZ());
-		if (dx + dz <= radius 
-				&& loc1.getY() <= loc2.getY() + maxY
-				&& loc1.getY() >= loc2.getY() - minY){
+		double dx = Math.abs(location1.getX() - location2.getX());
+		double dz = Math.abs(location1.getZ() - location2.getZ());
+		if (dx <= radius 
+				&& dz <= radius 
+				&& location1.getY() <= location2.getY() + maxY
+				&& location1.getY() >= location2.getY() - minY){
 			return true;
 		}
 		return false;
@@ -33,15 +34,16 @@ public class Validate{
 	 * @param loc
 	 * @return
 	 */
-	public static boolean isWithinCaptureArea(Location loc1, Location loc2){
-		double dx = Math.abs(loc1.getX() - loc2.getX());
-		double dy = Math.abs(loc1.getY() - loc2.getY());
-		double radius = YmlStorage.getDouble("CaptureDistance", loc1);
-		double maxY = YmlStorage.getDouble("CaptureMaxY", loc1);
-		double MinY = YmlStorage.getDouble("CaptureMinY", loc1);
-		if (dx + dy <= radius 
-				&& loc1.getY() <= loc2.getY() + maxY
-				&& loc1.getY() >= loc2.getY() - MinY){
+	public static boolean isWithinCaptureArea(Location player, Location target){
+		double dx = Math.abs(player.getX() - target.getX());
+		double dz = Math.abs(player.getZ() - target.getZ());
+		double radius = YmlStorage.getDouble("CaptureDistance", player);
+		double maxY = YmlStorage.getDouble("CaptureMaxY", player);
+		double MinY = YmlStorage.getDouble("CaptureMinY", player);
+		if (dx <= radius 
+				&& dz <= radius 
+				&& player.getY() <= target.getY() + maxY
+				&& player.getY() >= target.getY() - MinY){
 			return true;
 		}
 		return false;
