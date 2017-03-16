@@ -15,7 +15,7 @@ import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.hook.Dynmap;
 import eu.kingconquest.conquest.hook.Hooks;
-import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.listener.CaptureProgressListener;
 import eu.kingconquest.conquest.listener.ChestGuiListener;
@@ -47,7 +47,7 @@ public class Main extends JavaPlugin implements Listener{
 	public void onEnable(){
 		instance = this;
 
-		new TNEApi();
+		new EconAPI();
 		new Vault();
 		new Dynmap();
 		

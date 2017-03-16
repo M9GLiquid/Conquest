@@ -17,7 +17,7 @@ import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
 import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
-import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Marker;
 import eu.kingconquest.conquest.util.Message;
@@ -73,16 +73,16 @@ public class CaptureProgressListener implements Listener{
 				new Rocket(village.getParent().getLocation(), false, true, 4, 45, village.getOwner().getColor()); // Rocket on Success
 				village.getParent().getChildren().forEach(child->{
 					new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
-					TNEApi.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each 
+					EconAPI.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each 
 				});
 				new Message(player, MessageType.CHAT, "{CaptureTownSuccess}");
 				new Message(player, MessageType.CHAT, "{TownCaptured}");
-				TNEApi.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
+				EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
 			new Message(player, MessageType.CHAT, "{CaptureVillageSuccess}");
-			TNEApi.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation()));
-			TNEApi.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
+			EconAPI.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation()));
+			EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
 		new Message(null, MessageType.BROADCAST, "{Captured}");
@@ -104,7 +104,6 @@ public class CaptureProgressListener implements Listener{
 		
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getPreOwner();
-		new Message(null, MessageType.BROADCAST, "{WarnNeutral}");
 		Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 	}

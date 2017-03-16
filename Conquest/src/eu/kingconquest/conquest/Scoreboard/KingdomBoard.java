@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.Validate;
 
 public class KingdomBoard extends Board{
@@ -29,7 +29,7 @@ public class KingdomBoard extends Board{
 		board.setTitle("&6[&cKingdom &9Information&6]");
 		board.add(i--, "&c&lKingdom: " + kingdom.getColorSymbol() + kingdom.getName());
 		board.add(i--, "&c&lKing: &7" + (Validate.notNull(kingdom.getKing()) ? kingdom.getKing().getDisplayName() : "None"));	
-		board.add(i--, "&c&lBalance: &r&6"+ TNEApi.getBalance(kingdom.getUUID()) + "$");		
+		board.add(i--, "&c&lBalance: &r&6"+ EconAPI.getBalance(kingdom.getUUID()) + "$");		
 		board.add(i--, "  ");	
 		board.add(i--, "&6&lKingdom Specific");	
 		board.add(i--, "&c&lPoints Captured:");	

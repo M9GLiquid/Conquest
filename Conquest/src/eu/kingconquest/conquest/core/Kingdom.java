@@ -12,7 +12,8 @@ import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
-import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.hook.EconAPI;
+import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ColorManager;
 import eu.kingconquest.conquest.util.Marker;
@@ -56,7 +57,7 @@ public class Kingdom extends Objective{
 		wrapper.setKingdom(getUUID());
 		new KingdomBoard(player);
 		addMember(player.getUniqueId());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + player.getName() + " parent add " + getName());
+		Vault.perms.playerAddGroup(player, getName());
 	}
 		
 	/**
@@ -77,7 +78,7 @@ public class Kingdom extends Objective{
 		wrapper.setKingdom(null);
 		new NeutralBoard(player);
 		removeMember(player.getUniqueId());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pemissions user " + player.getName() + " parent remove " + getName());
+		Vault.perms.playerRemoveGroup(player, getName());
 	}
 	
 //Getters
@@ -323,7 +324,7 @@ public class Kingdom extends Objective{
 		Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions creategroup " + getName());
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions group " + getName() + " meta addsuffix  100 " + "\"&6{" + getColorSymbol() + getName() + "}&r &7\"");
-		TNEApi.createAccount(getUUID());
+		EconAPI.createAccount(getUUID());
 		if (Marker.update(this))
 			return true;
 		return false;

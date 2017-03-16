@@ -22,7 +22,7 @@ import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.gui.HomeGUI;
 import eu.kingconquest.conquest.gui.PlayerActionGUI;
 import eu.kingconquest.conquest.gui.util.Pagination;
-import eu.kingconquest.conquest.hook.TNEApi;
+import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.Validate;
 
@@ -109,7 +109,7 @@ public abstract class ChestGui extends Pagination{
 		}, "&6" + player.getName() + " Information",
 				"&7ScoreBoard: &3" + (Validate.notNull(wrapper.getBoardType()) ? wrapper.getBoardType() : "" )
 				+ "\n&7Kingdom: &3" + (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()).getName() : "None")
-				+ "\n&7Money: &6" + TNEApi.getBalance(player)
+				+ "\n&7Money: &6" + EconAPI.getBalance(player)
 				+ "\n&7Friends : &a" + wrapper.getOnlineFriends() + "&6/&2" + wrapper.getNumberOfFriends() + " &aOnline"
 				+"\n"
 				+ "\n&bClick for Settings"

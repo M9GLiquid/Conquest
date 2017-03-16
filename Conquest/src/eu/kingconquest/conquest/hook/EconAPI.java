@@ -10,10 +10,10 @@ import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
-public class TNEApi{
+public class EconAPI{
     public static Vault econ = null; //TNEAPI
 
-    public TNEApi(){
+    public EconAPI(){
     	//tneEcon = TNE.instance.api;
 	}
     
