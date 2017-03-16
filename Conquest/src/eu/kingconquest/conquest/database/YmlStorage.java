@@ -156,7 +156,7 @@ public class YmlStorage extends YamlConfiguration{
 
 	//Config Specific
 	//Statics
-	private static String headerMsg = "";
+	private static String headerMsg = "&6| - &aSuccess:";
 	private static String errorMsg = "&6| - &cFailed:";
 	private static HashMap<String, Boolean> loadMsg = new HashMap<>();
 	private static HashMap<String, Boolean> saveMsg = new HashMap<>();
