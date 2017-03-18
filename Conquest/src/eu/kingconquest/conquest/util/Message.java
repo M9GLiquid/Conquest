@@ -45,7 +45,7 @@ public class Message{
 			 text = text.contains(match.group()) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))) 		: text.replace(match.group(), "");
 		}
 
-		text = text.contains("{RewardNotReady}") 	? text.replace("{RewardNotReady}"	, Cach.StaticCooldownLeft.toString())										: text.replace("{RewardNotReady}", "");
+		text = text.contains("{RewardNotReady}") 	? text.replace("{RewardNotReady}"	, Cach.StaticCooldownLeft.toString())											: text.replace("{RewardNotReady}", "");
 		text = text.contains("{TeleportDelay}") 		? text.replace("{TeleportDelay}"		, Cach.tpDelay.toString())															: text.replace("{TeleportDelay}", "");
 		text = text.contains("{kingdom}") 					? text.replace("{kingdom}"					, Cach.StaticKingdom.getName()) 												: text.replace("{kingdom}", "");
 		text = text.contains("{village}") 						? text.replace("{village}"						, Cach.StaticVillage.getName())													: text.replace("{village}", "");
