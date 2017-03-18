@@ -38,6 +38,7 @@ public class Teleport{
 		taskID = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){
+				System.out.println("On Falling, Block Type under player: " + player.getLocation().subtract(0, 1, 0).getBlock().getType());
 			if (player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR)
 				stopFall(player);
 			}

@@ -45,15 +45,13 @@ public class CaptureProgressListener implements Listener{
 		Village village = (Village) e.getObjective();
 		player = e.getPlayer();
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		
+
 		new KingdomBoard(player);
 		village.removeCapturing(player);
 		village.setOwner(wrapper.getKingdom(player.getWorld()));
 		village.setPreOwner(wrapper.getKingdom(player.getWorld()));
 		village.removeAttacker(player);
 		village.removeDefender(player);
-		Cach.StaticKingdom = village.getOwner();
-		Cach.StaticVillage = village;
 		Marker.update(village);
 		village.updateGlass();
 		
@@ -65,6 +63,8 @@ public class CaptureProgressListener implements Listener{
 					break;
 				}
 			}
+			Cach.StaticKingdom = village.getOwner();
+			Cach.StaticVillage = village;
 			if (FullCapture){ // Towns children all got the same Owner
 				Cach.StaticTown = village.getParent();
 				village.getParent().setOwner(village.getOwner());
@@ -85,6 +85,8 @@ public class CaptureProgressListener implements Listener{
 			EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
+		Cach.StaticKingdom = village.getOwner();
+		Cach.StaticVillage = village;
 		new Message(null, MessageType.BROADCAST, "{Captured}");
 		if (village.getAttackers().size() < 1)
 			village.stop();

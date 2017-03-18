@@ -11,6 +11,8 @@ import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 public class CaptureProcess{
 	private PluginManager pm = Bukkit.getServer().getPluginManager();
@@ -74,7 +76,7 @@ public class CaptureProcess{
 						if ((village.getProgress() <= 0.0d)){
 							
 							village.setProgress(0.0d);
-							pm.callEvent(new CaptureNeutralEvent(player, village)); 
+							pm.callEvent(new CaptureNeutralEvent(player, village));
 						}
 
 						// Neutral Attacking
@@ -86,6 +88,13 @@ public class CaptureProcess{
 				}, 0, YmlStorage.getLong("CaptureRate", village.getLocation())));
 	}
 	private void callEvent(Event event) throws IllegalStateException{
-		pm.callEvent(event);
+		for (int i = 0; i <= 10; i++){
+			try{
+				pm.callEvent(event);
+				return;
+			}catch(IllegalStateException e){
+				new Message(null, MessageType.CONSOLE, "Tried too Call Event: " + event.getEventName());
+			}
+		}
 	}
 }
