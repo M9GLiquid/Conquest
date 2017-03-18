@@ -21,12 +21,11 @@ public class CreateListener implements Listener{
 			Kingdom kingdom = (Kingdom) event.getObjective();
 			EconAPI.createAccount(kingdom.getUUID());
 			EconAPI.createBank(kingdom.getUUID(), kingdom.getLocation().getWorld());
-			new Message(null, MessageType.CONSOLE, "{KingdomCreated}");
 			
-			// Add it via Vault? Is it possible?
-			// Create Group & Set the suffix
+			// Create Group & Set the suffix | Add it via Vault? Is it possible?
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/lp creategroup " + kingdom.getName());
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/lp group " + kingdom.getName() + " permission set \"suffix.100.&6{&2 + " + kingdom.getName() + "&6}&r &7\"");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/lp group " + kingdom.getName() + " meta  addsuffix  1000 \"&6{&2 + " + kingdom.getName() + "&6}&r\"");
+			new Message(null, MessageType.CONSOLE, "{KingdomCreated}");
 		}
 		/**
 		 * Code to add to Objective on Creation
