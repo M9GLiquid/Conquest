@@ -55,7 +55,6 @@ public class Message{
 		text = text.contains("{user}") 							? text.replace("{user}"							, Cach.StaticPlayer.getDisplayName())	 									: text.replace("{user}", "");
 		text = text.contains("{cost}") 							? text.replace("{cost}"							, Cach.StaticReward.getCost().toString())	 								: text.replace("{cost}", "");
 		
-		Cach.nullify();
 		return text;
 	}	
 

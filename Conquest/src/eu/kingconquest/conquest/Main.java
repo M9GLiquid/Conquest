@@ -14,8 +14,8 @@ import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.hook.Dynmap;
-import eu.kingconquest.conquest.hook.Hooks;
 import eu.kingconquest.conquest.hook.EconAPI;
+import eu.kingconquest.conquest.hook.Hooks;
 import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.listener.CaptureProgressListener;
 import eu.kingconquest.conquest.listener.ChestGuiListener;
@@ -28,6 +28,7 @@ import eu.kingconquest.conquest.listener.ProximityZoneListener;
 import eu.kingconquest.conquest.listener.ResetListener;
 import eu.kingconquest.conquest.listener.ServerRestartListener;
 import eu.kingconquest.conquest.listener.TrapListener;
+import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 
@@ -114,6 +115,7 @@ public class Main extends JavaPlugin implements Listener{
 		Village.clear();
 		Reward.clear();
 		PlayerWrapper.clear();
+		Cach.nullify();
 		
 		getServer().getServicesManager().unregisterAll(this);
 		Bukkit.getScheduler().cancelTasks(this);

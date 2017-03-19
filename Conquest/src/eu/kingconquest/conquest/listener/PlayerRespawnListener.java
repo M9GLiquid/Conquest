@@ -38,10 +38,10 @@ public class PlayerRespawnListener implements Listener{
 							player.teleport(wrapper.getKingdom(player.getWorld()).getSpawn());
 						else
 							player.teleport(player.getWorld().getSpawnLocation());
-						player.setGameMode(GameMode.SURVIVAL);
 						player.setCanPickupItems(false);
 					}
 				}, YmlStorage.getLong("RespawnDelay", player.getLocation()));
+				player.setGameMode(GameMode.SURVIVAL);
 			}
 		});
 	}
