@@ -56,14 +56,13 @@ public class CaptureProgressListener implements Listener{
 		village.updateGlass();
 		
 		boolean FullCapture = true;
-		if (village.hasParent()){
+		if (village.hasParent()){ //If Child with Parent
 			for (Village v : village.getParent().getChildren()){
-				if (!v.getOwner().equals(village.getOwner())){ 
+				if (!v.getOwner().equals(village.getOwner())){
 					FullCapture = false;
 					break;
 				}
 			}
-			Cach.StaticKingdom = village.getOwner();
 			Cach.StaticVillage = village;
 			Cach.StaticTown = village.getParent();
 			if (FullCapture){ // Towns children all got the same Owner
@@ -75,16 +74,19 @@ public class CaptureProgressListener implements Listener{
 					new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 					EconAPI.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each 
 				});
+				Cach.StaticKingdom = village.getOwner();
 				new Message(player, MessageType.CHAT, "{CaptureTownSuccess}");
 				new Message(player, MessageType.CHAT, "{TownCaptured}");
 				EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			}
 		}else{ //If Child without Parent
+			Cach.StaticKingdom = village.getOwner();
 			new Message(player, MessageType.CHAT, "{CaptureVillageSuccess}");
 			EconAPI.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation()));
 			EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getColor()); // Rocket on Success
 		}
+		Cach.StaticKingdom = village.getOwner();
 		new Message(null, MessageType.BROADCAST, "{Captured}");
 		if (village.getAttackers().size() < 1)
 			village.stop();

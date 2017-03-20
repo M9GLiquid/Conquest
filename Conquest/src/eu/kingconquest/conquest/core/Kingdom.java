@@ -13,7 +13,6 @@ import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.hook.EconAPI;
-import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.ColorManager;
 import eu.kingconquest.conquest.util.Marker;
@@ -57,7 +56,7 @@ public class Kingdom extends Objective{
 		wrapper.setKingdom(getUUID());
 		new KingdomBoard(player);
 		addMember(player.getUniqueId());
-		Vault.perms.playerAddGroup(player, getName());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent add " + getName());
 	}
 		
 	/**
@@ -78,7 +77,7 @@ public class Kingdom extends Objective{
 		wrapper.setKingdom(null);
 		new NeutralBoard(player);
 		removeMember(player.getUniqueId());
-		Vault.perms.playerRemoveGroup(player, getName());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent remove " + getName());
 	}
 	
 //Getters

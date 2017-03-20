@@ -28,7 +28,7 @@ Language:
       EditKingdomSpawn: '{color}{kingdom}s &7Spawn Location Changed'
       EditKingdomLocation: '{color}{kingdom}s &7Dynmap Location Changed'
   Towns:
-    CaptureTownSuccess: '&7You have successfully captured the entire Town &a{town}&7!'
+    CaptureTownSuccess: '&7You have successfully captured the entire Town {color}{town}&7!'
     KingdomFail: '&7You have not yet captured {town}!'
     TownCreated: '&7Town &f{town} &awas successfully created!'
     TownDeleted: '&7Town &f{town} &cwas successfully deleted!'
