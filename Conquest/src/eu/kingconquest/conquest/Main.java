@@ -47,19 +47,19 @@ public class Main extends JavaPlugin implements Listener{
 	@Override
 	public void onEnable(){
 		instance = this;
+		YmlStorage.load();
 
 		new EconAPI();
 		new Vault();
 		new Dynmap();
 		
-		YmlStorage.load();
-		new Message(null, MessageType.CONSOLE, "&6|==============={Prefix}==============|");
-		new Message(null, MessageType.CONSOLE, "&6|&2 Version: " + getDescription().getVersion());
-		new Message(null, MessageType.CONSOLE, "&6|&2 Hooks:");
+		new Message(MessageType.CONSOLE, "&6|==============={Prefix}==============|");
+		new Message(MessageType.CONSOLE, "&6|&2 Version: " + getDescription().getVersion());
+		new Message(MessageType.CONSOLE, "&6|&2 Hooks:");
 		Hooks.output();
-		new Message(null, MessageType.CONSOLE, "&6|&2 Configs:");
+		new Message(MessageType.CONSOLE, "&6|&2 Configs:");
 		YmlStorage.output();
-		new Message(null, MessageType.CONSOLE, "&6|=======================================|");
+		new Message(MessageType.CONSOLE, "&6|=======================================|");
 
 		ServerRestartListener.onServerRestart(Bukkit.getOnlinePlayers());
 		setListeners();

@@ -16,9 +16,9 @@ import eu.kingconquest.conquest.util.Validate;
 public class ServerRestartListener{ // Not a real Listener since it can't listend for a server restart :(
 	private static PlayerWrapper wrapper;
 
-	public static void onServerRestart(Collection<? extends Player> collection){
+	public static void onServerRestart(Collection<? extends Player> players){
 		createNeutralKingdom();
-		collection.forEach(player->{ 
+		players.forEach(player->{ 
 			YmlStorage.getWorlds().forEach(uniqueID->{
 				if (player.getWorld().equals(Bukkit.getWorld(uniqueID))){
 					

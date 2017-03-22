@@ -1,6 +1,7 @@
 package eu.kingconquest.conquest.core;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
@@ -25,12 +26,21 @@ public class CaptureProcess{
 	 */
 	public CaptureProcess(Player player, Village village){
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-
+		
+		// If player is in another GameMode than Survival
+		if (!player.getGameMode().equals(GameMode.SURVIVAL)){
+			village.removeAttacker(player);
+			village.removeDefender(player);
+			return;
+		}
+			
+		// If Task already running
 		if (village.getTaskID() > 0)
 			return;
 
+		// If already captured
 		if(village.getProgress() >= 100.0d 
-				&& village.getAttackers().size() < 1){
+				&& village.getAttackers().size() < 1){ 
 			new CaptureBoard(player, village);
 			return;
 		}

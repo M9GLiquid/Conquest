@@ -27,7 +27,7 @@ public class KingdomBoard extends Board{
 		}
 		int i = 13;
 		board.setTitle("&6[&cKingdom &9Information&6]");
-		board.add(i--, "&c&lKingdom: " + kingdom.getColorSymbol() + kingdom.getName());
+		board.add(i--, "&c&lKingdom: " + kingdom.getColor() + kingdom.getName());
 		board.add(i--, "&c&lKing: &7" + (Validate.notNull(kingdom.getKing()) ? kingdom.getKing().getDisplayName() : "None"));	
 		board.add(i--, "&c&lBalance: &r&6"+ EconAPI.getBalance(kingdom.getUUID()) + "$");		
 		board.add(i--, "  ");	

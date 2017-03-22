@@ -13,10 +13,10 @@ public class CaptureBoard extends Board{
 		int i = 13;
 		board.setTitle("&6[&eCapture Information&6]");
 		board.add(i--, "&a&lName: ");	
-		board.add(i--, village.getOwner().getColorSymbol() + village.getName());	
+		board.add(i--, village.getOwner().getColor() + village.getName());	
 		board.add(i--, "   ");	
 		board.add(i--, "&a&lOwner:");
-		board.add(i--, village.getOwner().getColorSymbol() + village.getOwner().getName());	
+		board.add(i--, village.getOwner().getColor() + village.getOwner().getName());	
 		board.add(i--, "&a&lParent:");	
 		board.add(i--, "&e" + (village.hasParent() ? village.getParent().getName() : "&fNone"));	
 		board.add(i--, "  ");	

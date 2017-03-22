@@ -49,7 +49,7 @@ public class OwnerGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			this.owner = kingdom;
 			previous.create();
-		}, kingdom.getColorSymbol() + kingdom.getName(),
+		}, kingdom.getColor() + kingdom.getName(),
 				"&bClick to select as &aOwner!");
 	}
 

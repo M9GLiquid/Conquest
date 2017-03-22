@@ -1,9 +1,8 @@
 package eu.kingconquest.conquest.gui.reward;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,19 +14,19 @@ import eu.kingconquest.conquest.util.ChatInteract;
 import eu.kingconquest.conquest.util.Validate;
 
 public class RewardEditGUI extends ChestGui{
+	private ItemStack item = new ItemStack(Material.ARMOR_STAND);
 	private ChestGui previous;
 	private String name = "";
-	private int itemSize = 0;
 	private int cooldown;
 	private Player player;
 	private int cost;
-	private Reward kit;
+	private Reward reward;
 
-	public RewardEditGUI(Player player, ChestGui previous, Reward kit){
+	public RewardEditGUI(Player player, ChestGui previous, Reward reward){
 		super();
 		this.previous = previous;
 		this.player = player;
-		this.kit = kit;
+		this.reward = reward;
 		
 		create();
 	}
@@ -70,19 +69,25 @@ public class RewardEditGUI extends ChestGui{
 		IncreaseCooldownButton(32, 1);
 		IncreaseCooldownButton(33, 10);
 		IncreaseCooldownButton(34, 100);
-		
+
+		DecreaseItemButton(37, -64);
+		DecreaseItemButton(38, -10);
+		DecreaseItemButton(39, -1);
 		itemsButton(40);
+		IncreaseItemButton(41, 1);
+		IncreaseItemButton(42, 10);
+		IncreaseItemButton(43, 64);
 		addButton(49);
 	}
 
 	private void displayInfo(int slot){
 		setItem(4, new ItemStack(Material.PAPER), player -> {
 		},"&6Kit Information" , 
-				"&7Name: &3" + kit.getName()
-				+ "\n&7Owner: &3" + kit.getOwner().getName()
-				+ "\n&7Cost: &3" + kit.getCost()
-				+ "\n&7Cooldown: &3" + kit.getCooldown()
-				+ "\n&7Items &3" + kit.getItems().size()
+				"&7Name: &3" + reward.getName()
+				+ "\n&7Owner: &3" + reward.getOwner().getName()
+				+ "\n&7Cost: &3" + reward.getCost()
+				+ "\n&7Cooldown: &3" + reward.getCooldown()
+				+ "\n&7Items &3" + reward.getItems().size()
 				);
 	}
 
@@ -114,8 +119,8 @@ public class RewardEditGUI extends ChestGui{
 	}
 	private void costDisplayButton(int slot){
 		setItem(slot, new ItemStack(Material.GOLD_NUGGET), player -> {
-			kit.setCost(cost);
-		},"&3Cost: &6" + kit.getCost() , 
+			reward.setCost(cost);
+		},"&3Cost: &6" + reward.getCost() , 
 				"\n&aClick to Save"
 				);
 	}
@@ -138,8 +143,8 @@ public class RewardEditGUI extends ChestGui{
 	}
 	private void cooldownDisplayButton(int slot){
 		setItem(slot, new ItemStack(Material.WATCH), player -> {
-			kit.setCooldown(cooldown);
-		},"&3Cooldown: &6" + kit.getCooldown() + " &3minutes" , 
+			reward.setCooldown(cooldown);
+		},"&3Cooldown: &6" + reward.getCooldown() + " &3minutes" , 
 				"\n&aClick to Save"
 				);
 	}
@@ -152,26 +157,46 @@ public class RewardEditGUI extends ChestGui{
 				);
 	}
 	
-	private ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-	private ItemStack item = new ItemStack(Material.ARMOR_STAND);
+	private void DecreaseItemButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
+			if ((cost - amount) >= 0)
+				item.setAmount(item.getAmount() + amount);
+			else
+				item.setAmount(0);
+			display();
+		},"&3Decrease&6(&c" + amount +"&6)" , 
+				"&cClick to Decrease!"
+				);
+	}
 	private void addButton(int slot){ //shift + click add item to Kit (Add to Slot and on press Save)
 		if (getInventoryItems().containsKey(InventoryType.PLAYER))
-			item = getInventoryItems().get(InventoryType.PLAYER);
+			item = getInventoryItems().get(InventoryType.PLAYER).clone();
 		else
 			item  = new ItemStack(Material.ARMOR_STAND);
 		
 		setItem(slot, item, player -> {
-				item.setAmount(itemSize);
-				items.add(item);
+			if (getClickType().equals(ClickType.LEFT)){
+				reward.addItem(reward.getItems().size() +1, item);
+			}else if (getClickType().equals(ClickType.RIGHT))
+				new RewardItemsGUI(player, this, reward);
 				display();
 		}, "", 
-				"\n&bClick item in your inventory to add, then..."
-				+"\n&bClick to &aSave &3item to kit");
+				"\n&bClick item in your inventory, then..."
+						+"\n&bLeft-Click this to &aSave &3item to Reward Box or..."
+						+"\n&bRight-Click this to &dSee &3items selected");
+	}
+	private void IncreaseItemButton(int slot, int amount){
+		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
+			item.setAmount(item.getAmount() + amount);
+			display();
+		},"&3Increase&6(&c+" + amount +"&6)" , 
+				"&aClick to Increase!"
+				);
 	}
 
 	private void itemsButton(int slot){
 		setItem(slot, new ItemStack(Material.ARMOR_STAND), player -> {
-			new ItemEditGUI(player, kit, previous);
+			new ItemEditGUI(player, reward, previous);
 		}, "&3Edit Items",  
 				"\n&bClick to Edit Items");
 	}

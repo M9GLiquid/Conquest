@@ -79,14 +79,14 @@ public class ParentGUI extends ChestGui{
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			set(null);
 			previous.create();
-		}, town.getOwner().getColorSymbol() +  town.getName(),
+		}, town.getOwner().getColor() +  town.getName(),
 				"&bClick to &cremove current &bparent!");
 	}
 	private void addButton(int slot, Town town){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {
 			set(town);
 			previous.create();
-		}, town.getOwner().getColorSymbol() +  town.getName(),
+		}, town.getOwner().getColor() +  town.getName(),
 				"&bClick to &aselect &bparent!");
 	}
 	

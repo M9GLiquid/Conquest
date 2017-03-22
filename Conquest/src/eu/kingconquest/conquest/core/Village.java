@@ -52,7 +52,7 @@ public class Village extends Objective{
 			setParent(parent);
 		
 		addVillage(this);
-		Marker.create(this);
+		Marker.update(this);
 		Marker.setDescription(this);
 	}
 	
@@ -79,7 +79,7 @@ public class Village extends Objective{
 		this.parent = parent;
 		//If parent owner not same as this owner update parent to neutral
 		if (Validate.notNull(parent))
-			if (!parent.getOwner().equals(this))
+			if (!parent.getOwner().equals(getOwner()))
 				parent.setNeutral();
 	}
 	public void removeParent(){
@@ -117,6 +117,11 @@ public class Village extends Objective{
 		updateGlass();
 		Marker.update(this);
 	}
+	public boolean isNeutral(){
+		if (getOwner().isNeutral())
+			return true;
+		return false;
+	}
 	
 	public void setPreOwner(Kingdom kingdom){
 		this.preOwner = kingdom;
@@ -144,11 +149,11 @@ public class Village extends Objective{
 	public HashMap<UUID, UUID> getAttackers(){
 		return attackers;
 	}
-	public void addAttacker(Player p){
-		attackers.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getUUID());
+	public void addAttacker(Player player){
+		attackers.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getUUID());
 	}
-	public void removeAttacker(Player p){
-		attackers.remove(p.getUniqueId());
+	public void removeAttacker(Player player){
+		attackers.remove(player.getUniqueId());
 	}
 
 	/**
@@ -158,11 +163,11 @@ public class Village extends Objective{
 	public HashMap<UUID, UUID> getDefenders(){
 		return defenders;
 	}
-	public  void addDefender(Player p){
-		defenders.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getUUID());
+	public  void addDefender(Player player){
+		defenders.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getUUID());
 	}
-	public  void removeDefender(Player p){
-		defenders.remove(p.getUniqueId());
+	public  void removeDefender(Player player){
+		defenders.remove(player.getUniqueId());
 	}
 	
 	private static ArrayList<Village> villages = new ArrayList<Village>();

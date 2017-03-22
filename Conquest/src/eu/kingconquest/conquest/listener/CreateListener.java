@@ -24,8 +24,10 @@ public class CreateListener implements Listener{
 			
 			// Create Group & Set the suffix | Add it via Vault? Is it possible?
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/lp creategroup " + kingdom.getName());
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/lp group " + kingdom.getName() + " meta  addsuffix  1000 \"&6{&2 + " + kingdom.getName() + "&6}&r\"");
-			new Message(null, MessageType.CONSOLE, "{KingdomCreated}");
+			Bukkit.dispatchCommand(
+					Bukkit.getConsoleSender(), 
+					"/lp group " + kingdom.getName() + " permission set \"suffix.100.§6{" + kingdom.getColor() + kingdom.getName() + "§6}§r\"");
+			new Message(event.getPlayer(), MessageType.CONSOLE, "{KingdomCreated}");
 		}
 		/**
 		 * Code to add to Objective on Creation

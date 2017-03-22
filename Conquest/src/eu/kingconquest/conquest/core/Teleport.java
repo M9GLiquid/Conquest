@@ -13,11 +13,11 @@ import eu.kingconquest.conquest.util.MessageType;
 
 public class Teleport{
 	private int taskID;
-
+	
 	public Teleport(Player player, Location loc){
 		Cach.tpDelay = YmlStorage.getLong("TeleportDelay", loc);
-		new Message(player, MessageType.CHAT, "{TeleportDelay}");
-		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(Main.getInstance(), new Runnable(){
+		new Message(player, MessageType.CHAT, "{StartTP}");
+		Bukkit.getServer().getScheduler().runTaskLater(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){
 				player.setInvulnerable(true);
@@ -27,7 +27,7 @@ public class Teleport{
 			}
 		}, Cach.tpDelay);
 	}
-
+	
 	/**
 	 * Fall from Y: 256
 	 * Involnerable while falling
@@ -35,16 +35,15 @@ public class Teleport{
 	 */
 	private void startFall(Player player){
 		player.setFlying(false);
-		taskID = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Main.getInstance(), new Runnable(){
+		taskID = Bukkit.getServer().getScheduler().runTaskTimer(Main.getInstance(), new Runnable(){
 			@Override
-			public void run(){
-				System.out.println("On Falling, Block Type under player: " + player.getLocation().subtract(0, 1, 0).getBlock().getType());
-			if (player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR)
-				stopFall(player);
+			public void run(){				
+				if (player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR)
+					stopFall(player);
 			}
 		}, 0, 10).getTaskId();
 	}
-
+	
 	/**
 	 * Stop the Clock of capturing!
 	 * @param p - Player instance

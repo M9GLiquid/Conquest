@@ -164,7 +164,7 @@ public class EditGUI extends ChestGui{
 		String str = "";
 		
 		if (objective instanceof Kingdom) {
-			str	= "\n&aName: &f" + ((Kingdom)objective).getColorSymbol() + objective.getName();
+			str	= "\n&aName: &f" + ((Kingdom)objective).getColor() + objective.getName();
 			if(Validate.notNull(((Kingdom)objective).getKing()))
 				str += "\n&aKing: &f" + ((Kingdom)objective).getKing().getName();
 			else
@@ -197,7 +197,7 @@ public class EditGUI extends ChestGui{
 					+ "\n- &cY: &f"+ Math.floor(objective.getSpawn().getY())
 					+ "\n- &cZ: &f"+ Math.floor(objective.getSpawn().getZ());
 		}else if(objective instanceof Village) {
-			str = "\n&aName: &f" + objective.getOwner().getColorSymbol() + objective.getName();
+			str = "\n&aName: &f" + objective.getOwner().getColor() + objective.getName();
 			str += "\n&aOwner: &f" + objective.getOwner().getName()
 					+ "\n&aPre-Owner: &f" + ((Village)objective).getPreOwner().getName();
 			if (Validate.notNull(((Village)objective).getParent()))
@@ -280,6 +280,15 @@ public class EditGUI extends ChestGui{
 			objective.setOwner(ownerGui.get());
 			objective.updateGlass();
 			ownerGui.close(player);
+			Cach.StaticKingdom = objective.getOwner();
+			if (objective instanceof Village){
+				Cach.StaticVillage = (Village) objective;
+				Cach.StaticTown = parent;
+				new Message(player, MessageType.CHAT, "{AdminEditVillageOwner}");
+			}else if (objective instanceof Town){
+				Cach.StaticTown = (Town) objective;
+				new Message(player, MessageType.CHAT, "{AdminEditTownOwner}");
+			}
 			ownerGui = null;
 		}
 	}
@@ -296,10 +305,11 @@ public class EditGUI extends ChestGui{
 			((Village)objective).setPreOwner(preOwnerGui.get());
 			objective.updateGlass();
 			preOwnerGui.close(player);
-			
+
 			Cach.StaticVillage = (Village) objective;
 			Cach.StaticTown = parent;
-			new Message(player, MessageType.CHAT, "{AdminEditVillagePreParent}");
+			Cach.StaticKingdom = objective.getOwner();
+			new Message(player, MessageType.CHAT, "{AdminEditVillagePreOwner}");
 			preOwnerGui = null;
 		}
 	}

@@ -79,7 +79,7 @@ public class KingdomGUI extends ChestGui{
 	private void editButton(int i, Kingdom kingdom){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
 			new EditGUI(player, kingdom, this);
-		},"&3Edit " + kingdom.getColorSymbol() + kingdom.getName()
+		},"&3Edit " + kingdom.getColor() + kingdom.getName()
 		,displayInfo(kingdom));
 	}
 

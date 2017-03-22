@@ -48,7 +48,7 @@ public class Marker{
 
 	public static MarkerIcon int2MarkerIcon(Objective objective){
 		if (objective instanceof Kingdom){
-			switch (((Kingdom) objective).getColor()){
+			switch (((Kingdom) objective).getIntColor()){
 				case 0: return DARK_BLUE_KINGDOM;
 				case 1: return DARK_GREEN_KINGDOM; 
 				case 2: return AQUA_KINGDOM;
@@ -61,7 +61,7 @@ public class Marker{
 				case -1:return NEUTRAL_KINGDOM;
 			}
 		}else if (objective instanceof Town){
-			switch (objective.getOwner().getColor()){
+			switch (objective.getOwner().getIntColor()){
 				case 0: return DARK_BLUE_TOWN;
 				case 1: return DARK_GREEN_TOWN;
 				case 2: return AQUA_TOWN;
@@ -74,7 +74,7 @@ public class Marker{
 				case -1:return NEUTRAL_TOWN;
 			}
 		}else  if (objective instanceof Village){
-			switch (objective.getOwner().getColor()){
+			switch (objective.getOwner().getIntColor()){
 				case 0: return DARK_BLUE_VILLAGE;
 				case 1: return DARK_GREEN_VILLAGE;
 				case 2: return AQUA_VILLAGE;

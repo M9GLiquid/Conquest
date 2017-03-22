@@ -80,7 +80,7 @@ public abstract class Objective{
 		Bukkit.getServer().getWorld(loc.getWorld().getName()).getBlockAt(loc).setType(block);
 		if (owner != null){
 			
-			Bukkit.getServer().getWorld(loc.getWorld().getName()).getBlockAt(loc).setData(ColorManager.intToByte(owner.getColor()));
+			Bukkit.getServer().getWorld(loc.getWorld().getName()).getBlockAt(loc).setData(ColorManager.intToByte(owner.getIntColor()));
 			return;
 		}
 		Bukkit.getServer().getWorld(loc.getWorld().getName()).getBlockAt(loc).setData(ColorManager.intToByte(999));

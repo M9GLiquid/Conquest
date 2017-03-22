@@ -197,7 +197,7 @@ public class HomeGUI extends ChestGui{
 							+ "\n";
 		}else{
 			if (wrapper.isInKingdom(player.getWorld())){
-				details = "\n&cLeave " + wrapper.getKingdom(player.getWorld()).getColorSymbol() + wrapper.getKingdom(player.getWorld()).getName()
+				details = "\n&cLeave " + wrapper.getKingdom(player.getWorld()).getColor() + wrapper.getKingdom(player.getWorld()).getName()
 						+ "\n";
 			}else{
 				details = "\n&aJoin &7a Kingdom!"

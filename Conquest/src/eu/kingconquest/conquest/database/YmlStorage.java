@@ -378,7 +378,6 @@ public class YmlStorage extends YamlConfiguration{
 		getPathSection(config, world.getUID().toString()).forEach(uniqueID ->{
 			if (Validate.notNull(Town.getTown(UUID.fromString(uniqueID), world)))
 				return; //Town already loaded!
-
 			new Town(config.getString(world.getUID().toString() + "." + uniqueID + ".Name")
 					,uniqueID
 					,config.getLocation(world, world.getUID().toString() + "." + uniqueID + ".Location")
@@ -478,7 +477,7 @@ public class YmlStorage extends YamlConfiguration{
 				config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Name", kingdom.getName());
 				if (Validate.notNull(kingdom.getKing()))
 					config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".King", kingdom.getKing().getUniqueId().toString());
-				config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getColor());
+				config.set(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Color", kingdom.getIntColor());
 				config.setLocation(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Location", kingdom.getLocation());
 				config.setLocation(world.getUID().toString() + "." + kingdom.getUUID().toString() + ".Spawn", kingdom.getSpawn());
 				List<String> members = new ArrayList<String>();

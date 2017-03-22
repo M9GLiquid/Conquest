@@ -37,7 +37,7 @@ public class Kingdom extends Objective{
 			setKing(UUID.fromString(kingID));
 		setColor(color);
 		addKingdom(this);
-		Marker.create(this);
+		Marker.update(this);
 		Marker.setDescription(this);
 	}
 	
@@ -85,17 +85,17 @@ public class Kingdom extends Objective{
 		return Bukkit.getPlayer(king);
 	}
 	/**
-	 * Get Kingdom ID
+	 * Get Kingdom Color by Integer
 	 * @return Integer
 	 */
-	public Integer getColor(){
+	public Integer getIntColor(){
 		return color;
 	}
 	/**
-	 * Get Kingdom ID
+	 * Get Kingdom Color by Symbol
 	 * @return Integer
 	 */
-	public String getColorSymbol(){
+	public String getColor(){
 		return ColorManager.intToSymbols(color);
 	}
 	/**
@@ -322,7 +322,7 @@ public class Kingdom extends Objective{
 	public boolean create(Player player){
 		Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions creategroup " + getName());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions group " + getName() + " meta addsuffix  100 " + "\"&6{" + getColorSymbol() + getName() + "}&r &7\"");
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "permissions group " + getName() + " meta addsuffix  100 " + "\"&6{" + getColor() + getName() + "}&r &7\"");
 		EconAPI.createAccount(getUUID());
 		if (Marker.update(this))
 			return true;
@@ -330,9 +330,10 @@ public class Kingdom extends Objective{
 	}
 	@Override
 	public boolean delete(Player player){
-		new Message(player, MessageType.CHAT, "[KingdomDeleted]");
+		Cach.StaticKingdom = this;
+		new Message(player, MessageType.CHAT, "{KingdomDeleted}");
 		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp removegroup " + getName());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp deletegroup " + getName());
 		removeKingdom(this);
 		if (Marker.remove(this))
 			return true;

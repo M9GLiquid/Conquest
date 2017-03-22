@@ -34,31 +34,31 @@ Database:
 ActiveWorlds:
   world:
     General:
-      Debug: true
+      Debug: false
       RespawnDelay: 10
       TeleportDelay: 10
     Income:
-      CapCash: 100
+      CapCash: 30
       IncomeDelay: 60000
       TownBaseValue: 0.2
       VillageBaseValue: 0.5
     Combat:
-      CaptureRate: 0.3
+      CaptureRate: 0.15
       CaptureDistance: 5.0
       CaptureMaxY: 5.0
       CaptureMinY: 1.0
   Sezty:
     General:
-      Debug: true
+      Debug: false
       RespawnDelay: 10
       TeleportDelay: 10
     Income:
-      CapCash: 100
+      CapCash: 30
       IncomeDelay: 60000
       TownBaseValue: 0.2
       VillageBaseValue: 0.5
     Combat:
-      CaptureRate: 0.3
+      CaptureRate: 0.15
       CaptureDistance: 5.0
       CaptureMaxY: 5.0
       CaptureMinY: 1.0

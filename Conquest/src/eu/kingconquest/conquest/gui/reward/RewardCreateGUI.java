@@ -196,8 +196,8 @@ public class RewardCreateGUI extends ChestGui{
 
 	private void saveButton(){
 		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
-			Reward kit = new Reward(name, player.getWorld(), cost, cooldown, parent.getUUID());
-			kit.addItems(0, items);
+			Reward reward = new Reward(name, player.getWorld(), cost, cooldown, parent.getUUID());
+			reward.addItems(0, items);
 			new RewardGUI(player, null);
 			close(player);
 		},"&aSave" , "");
@@ -217,17 +217,19 @@ public class RewardCreateGUI extends ChestGui{
 	private void itemButton(int slot){ //shift + click add item to Kit (Add to Slot and on press Save)
 		if (getInventoryItems().containsKey(InventoryType.PLAYER))
 			item = getInventoryItems().get(InventoryType.PLAYER);
+		else
+			item  = new ItemStack(Material.ARMOR_STAND);
+			
 
 		setItem(slot, item, player -> {
 			if (getClickType().equals(ClickType.LEFT)){
 				items.add(item.clone());
-				item  = new ItemStack(Material.ARMOR_STAND);
 			}else if (getClickType().equals(ClickType.RIGHT))
 				new RewardItemsGUI(player, this, items);
 			display();
 		}, "", 
-				"\n&bClick item in your inventory, add it, then..."
-						+"\n&bLeft-Click this to &aSave &3item to kit or..."
+				"\n&bClick item in your inventory, then..."
+						+"\n&bLeft-Click this to &aSave &3item to Reward Box or..."
 						+"\n&bRight-Click this to &dSee &3items selected");
 	}
 	private void IncreaseItemButton(int slot, int amount){

@@ -58,12 +58,14 @@ public class VillageGUI extends ChestGui{
 	private void editButton(int i, Village village){
 		setItem(i, new ItemStack(Material.BEACON), player -> {
 			new EditGUI(player, village, this);
-		},"&aEdit " + village.getOwner().getColorSymbol() + village.getName()
+		},"&aEdit " + village.getOwner().getColor() + village.getName()
 		, displayInfo(village));
 	}
 
 	private String displayInfo(Village village) {
 		String str = "\n&aName: &f" + village.getName();
+		str += "\n&aOwner: " + village.getOwner().getColor() + village.getOwner().getName();
+		str += "\n&aPre-Owner: " + village.getPreOwner().getColor() + village.getPreOwner().getName();
 		if (Validate.notNull(village.getParent()))
 			str += "\n&aParent: &f" + village.getParent().getName();
 		else

@@ -19,7 +19,7 @@ public class PlayerBoard extends Board{
 
 		int i = 13;
 		board.setTitle("&6[&ePlayer Information&6]");
-		board.add(i--, "&c&lKingdom: &r&7" + kingdom.getColorSymbol() + kingdom.getName());
+		board.add(i--, "&c&lKingdom: &r&7" + kingdom.getColor() + kingdom.getName());
 		board.add(i--, "&c&lBalance: &6" + Vault.econ.getBalance(player) + "$");	
 		board.add(i--, "  ");	
 		board.add(i--, "&c&lFriends: &3" + wrapper.getOnlineFriends() + "/" + wrapper.getNumberOfFriends() + " &aOnline");
