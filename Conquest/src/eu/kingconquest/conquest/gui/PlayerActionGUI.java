@@ -177,12 +177,13 @@ public class PlayerActionGUI extends ChestGui{
 						+ "\n&c &3This will also teleport target to new kingdom");
 		
 		if (Validate.notNull(ownerGui)){
-			wrapper.setKingdom(ownerGui.get().getUUID());
 			Cach.StaticKingdom = ownerGui.get();
 			Cach.StaticPlayer = viewer;
 			new Message(target, MessageType.CHAT, "MoveSuccess");
 			Cach.StaticPlayer = target;
 			new Message(target, MessageType.CHAT, "AdminMoveSuccess");
+			kingdom.leave(target);
+			ownerGui.get().join(target);
 			ownerGui = null;
 		}
 		
