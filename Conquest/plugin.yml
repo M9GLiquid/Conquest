@@ -3,7 +3,7 @@ main: eu.kingconquest.conquest.Main
 load: POSTWORLD
 depend: [Vault, dynmap]
 softdepend: [TheNewEconomy]
-version: 0.7.5.6
+version: 0.7.6.8
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 
@@ -13,7 +13,7 @@ commands:
     description: Main Commmand
     aliases: [c, kc, kingc, conquest]
     permission: conquest.basic
-    permission-message: You need the permission "conquest.basic" for this command
+    permission-message: Permission "conquest.basic" required for this command
     
 permissions:
    conquest.*:
@@ -205,7 +205,7 @@ permissions:
      description: Gives access to basic commands
      children:
        conquest.basic.join: true
-       conquest.basic.leave: true
+       conquest.basic.leave: false
        conquest.basic.teleport: true
        conquest.basic.reward: true
     
