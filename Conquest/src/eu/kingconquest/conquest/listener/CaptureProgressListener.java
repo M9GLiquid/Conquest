@@ -22,6 +22,7 @@ import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
 import eu.kingconquest.conquest.event.CaptureZoneExitEvent;
+import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
 import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Marker;
@@ -45,8 +46,8 @@ public class CaptureProgressListener implements Listener{
 		
 		//Run Mob Spawns as defence if objective owner isn't Neutral
 		if (village.getPreOwner().equals(wrapper.getKingdom(village.getWorld()))){
-			//pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
-			//pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
+			pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
 		}
 	}
 	
@@ -124,7 +125,7 @@ public class CaptureProgressListener implements Listener{
 
 		new Message(MessageType.BROADCAST, "{WarnNeutral}");
 		if (village.isNeutral() && village.getProgress() <= 10.0){
-			//pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 			
 			//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 		}
