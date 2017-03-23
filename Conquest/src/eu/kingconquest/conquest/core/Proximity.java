@@ -32,7 +32,7 @@ public class Proximity implements Listener{
 				pm.callEvent(new CaptureZoneEnterEvent(player, village));
 			}else{
 				// If the player is outside of the area
-				if (village.isCapturing(player)){
+				if (village.isCapturing(player)) {
 					pm.callEvent(new CaptureZoneExitEvent(player, village));
 					return;
 				}
@@ -41,7 +41,7 @@ public class Proximity implements Listener{
 	}
 	
 	public static void villageAreaProximity(Player player){
-	
+		
 	}
 	
 	public static void townZoneProximity(Player player){
@@ -63,7 +63,7 @@ public class Proximity implements Listener{
 		}
 		pm.callEvent(new CaptureZoneEnterEvent(player, objective));
 	}
-
+	
 	public static void objectiveAreaProximity(Objective objective,Player player){
 		
 	}

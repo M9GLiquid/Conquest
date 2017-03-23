@@ -25,7 +25,6 @@ import eu.kingconquest.conquest.util.Validate;
 
 public class Village extends Objective{
 	private DecimalFormat  format = new DecimalFormat("###.##");  
-	private final static double SPEED = 1.2d;
 	private double progress = 0.0d;
 	
 	public Village(String name, Location loc, Location spawn, Kingdom owner, Kingdom preOwner, Town parent) {
@@ -114,9 +113,11 @@ public class Village extends Objective{
 	 */
 	public void setNeutral(){
 		setOwner(Kingdom.getKingdom("Neutral", getWorld()));
+		setProgress(0.0d);
 		updateGlass();
 		Marker.update(this);
 	}
+	
 	public boolean isNeutral(){
 		if (getOwner().isNeutral())
 			return true;
@@ -138,10 +139,6 @@ public class Village extends Objective{
 		return false;
 	}
 	
-//Others
-	public static double getCapSpeed(){
-		return SPEED;
-	}
 	/**
 	 * Outpost Agressors(Player)
 	 */

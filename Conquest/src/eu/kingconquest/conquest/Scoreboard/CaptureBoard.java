@@ -1,12 +1,11 @@
 package eu.kingconquest.conquest.Scoreboard;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 
 import eu.kingconquest.conquest.core.Village;
 
 public class CaptureBoard extends Board{
-
-	public CaptureBoard(Player player, Village village){
+	public CaptureBoard(Village village){
 		setType(BoardType.CAPTUREBOARD);
 		SimpleScoreboard board = new SimpleScoreboard();
 		
@@ -22,6 +21,13 @@ public class CaptureBoard extends Board{
 		board.add(i--, "  ");	
 		board.add(i--, "&a&lCapture Progress:");	
 		board.add(i--, "&e" + village.getProgress() + "%");	
-		board.send(player); // Build Scoreboard then send it to player
+		//Send new Caotureboard to all Attacking
+		village.getAttackers().forEach((playerID, kingdomID)->{
+			board.send(Bukkit.getPlayer(playerID));
+		});
+		//Send new Caotureboard to all Defending
+		village.getDefenders().forEach((playerID, kingdomID)->{
+			board.send(Bukkit.getPlayer(playerID));
+		});
 	}
 }

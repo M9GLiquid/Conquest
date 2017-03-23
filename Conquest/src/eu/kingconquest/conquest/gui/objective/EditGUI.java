@@ -164,54 +164,57 @@ public class EditGUI extends ChestGui{
 		String str = "";
 		
 		if (objective instanceof Kingdom) {
-			str	= "\n&aName: &f" + ((Kingdom)objective).getColor() + objective.getName();
-			if(Validate.notNull(((Kingdom)objective).getKing()))
-				str += "\n&aKing: &f" + ((Kingdom)objective).getKing().getName();
+			Kingdom kingdom = (Kingdom) objective;
+			str	= "\n&aName: &f" +kingdom.getColor() + kingdom.getName();
+			if(Validate.notNull(kingdom.getKing()))
+				str += "\n&aKing: &f" + kingdom.getKing().getName();
 			else
 				str += "\n&aKing: &fNone";
-			if(Validate.notNull(((Kingdom)objective).getMembers()))
-				str += "\n&aMembers: &f" + ((Kingdom)objective).getMembers().size();
+			if(Validate.notNull(kingdom.getMembers()))
+				str += "\n&aMembers: &f" + kingdom.getMembers().size();
 			else
 				str += "\n&aMembers: &fNone";
 			str	+= "\n&aLocation:"
-					+ "\n- &cX: &f"+ Math.floor(objective.getLocation().getX())
-					+ "\n- &cY: &f"+ Math.floor(objective.getLocation().getY())
-					+ "\n- &cZ: &f"+ Math.floor(objective.getLocation().getZ())
+					+ "\n- &cX: &f"+ Math.floor(kingdom.getLocation().getX())
+					+ "\n- &cY: &f"+ Math.floor(kingdom.getLocation().getY())
+					+ "\n- &cZ: &f"+ Math.floor(kingdom.getLocation().getZ())
 					+ "\n&aSpawn:"
-					+ "\n- &cX: &f"+ Math.floor(objective.getSpawn().getX())
-					+ "\n- &cY: &f"+ Math.floor(objective.getSpawn().getY())
-					+ "\n- &cZ: &f"+ Math.floor(objective.getSpawn().getZ());
+					+ "\n- &cX: &f"+ Math.floor(kingdom.getSpawn().getX())
+					+ "\n- &cY: &f"+ Math.floor(kingdom.getSpawn().getY())
+					+ "\n- &cZ: &f"+ Math.floor(kingdom.getSpawn().getZ());
 		}else if(objective instanceof Town) {
-			str = "\n&aName: &f" + objective.getName();
-			str += "\n&aOwner: &f" + objective.getOwner().getName();
-			if (Validate.notNull(((Town)objective).getChildren()))
-				str += "\n&aChildren: &f" + ((Town)objective).getChildren().size();
+			Town town = (Town) objective;
+			str = "\n&aName: &f" + town.getOwner().getColor() + town.getName();
+			str += "\n&aOwner: &f" + town.getOwner().getColor() + town.getOwner().getName();
+			if (Validate.notNull(town.getChildren()))
+				str += "\n&aChildren: &f" + town.getChildren().size();
 			else
 				str += "\n&aChildren: &fNone";			
 			str += "\n&aLocation:"
-					+ "\n- &cX: &f"+ Math.floor(objective.getLocation().getX())
-					+ "\n- &cY: &f"+ Math.floor(objective.getLocation().getY())
-					+ "\n- &cZ: &f"+ Math.floor(objective.getLocation().getZ())
+					+ "\n- &cX: &f"+ Math.floor(town.getLocation().getX())
+					+ "\n- &cY: &f"+ Math.floor(town.getLocation().getY())
+					+ "\n- &cZ: &f"+ Math.floor(town.getLocation().getZ())
 					+ "\n&aSpawn:"
-					+ "\n- &cX: &f"+ Math.floor(objective.getSpawn().getX())
-					+ "\n- &cY: &f"+ Math.floor(objective.getSpawn().getY())
-					+ "\n- &cZ: &f"+ Math.floor(objective.getSpawn().getZ());
+					+ "\n- &cX: &f"+ Math.floor(town.getSpawn().getX())
+					+ "\n- &cY: &f"+ Math.floor(town.getSpawn().getY())
+					+ "\n- &cZ: &f"+ Math.floor(town.getSpawn().getZ());
 		}else if(objective instanceof Village) {
-			str = "\n&aName: &f" + objective.getOwner().getColor() + objective.getName();
-			str += "\n&aOwner: &f" + objective.getOwner().getName()
-					+ "\n&aPre-Owner: &f" + ((Village)objective).getPreOwner().getName();
-			if (Validate.notNull(((Village)objective).getParent()))
-				str += "\n&aParent: &f" + ((Village)objective).getParent().getName();
+			Village village = (Village) objective;
+			str = "\n&aName: &f" + village.getOwner().getColor() + village.getName();
+			str += "\n&aOwner: &f" + village.getOwner().getColor() + village.getOwner().getName()
+					+ "\n&aPre-Owner: &f" + village.getPreOwner().getColor() + village.getPreOwner().getName();
+			if (Validate.notNull(village.getParent()))
+				str += "\n&aParent: &f" + village.getParent().getName();
 			else
 				str += "\n&aParent: &fNone";			
 			str +=  "\n&aLocation:"
-					+ "\n- &cX: &f"+ Math.floor(objective.getLocation().getX())
-					+ "\n- &cY: &f"+ Math.floor(objective.getLocation().getY())
-					+ "\n- &cZ: &f"+ Math.floor(objective.getLocation().getZ())
+					+ "\n- &cX: &f"+ Math.floor(village.getLocation().getX())
+					+ "\n- &cY: &f"+ Math.floor(village.getLocation().getY())
+					+ "\n- &cZ: &f"+ Math.floor(village.getLocation().getZ())
 					+ "\n&aSpawn:"
-					+ "\n- &cX: &f"+ Math.floor(objective.getSpawn().getX())
-					+ "\n- &cY: &f"+ Math.floor(objective.getSpawn().getY())
-					+ "\n- &cZ: &f"+ Math.floor(objective.getSpawn().getZ());
+					+ "\n- &cX: &f"+ Math.floor(village.getSpawn().getX())
+					+ "\n- &cY: &f"+ Math.floor(village.getSpawn().getY())
+					+ "\n- &cZ: &f"+ Math.floor(village.getSpawn().getZ());
 		}
 		return str;
 	}
@@ -283,7 +286,6 @@ public class EditGUI extends ChestGui{
 			Cach.StaticKingdom = objective.getOwner();
 			if (objective instanceof Village){
 				Cach.StaticVillage = (Village) objective;
-				Cach.StaticTown = parent;
 				new Message(player, MessageType.CHAT, "{AdminEditVillageOwner}");
 			}else if (objective instanceof Town){
 				Cach.StaticTown = (Town) objective;
@@ -302,14 +304,14 @@ public class EditGUI extends ChestGui{
 		
 		if (Validate.notNull(preOwnerGui) 
 				&& !(objective instanceof Kingdom)){
-			((Village)objective).setPreOwner(preOwnerGui.get());
 			objective.updateGlass();
-			preOwnerGui.close(player);
-
-			Cach.StaticVillage = (Village) objective;
-			Cach.StaticTown = parent;
 			Cach.StaticKingdom = objective.getOwner();
-			new Message(player, MessageType.CHAT, "{AdminEditVillagePreOwner}");
+			if (objective instanceof Village){
+				((Village)objective).setPreOwner(preOwnerGui.get());
+				preOwnerGui.close(player);
+				Cach.StaticVillage = (Village) objective;
+				new Message(player, MessageType.CHAT, "{AdminEditVillagePreOwner}");
+			}
 			preOwnerGui = null;
 		}
 	}
@@ -324,13 +326,11 @@ public class EditGUI extends ChestGui{
 		if (Validate.notNull(parentGui)){
 			if (parentGui.get() instanceof Town)
 				parent = (Town) parentGui.get();
-			
-
-			Cach.StaticVillage = (Village) objective;
 			if (Validate.notNull(parent)){
 				parent.addChild((Village) objective);
 				((Village) objective).setParent(parent);
-				
+				Cach.StaticKingdom = objective.getOwner();
+				Cach.StaticVillage = (Village) objective;
 				Cach.StaticTown = parent;
 				new Message(player, MessageType.CHAT, "{AdminEditVillageParent}");
 			}else{

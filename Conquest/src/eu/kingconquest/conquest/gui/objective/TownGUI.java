@@ -63,20 +63,20 @@ public class TownGUI extends ChestGui{
 	}
 
 	private String displayInfo(Town town) {
-		String str = "\n&aName: &f" + town.getName();
-		str += "\n&aOwner: " + town.getOwner().getColor() + town.getOwner().getName();
+		String str = "\n&aName: &f" + town.getOwner().getColor() + town.getName();
+		str += "\n&aOwner: &f" + town.getOwner().getColor() + town.getOwner().getName();
 		if (Validate.notNull(town.getChildren()))
 			str += "\n&aChildren: &f" + town.getChildren().size();
 		else
-			str += "\n&aChildren: &fNone";
+			str += "\n&aChildren: &fNone";			
 		str += "\n&aLocation:"
-		+ "\n&cX: &f"+ Math.floor(town.getLocation().getX())
-		+ "\n&cY: &f"+ Math.floor(town.getLocation().getY())
-		+ "\n&cZ: &f"+ Math.floor(town.getLocation().getZ())
-		+ "\n&aSpawn:"
-		+ "\n&cX: &f"+ Math.floor(town.getSpawn().getX())
-		+ "\n&cY: &f"+ Math.floor(town.getSpawn().getY())
-		+ "\n&cZ: &f"+ Math.floor(town.getSpawn().getZ());
+				+ "\n- &cX: &f"+ Math.floor(town.getLocation().getX())
+				+ "\n- &cY: &f"+ Math.floor(town.getLocation().getY())
+				+ "\n- &cZ: &f"+ Math.floor(town.getLocation().getZ())
+				+ "\n&aSpawn:"
+				+ "\n- &cX: &f"+ Math.floor(town.getSpawn().getX())
+				+ "\n- &cY: &f"+ Math.floor(town.getSpawn().getY())
+				+ "\n- &cZ: &f"+ Math.floor(town.getSpawn().getZ());
 		return str;
 	}
 	

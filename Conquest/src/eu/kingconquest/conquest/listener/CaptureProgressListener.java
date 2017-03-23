@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
 
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
@@ -15,7 +16,7 @@ import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
-import eu.kingconquest.conquest.event.NeutralCaptureTrapEvent;
+import eu.kingconquest.conquest.event.CaptureZoneExitEvent;
 import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Marker;
@@ -23,6 +24,7 @@ import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 
 public class CaptureProgressListener implements Listener{
+	private static PluginManager pm = Bukkit.getServer().getPluginManager();
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureStart(CaptureStartEvent e){
@@ -31,12 +33,12 @@ public class CaptureProgressListener implements Listener{
 		
 		Cach.StaticVillage = village;
 		Cach.StaticKingdom = village.getOwner();
+		new Message(MessageType.BROADCAST, "{WarnDistress}");
 		
 		//Run Mob Spawns as defence if objective owner isn't Neutral
 		if (village.getPreOwner().equals(wrapper.getKingdom(village.getWorld()))){
-			Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
-			Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
-			new Message(MessageType.BROADCAST, "{WarnDistress}");
+			//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
 		}
 	}
 	
@@ -51,8 +53,6 @@ public class CaptureProgressListener implements Listener{
 		village.removeCapturing(player);
 		village.setOwner(wrapper.getKingdom(player.getWorld()));
 		village.setPreOwner(wrapper.getKingdom(player.getWorld()));
-		village.removeAttacker(player);
-		village.removeDefender(player);
 		Marker.update(village);
 		village.updateGlass();
 		
@@ -87,8 +87,7 @@ public class CaptureProgressListener implements Listener{
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getIntColor()); // Rocket on Success
 		}
 		new Message(MessageType.BROADCAST, "{Captured}");
-		if (village.getAttackers().size() < 1)
-			village.stop();
+		pm.callEvent(new CaptureZoneExitEvent(player, village));
 		village.addDefender(player);
 	}
 	
@@ -96,17 +95,16 @@ public class CaptureProgressListener implements Listener{
 	public void onCaptureNeutral(CaptureNeutralEvent e){
 		Village village = (Village) e.getObjective();
 		
-		if (!village.getPreOwner().isNeutral()){
+		if (!village.getPreOwner().isNeutral())
 			village.setPreOwner(Kingdom.getKingdom("Neutral", village.getWorld()));
-		}
+		
 		village.setNeutral();
 		if (village.hasParent())
 			village.getParent().setNeutral();
 		
-		Cach.StaticVillage = village;
-		Cach.StaticKingdom = village.getPreOwner();
 		if (village.isNeutral() && village.getProgress() <= 10.0){
-			Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			
 			//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 		}
 	}

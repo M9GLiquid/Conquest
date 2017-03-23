@@ -63,21 +63,21 @@ public class VillageGUI extends ChestGui{
 	}
 
 	private String displayInfo(Village village) {
-		String str = "\n&aName: &f" + village.getName();
-		str += "\n&aOwner: " + village.getOwner().getColor() + village.getOwner().getName();
-		str += "\n&aPre-Owner: " + village.getPreOwner().getColor() + village.getPreOwner().getName();
+		String str = "\n&aName: &f" + village.getOwner().getColor() + village.getName();
+		str += "\n&aOwner: &f" + village.getOwner().getColor() + village.getOwner().getName()
+				+ "\n&aPre-Owner: &f" + village.getPreOwner().getColor() + village.getPreOwner().getName();
 		if (Validate.notNull(village.getParent()))
 			str += "\n&aParent: &f" + village.getParent().getName();
 		else
-			str += "\n&aParent: &fNone";
-		str += "\n&aLocation:"
-		+ "\n&cX: &f"+ Math.floor(village.getLocation().getX())
-		+ "\n&cY: &f"+ Math.floor(village.getLocation().getY())
-		+ "\n&cZ: &f"+ Math.floor(village.getLocation().getZ())
-		+ "\n&aSpawn:"
-		+ "\n&cX: &f"+ Math.floor(village.getSpawn().getX())
-		+ "\n&cY: &f"+ Math.floor(village.getSpawn().getY())
-		+ "\n&cZ: &f"+ Math.floor(village.getSpawn().getZ());
+			str += "\n&aParent: &fNone";			
+		str +=  "\n&aLocation:"
+				+ "\n- &cX: &f"+ Math.floor(village.getLocation().getX())
+				+ "\n- &cY: &f"+ Math.floor(village.getLocation().getY())
+				+ "\n- &cZ: &f"+ Math.floor(village.getLocation().getZ())
+				+ "\n&aSpawn:"
+				+ "\n- &cX: &f"+ Math.floor(village.getSpawn().getX())
+				+ "\n- &cY: &f"+ Math.floor(village.getSpawn().getY())
+				+ "\n- &cZ: &f"+ Math.floor(village.getSpawn().getZ());
 		return str;
 	}
 	

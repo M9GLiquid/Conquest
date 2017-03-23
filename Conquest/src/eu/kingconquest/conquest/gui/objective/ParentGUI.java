@@ -50,14 +50,10 @@ public class ParentGUI extends ChestGui{
 		setCurrentItem(0);
 		clearSlots();
 		
-		//Slot 0
 		playerInfo(player);
-		//Slot 3
 		previous(this);
-		//Slot 5
 		next(this);
-		//Slot 8
-		closeButton();
+		backButton(previous);
 		
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {

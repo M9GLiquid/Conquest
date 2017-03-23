@@ -85,24 +85,23 @@ public class KingdomGUI extends ChestGui{
 
 	private String displayInfo(Kingdom kingdom) {
 		
-		String str = "&aName: &r" + kingdom.getName();
-		if (Validate.notNull(kingdom.getKing()))
-			str += "\n&aKing: &r" + kingdom.getKing().getName();
+		String str	= "\n&aName: &f" +kingdom.getColor() + kingdom.getName();
+		if(Validate.notNull(kingdom.getKing()))
+			str += "\n&aKing: &f" + kingdom.getKing().getName();
 		else
-			str += "\n&aKing: &rNot Set";
-			
-		if (Validate.notNull(kingdom.getMembers()))
-			str += "\n&aMembers: &r" + kingdom.getMembers().size();
+			str += "\n&aKing: &fNone";
+		if(Validate.notNull(kingdom.getMembers()))
+			str += "\n&aMembers: &f" + kingdom.getMembers().size();
 		else
-			str += "\n&aMembers: &r0";
-		str += "\n&aLocation:"
-		+ "\n&cX: &r"+ Math.floor(kingdom.getLocation().getX())
-		+ "\n&cY: &r"+ Math.floor(kingdom.getLocation().getY())
-		+ "\n&cZ: &r"+ Math.floor(kingdom.getLocation().getZ())
-		+ "\n&aSpawn:"
-		+ "\n&cX: &r"+ Math.floor(kingdom.getSpawn().getX())
-		+ "\n&cY: &r"+ Math.floor(kingdom.getSpawn().getY())
-		+ "\n&cZ: &r"+ Math.floor(kingdom.getSpawn().getZ());
+			str += "\n&aMembers: &fNone";
+		str	+= "\n&aLocation:"
+				+ "\n- &cX: &f"+ Math.floor(kingdom.getLocation().getX())
+				+ "\n- &cY: &f"+ Math.floor(kingdom.getLocation().getY())
+				+ "\n- &cZ: &f"+ Math.floor(kingdom.getLocation().getZ())
+				+ "\n&aSpawn:"
+				+ "\n- &cX: &f"+ Math.floor(kingdom.getSpawn().getX())
+				+ "\n- &cY: &f"+ Math.floor(kingdom.getSpawn().getY())
+				+ "\n- &cZ: &f"+ Math.floor(kingdom.getSpawn().getZ());
 		return str;
 	}
 

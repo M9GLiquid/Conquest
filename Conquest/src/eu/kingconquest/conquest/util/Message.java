@@ -22,7 +22,7 @@ public class Message{
 				if (Validate.notNull(target))
 					target.sendMessage(getMessage("{Prefix} " + message));
 				else
-					new Message(null, MessageType.ERROR, "Tried to send a chat message without a player to send to");
+					new Message(MessageType.ERROR, "Tried to send a chat message without a player to send to");
 				break;
 			case DEBUG:
 				Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} &6[&c"+ type.getName() +"&6] &7" + message));
@@ -34,7 +34,7 @@ public class Message{
 				Main.getInstance().getServer().broadcastMessage(getMessage("&6[&c"+ type.getName() +"&6] " + message));
 				break;
 			case CONSOLE:
-				Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} " + message));
+				Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} &d" + message));
 				break;
 		}
 	}
@@ -53,7 +53,7 @@ public class Message{
 		text = text.contains("{village}") 						? text.replace("{village}"						, Cach.StaticVillage.getName())								: text.replace("{village}", "");
 		text = text.contains("{reward}") 					? text.replace("{reward}"					, Cach.StaticReward.getName())	 							: text.replace("{reward}", "");
 		text = text.contains("{town}") 						? text.replace("{town}"						, Cach.StaticTown.getName()) 								: text.replace("{town}", "");
-		text = text.contains("{color}") 						? text.replace("{color}"						, Cach.StaticKingdom.getColor()) 				: text.replace("{color}", "");
+		text = text.contains("{color}") 						? text.replace("{color}"						, Cach.StaticKingdom.getColor()) 							: text.replace("{color}", "");
 		text = text.contains("{user}") 							? text.replace("{user}"							, Cach.StaticPlayer.getDisplayName())	 				: text.replace("{user}", "");
 		text = text.contains("{cost}") 							? text.replace("{cost}"							, Cach.StaticReward.getCost().toString())	 			: text.replace("{cost}", "");
 		

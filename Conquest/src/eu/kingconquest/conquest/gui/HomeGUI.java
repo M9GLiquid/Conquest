@@ -87,8 +87,11 @@ public class HomeGUI extends ChestGui{
 
 	private void reloadButton(){
 		setItem(2, new ItemStack(Material.REDSTONE_LAMP_OFF), player -> {
-			if (YmlStorage.loadDefault() && YmlStorage.loadLanguage()){
-				new Message(player, MessageType.CHAT, "&7Config.yml & Language.yml &aSuccessfully to reload!");
+			YmlStorage.clearData();
+			YmlStorage.loadLanguage();
+			YmlStorage.loadDefault();
+			if (YmlStorage.loadLanguage() && YmlStorage.loadDefault()){
+				new Message(player, MessageType.CHAT, "&7Config.yml & Language.yml &aSuccessfully reloaded!");
 				return;
 			}
 			new Message(player, MessageType.CHAT, "&7Config.yml & Language.yml &cFailed to reload!");
