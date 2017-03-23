@@ -108,16 +108,7 @@ public class EditGUI extends ChestGui{
 		}
 		teleportButton(2);
 	}
-	
-	private void ownerIcon(int slot){
-		setItem(slot, new ItemStack(Material.PAPER), player -> {
-		}, "&r&7<< &5&lEdit Owners &7>>", "");
-	}
-	private void locationIcon(int slot){
-		setItem(slot, new ItemStack(Material.PAPER), player -> {
-		}, "&r&7<< &5&lEdit Locations &7>>", "");
-	}
-	
+		
 	private void teleportButton(int slot){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
 			player.teleport(objective.getLocation());
@@ -252,7 +243,10 @@ public class EditGUI extends ChestGui{
 		}, "&5Edit Spawn Location!",
 				"&bClick to edit!");
 	}
-	
+	private void locationIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
+		}, "&r&7<< &5&lEdit Locations &7>>", "");
+	}
 	private void locationButton(int slot){
 		setItem(slot, new ItemStack(Material.BANNER), player -> {
 			objective.setSpawn(player.getLocation());
@@ -294,7 +288,10 @@ public class EditGUI extends ChestGui{
 			ownerGui = null;
 		}
 	}
-	
+	private void ownerIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
+		}, "&r&7<< &5&lEdit Owners &7>>", "");
+	}
 	private OwnerGUI preOwnerGui;
 	private void preOwnerButton(int slot){
 		setItem(slot, new ItemStack(Material.BEACON), player -> {

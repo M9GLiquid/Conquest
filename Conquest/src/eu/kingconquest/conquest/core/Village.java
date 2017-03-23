@@ -55,7 +55,7 @@ public class Village extends Objective{
 		Marker.setDescription(this);
 	}
 	
-//Getters
+	//Getters
 	/**
 	 * Get Village Capture Progress
 	 * 
@@ -64,7 +64,7 @@ public class Village extends Objective{
 	public double getProgress(){
 		return Double.valueOf(format.format(progress).replaceAll(",", "."));
 	}
-
+	
 	/**
 	 * Get Village Parent
 	 * 
@@ -93,7 +93,7 @@ public class Village extends Objective{
 		return preOwner;
 	}
 	
-//Setters
+	//Setters
 	/**
 	 * Set Village Capture Progress
 	 * 
@@ -105,7 +105,7 @@ public class Village extends Objective{
 		if (getProgress() > 100.0d)
 			this.progress = 100.0d;
 	}
-
+	
 	
 	/**
 	 * Set Village as Neutral
@@ -127,7 +127,7 @@ public class Village extends Objective{
 	public void setPreOwner(Kingdom kingdom){
 		this.preOwner = kingdom;
 	}
-//boolean checks
+	//boolean checks
 	/**
 	 * If Village has parent
 	 * 
@@ -152,7 +152,17 @@ public class Village extends Objective{
 	public void removeAttacker(Player player){
 		attackers.remove(player.getUniqueId());
 	}
-
+	public void clearAttackers(){
+		attackers.clear();
+	}
+	
+	public boolean isCapturing(Player player){
+		if (attackers.containsKey(player.getUniqueId()) || defenders.containsKey(player.getUniqueId()))
+			return true;
+		return false;
+	}
+	
+	
 	/**
 	 * Outpost Defenders(Player)
 	 */
@@ -166,6 +176,9 @@ public class Village extends Objective{
 	public  void removeDefender(Player player){
 		defenders.remove(player.getUniqueId());
 	}
+	public void clearDefender(){
+		defenders.clear();
+	}	
 	
 	private static ArrayList<Village> villages = new ArrayList<Village>();
 	public static ArrayList<Village> getVillages(){
@@ -174,10 +187,10 @@ public class Village extends Objective{
 	public static ArrayList<Village> getVillages(World world){
 		ArrayList<Village> villages = new ArrayList<Village>();
 		Village.getVillages().stream()
-			.filter(village->village.getWorld().equals(world))
-			.forEach(village->{
-				villages.add(village);
-			});
+		.filter(village->village.getWorld().equals(world))
+		.forEach(village->{
+			villages.add(village);
+		});
 		return villages;
 	}
 	public static Village getVillage(UUID ID, World world) {
@@ -212,7 +225,6 @@ public class Village extends Objective{
 		Village.getVillages().forEach(village->{
 			village.attackers.clear();
 			village.defenders.clear();
-			village.clearCapturing();
 			village.parent = null;
 			village.preOwner = null;			
 		});
@@ -246,27 +258,27 @@ public class Village extends Objective{
 			
 			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 			setPreOwner(Kingdom.getKingdom("Neutral", getWorld()));
-
+			
 			Location loc = player.getLocation().clone();
 			int rows = 3;
-
+			
 			loc.setY(loc.getY() -3);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Iron Blocks! 3x3 area
 			setBeaconBase(rows, loc, IRON_BLOCK, null);
-
+			
 			loc = player.getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Upper Blocks! 3x3 area
 			setBeaconBase(rows, loc.clone(), STEP, 7);
 			updateGlass();
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
-
+			
 			Cach.StaticVillage = this;
 			Cach.StaticKingdom = this.getOwner();
 			new Message(player, MessageType.CHAT, "{VillageCreated}");
@@ -286,23 +298,23 @@ public class Village extends Objective{
 			}
 			int rows = 3;
 			loc = getLocation().clone();
-
+			
 			loc.setY(loc.getY() - 4);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Iron Blocks! 3x3 area
 			setBeaconBase(rows, loc, AIR, null);
-
+			
 			loc = getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Upper Blocks! 3x3 area
 			setBeaconBase(rows, loc, AIR, null);
 			
-
+			
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
 			new Message(player, MessageType.CHAT, "{VillageDeleted}");
 			removeVillage(this);
@@ -333,5 +345,4 @@ public class Village extends Objective{
 	public void setTaskID(int taskID){
 		this.taskID = taskID;
 	}
-	
 }

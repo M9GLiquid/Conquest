@@ -539,7 +539,7 @@ public class YmlStorage extends YamlConfiguration{
 		PlayerWrapper.Wrappers().forEach((uuid, wrapper)->{
 			YmlStorage config = new YmlStorage("Data" + File.separator + "Users", uuid + ".yml");
 			try {
-				config.set(world.getUID().toString() + "." + uuid + ".Scoreboard", wrapper.getBoardType());
+				config.set(world.getUID().toString() + "." + uuid + ".Scoreboard", wrapper.getBoardType().getName());
 				if (wrapper.isInKingdom(world))
 					config.set(world.getUID().toString() + "." + uuid + ".Kingdom", wrapper.getKingdom(world).getUUID().toString());
 				wrapper.getRewardCooldowns().forEach((rUUID, cooldown)->{
@@ -559,7 +559,7 @@ public class YmlStorage extends YamlConfiguration{
 			YmlStorage config = new YmlStorage("Data" + File.separator + "Rewards", reward.getUUID().toString() + ".yml");
 			try {
 				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Name", reward.getName());
-				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Owner", reward.getOwnerUUID().toString());
+				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Owner", reward.getParent().getUUID().toString());
 				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Cost", reward.getCost());
 				config.set(world.getUID().toString() + "." + reward.getUUID() + ".Cooldown", reward.getCooldown());
 				if (reward.getItems().size() < 1)

@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +12,7 @@ import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Village;
 import eu.kingconquest.conquest.event.CaptureZoneEnterEvent;
 import eu.kingconquest.conquest.event.CaptureZoneExitEvent;
+import eu.kingconquest.conquest.util.Validate;
 
 public class ProximityZoneListener implements Listener{
 	private PlayerWrapper wrapper;
@@ -29,11 +31,9 @@ public class ProximityZoneListener implements Listener{
 		
 		// If Defenders  Kingdom is owner of Objective
 		if (village.getOwner().equals(wrapper.getKingdom(player.getWorld()))){
-			village.addCapturing(player);
 			village.removeAttacker(player);
 			village.addDefender(player);
 		}else{
-			village.addCapturing(player);
 			village.addAttacker(player);
 		}
 		new CaptureProcess(player, village);
@@ -42,11 +42,18 @@ public class ProximityZoneListener implements Listener{
 	@EventHandler
 	public void onZoneExit(CaptureZoneExitEvent e){
 		Village village = (Village) e.getObjective();
-		player = e.getPlayer();
+		if (Validate.isNull(e.getPlayer())){
+			village.getAttackers().forEach((uuid, kuuid)->{
+				if (kuuid.equals(village.getOwner().getUUID()))
+					village.addDefender(Bukkit.getPlayer(uuid)); // add defender of the winning kingdom
+			});
+			village.clearAttackers();
+		}else{
+			player = e.getPlayer();
 
-		village.removeCapturing(player);
-		village.removeAttacker(player);
-		village.removeDefender(player);
+			village.removeAttacker(player);
+			village.removeDefender(player);
+		}
 		new PlayerBoard(player);
 		
 		if (village.getAttackers().size() < 1 

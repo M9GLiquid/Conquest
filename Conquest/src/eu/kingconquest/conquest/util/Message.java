@@ -11,7 +11,7 @@ import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.database.YmlStorage;
 
 public class Message{
-	
+	private static String cooldownLeft ="";
 	
 	public Message(MessageType type, String message){
 		this(null, type, message);
@@ -46,8 +46,9 @@ public class Message{
 			if (Validate.notNull(YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))))
 				text = text.contains(match.group()) 					? text.replace(match.group(), YmlStorage.getStr(match.group().replace("{", "").replace("}", ""))) 		: text.replace(match.group(), "");
 		}
-		
-		text = text.contains("{RewardNotReady}") 	? text.replace("{RewardNotReady}"	, Cach.StaticCooldownLeft.toString())						: text.replace("{RewardNotReady}", "");
+		if (Validate.notNull(Cach.StaticCooldownLeft))
+			cooldownLeft = Cach.StaticCooldownLeft[0] + "h, " + Cach.StaticCooldownLeft[1] + "m, " + Cach.StaticCooldownLeft[2] + "s";
+		text = text.contains("{cooldownLeft}") 			? text.replace("{cooldownLeft}"			, cooldownLeft)														: text.replace("{cooldownLeft}", "");
 		text = text.contains("{TeleportDelay}") 		? text.replace("{TeleportDelay}"		, String.valueOf((Cach.tpDelay / 20)))					: text.replace("{TeleportDelay}", "");
 		text = text.contains("{kingdom}") 					? text.replace("{kingdom}"					, Cach.StaticKingdom.getName()) 							: text.replace("{kingdom}", "");
 		text = text.contains("{village}") 						? text.replace("{village}"						, Cach.StaticVillage.getName())								: text.replace("{village}", "");

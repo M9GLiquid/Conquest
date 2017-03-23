@@ -19,11 +19,11 @@ import eu.kingconquest.conquest.Scoreboard.SimpleScoreboard;
 import eu.kingconquest.conquest.util.Validate;
 
 public class PlayerWrapper{
-
+	
 	public PlayerWrapper(UUID uuid){
 		wrapper.put(uuid, this);
 	}
-
+	
 	private ArrayList<UUID> friends = new ArrayList<UUID>();
 	public void addFriend(Player friend){
 		friends.add(friend.getUniqueId());
@@ -50,15 +50,15 @@ public class PlayerWrapper{
 	public ArrayList<UUID> getFriends(){
 		return friends;
 	}
-
+	
 	private HashMap<UUID, LocalDateTime> cooldowns = new HashMap<UUID, LocalDateTime>();
 	public boolean isRewardReady(Reward reward){
 		if (Validate.isNull(cooldowns.get(reward.getUUID())))
 			return true;
-
-		LocalDateTime date = LocalDateTime.now();
-		if (date.isAfter(cooldowns.get(reward.getUUID()))
-				|| date.equals(cooldowns.get(reward.getUUID()))){
+		
+		LocalDateTime now = LocalDateTime.now();
+		if (now.isAfter(cooldowns.get(reward.getUUID()))
+				|| now.equals(cooldowns.get(reward.getUUID()))){
 			cooldowns.remove(reward);
 			return true;
 		}else
@@ -67,7 +67,7 @@ public class PlayerWrapper{
 	public boolean isRewardReady(UUID reward){
 		if (Validate.isNull(cooldowns.get(reward)))
 			return true;
-
+		
 		LocalDateTime date = LocalDateTime.now();
 		if (date.isAfter(cooldowns.get(reward)) 
 				|| date.equals(cooldowns.get(reward))){
@@ -78,7 +78,7 @@ public class PlayerWrapper{
 	}
 	public void setRewardCooldown(Reward reward){
 		LocalDateTime now = LocalDateTime.now();
-		now.plusMinutes(reward.getCooldown());
+		now = now.plusMinutes(reward.getCooldown());
 		cooldowns.put(reward.getUUID(), now);
 	}
 	public void setRewardCooldown(UUID uuid, Long cooldown){
@@ -93,17 +93,18 @@ public class PlayerWrapper{
 			Duration duration = Duration.between(date, now);
 			c.put(uuid, duration.getSeconds() / 60); //Minutes
 		});
-
+		
 		return c;
 	}
 	public Long getRewardCooldown(Reward reward){
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime date = cooldowns.get(reward.getUUID());
-		Duration duration = Duration.between(date, now);
-
-		return duration.getSeconds();
+		try{
+			Duration duration = Duration.between(LocalDateTime.now(), cooldowns.get(reward.getUUID()));
+			return duration.getSeconds();
+		}catch(Exception e){
+			return null;
+		}
 	}
-
+	
 	private UUID kingdom;
 	public void setKingdom(UUID uuid){
 		this.kingdom = uuid;
@@ -116,27 +117,27 @@ public class PlayerWrapper{
 			return true;
 		return false;
 	}
-
+	
 	public Player getPlayer(UUID uuid){
 		return Bukkit.getPlayer(uuid);
 	}
-
+	
 	private BoardType boardType = BoardType.NEUTRALBOARD;
 	public BoardType getBoardType(){
 		return boardType;
 	}
 	public Board getBoardType(Player player){
 		switch (boardType){
-		case KINGDOMBOARD:
-			return new KingdomBoard(player);
-		/*case TRAPBOARD:
+			case KINGDOMBOARD:
+				return new KingdomBoard(player);
+				/*case TRAPBOARD:
 			return new TrapBoard(player);
 			break;*/
-		case PLAYERBOARD:
-			return new PlayerBoard(player);
-		case NEUTRALBOARD:
-		default:
-			return new NeutralBoard(player);
+			case PLAYERBOARD:
+				return new PlayerBoard(player);
+			case NEUTRALBOARD:
+			default:
+				return new NeutralBoard(player);
 		}
 	}
 	public void setBoardType(BoardType board){
@@ -147,7 +148,7 @@ public class PlayerWrapper{
 			if (type.getName().equals(board.toLowerCase()))
 				this.boardType = type;
 	}
-
+	
 	private SimpleScoreboard scoreboard;
 	public void setScoreboard(SimpleScoreboard scoreboard){
 		this.scoreboard= scoreboard;
@@ -155,7 +156,7 @@ public class PlayerWrapper{
 	public SimpleScoreboard getScoreboard(){
 		return scoreboard;
 	}
-
+	
 	private static HashMap<UUID, PlayerWrapper> wrapper = new HashMap<UUID, PlayerWrapper>();
 	public static PlayerWrapper getWrapper(Player player){
 		if (Validate.notNull(wrapper.get(player.getUniqueId()))){

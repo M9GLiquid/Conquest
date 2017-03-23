@@ -14,31 +14,28 @@ import eu.kingconquest.conquest.util.Validate;
 public class Reward{
 	private HashMap<Integer, ItemStack> items = new HashMap<Integer, ItemStack>();
 	private long cooldown;
-	private UUID owner;
+	private UUID parent;
 	private String name;
 	private UUID world;
 	private UUID uuid;
 	private long cost;
 	
-	public Reward(String name, World world, long cost, long cooldown, UUID owner){
+	public Reward(String name, World world, long cost, long cooldown, UUID parent){
+		this(name,world,cost, cooldown,parent,null);
+	}
+	public Reward(String name, World world, long cost, long cooldown, UUID parent, UUID uuid){
 		this.name = name;
-		newUUID();
+		if(Validate.notNull(uuid))
+			this.uuid = uuid;
+		else
+			newUUID();
 		this.world = world.getUID();
 		this.cost = cost;
 		this.cooldown = cooldown;
-		this.owner = owner;
+		this.parent = parent;
 		addReward(this);
 	}
-	public Reward(String name, World world, long cost, long cooldown, UUID owner, UUID uuid){
-		this.name = name;
-		this.uuid = uuid;
-		this.world = world.getUID();
-		this.cost = cost;
-		this.cooldown = cooldown;
-		this.owner = owner;
-		addReward(this);
-	}
-
+	
 	public String getName(){
 		return name;
 	}
@@ -55,15 +52,16 @@ public class Reward{
 		return cost;
 	}
 	
-	public Objective getOwner(){
-		if (Validate.notNull(Town.getTown(owner, getWorld())))
-			return Town.getTown(owner, getWorld());
-		if (Validate.notNull(Village.getVillage(owner, getWorld())))
-			return Village.getVillage(owner, getWorld());
+	public Objective getParent(){
+		if (Validate.notNull(Town.getTown(parent, getWorld())))
+			return Town.getTown(parent, getWorld());
+		if (Validate.notNull(Village.getVillage(parent, getWorld())))
+			return Village.getVillage(parent, getWorld());
 		return null;
 	}
-	public UUID getOwnerUUID(){
-		return owner;
+	
+	public void setParent(Objective parent){
+		this.parent = parent.getUUID();
 	}
 	
 	public Long getCooldown(){
@@ -88,13 +86,13 @@ public class Reward{
 	
 	public void addItem(int i, ItemStack temp){
 		if (Validate.notNull(temp))
-				items.put(i, temp.clone());
+			items.put(i, temp.clone());
 	}
 	
 	public void addItems(int i, ArrayList<ItemStack> temp){
 		for (ItemStack item : temp){
 			if (Validate.notNull(item)){
-					items.put(i++, item.clone());
+				items.put(i++, item.clone());
 			}
 		}
 	}
@@ -114,10 +112,10 @@ public class Reward{
 	public static ArrayList<Reward> getRewards(World world){
 		ArrayList<Reward> rewards = new ArrayList<Reward>();
 		Reward.getRewards().stream()
-			.filter(reward->reward.getWorld().equals(world))
-			.forEach(reward->{
-				rewards.add(reward);
-			});
+		.filter(reward->reward.getWorld().equals(world))
+		.forEach(reward->{
+			rewards.add(reward);
+		});
 		return rewards;
 	}
 	public static Reward getReward(UUID uniqueID, World world){

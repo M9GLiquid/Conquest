@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import eu.kingconquest.conquest.chatinteract.NamePrompt;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Reward;
+import eu.kingconquest.conquest.gui.objective.ParentGUI;
 import eu.kingconquest.conquest.gui.reward.item.ItemEditGUI;
 import eu.kingconquest.conquest.util.ChatInteract;
 import eu.kingconquest.conquest.util.Validate;
@@ -69,22 +70,18 @@ public class RewardEditGUI extends ChestGui{
 		IncreaseCooldownButton(32, 1);
 		IncreaseCooldownButton(33, 10);
 		IncreaseCooldownButton(34, 100);
+		parentButton(40);
 
-		DecreaseItemButton(37, -64);
-		DecreaseItemButton(38, -10);
-		DecreaseItemButton(39, -1);
-		itemsButton(40);
-		IncreaseItemButton(41, 1);
-		IncreaseItemButton(42, 10);
-		IncreaseItemButton(43, 64);
-		addButton(49);
+		addButton(48);
+		itemsIcon(49);
+		itemsButton(50);
 	}
 
 	private void displayInfo(int slot){
 		setItem(4, new ItemStack(Material.PAPER), player -> {
 		},"&6Kit Information" , 
 				"&7Name: &3" + reward.getName()
-				+ "\n&7Owner: &3" + reward.getOwner().getName()
+				+ "\n&7Parent: &3" + reward.getParent().getOwner().getColor() + reward.getParent().getName()
 				+ "\n&7Cost: &3" + reward.getCost()
 				+ "\n&7Cooldown: &3" + reward.getCooldown()
 				+ "\n&7Items &3" + reward.getItems().size()
@@ -157,17 +154,24 @@ public class RewardEditGUI extends ChestGui{
 				);
 	}
 	
-	private void DecreaseItemButton(int slot, int amount){
-		setItem(slot,  new ItemStack(Material.WOOD_BUTTON), player -> {
-			if ((cost - amount) >= 0)
-				item.setAmount(item.getAmount() + amount);
-			else
-				item.setAmount(0);
-			display();
-		},"&3Decrease&6(&c" + amount +"&6)" , 
-				"&cClick to Decrease!"
+
+	private ParentGUI parentGui;
+	private void parentButton(int slot){
+		setItem(slot, new ItemStack(Material.BEACON), player -> {
+			parentGui = new ParentGUI(player, null, this);
+		},"&3Select Parent" , 
+				(Validate.notNull(reward.getParent()) ? "&7Parent: &3" + reward.getParent().getName() + "\n" : "")
+				+ "&aClick to Select!"
 				);
+
+		if (Validate.notNull(parentGui)){
+			reward.setParent(parentGui.get());
+			parentGui.close(player);
+			parentGui = null;
+			display();
+		}
 	}
+	
 	private void addButton(int slot){ //shift + click add item to Kit (Add to Slot and on press Save)
 		if (getInventoryItems().containsKey(InventoryType.PLAYER))
 			item = getInventoryItems().get(InventoryType.PLAYER).clone();
@@ -185,15 +189,10 @@ public class RewardEditGUI extends ChestGui{
 						+"\n&bLeft-Click this to &aSave &3item to Reward Box or..."
 						+"\n&bRight-Click this to &dSee &3items selected");
 	}
-	private void IncreaseItemButton(int slot, int amount){
-		setItem(slot,  new ItemStack(Material.STONE_BUTTON), player -> {
-			item.setAmount(item.getAmount() + amount);
-			display();
-		},"&3Increase&6(&c+" + amount +"&6)" , 
-				"&aClick to Increase!"
-				);
+	private void itemsIcon(int slot){
+		setItem(slot, new ItemStack(Material.PAPER), player -> {
+		}, "&r&7<< &5&lAdd Items |  Edit Items &7>>", "");
 	}
-
 	private void itemsButton(int slot){
 		setItem(slot, new ItemStack(Material.ARMOR_STAND), player -> {
 			new ItemEditGUI(player, reward, previous);

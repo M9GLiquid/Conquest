@@ -76,4 +76,24 @@ public class Validate{
 		if (reference != null)
 			new Message(null, MessageType.ERROR, errorMsg);
 	}
+	
+	public static Integer[] getTime(long time){
+		Integer[] timeFormat = {
+				((int) time / 3600),
+				((int) time % 3600) / 60,
+				((int) time % 60)
+		};
+		return timeFormat;
+	}
+	
+	public static Double[] getTime(double seconds){
+		Double[] time = {
+				Math.floor((seconds / 60) / 60), //Hours
+				Math.floor(seconds / 60), //Minutes
+				(seconds / 60) - Math.floor(seconds / 60) //Seconds left
+		};
+		//time[0] = Math.floor(seconds / 60);
+		//time[1] = (seconds / 60) - Math.floor(seconds / 60);
+		return time;
+	}
 }

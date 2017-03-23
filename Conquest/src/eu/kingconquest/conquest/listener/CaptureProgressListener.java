@@ -1,6 +1,11 @@
 package eu.kingconquest.conquest.listener;
 
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+import java.util.WeakHashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,9 +27,12 @@ import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Marker;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
+import eu.kingconquest.conquest.util.Validate;
 
 public class CaptureProgressListener implements Listener{
+	private WeakHashMap<UUID, Integer> compare = new WeakHashMap<UUID, Integer>();
 	private static PluginManager pm = Bukkit.getServer().getPluginManager();
+	private Player player;
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureStart(CaptureStartEvent e){
@@ -37,20 +45,28 @@ public class CaptureProgressListener implements Listener{
 		
 		//Run Mob Spawns as defence if objective owner isn't Neutral
 		if (village.getPreOwner().equals(wrapper.getKingdom(village.getWorld()))){
-			//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
-			//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
+			//pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			//pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 30));
 		}
 	}
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onCaptureSuccess(CaptureCompleteEvent e){
 		Village village = (Village) e.getObjective();
-		Player player = e.getPlayer();
+		village.getAttackers().values().forEach(kuuid->{
+			compare.put(kuuid, ((Validate.notNull(compare.get(kuuid)) ? compare.get(kuuid) : 1) + 1));
+		});
+		UUID key = Collections.max(compare.entrySet(), Map.Entry.comparingByValue()).getKey();
+		village.getAttackers().forEach((uuid, kuuid)->{
+			if (kuuid.equals(key)){
+				player = Bukkit.getPlayer(uuid);
+				return;
+			}
+		});
 		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 		
 		wrapper.getBoardType(player);
 		
-		village.removeCapturing(player);
 		village.setOwner(wrapper.getKingdom(player.getWorld()));
 		village.setPreOwner(wrapper.getKingdom(player.getWorld()));
 		Marker.update(village);
@@ -74,21 +90,25 @@ public class CaptureProgressListener implements Listener{
 					new Rocket(child.getLocation(), false, true, 1, 35, village.getOwner().getIntColor()); // Rocket on Success
 					EconAPI.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation())); // Add Funds for each villageS
 				});
-				new Message(player, MessageType.CHAT, "{CaptureTownSuccess}");
-				new Message(player, MessageType.CHAT, "{TownCaptured}");
-				EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
+				village.getAttackers().forEach((uuid, kuuid)->{
+					new Message(Bukkit.getPlayer(uuid), MessageType.CHAT, "{CaptureTownSuccess}");
+					new Message(Bukkit.getPlayer(uuid), MessageType.CHAT, "{TownCaptured}");
+					EconAPI.addFunds(Bukkit.getPlayer(uuid), YmlStorage.getDouble("CapCash", village.getLocation()));
+				});
 				village.getParent().setOwner(village.getOwner());
 				village.getParent().updateGlass();
 			}
 		}else{ //If Child without Parent
-			new Message(player, MessageType.CHAT, "{CaptureVillageSuccess}");
+			village.getAttackers().forEach((uuid, kuuid)->{
+				new Message(player, MessageType.CHAT, "{CaptureVillageSuccess}");
+				EconAPI.addFunds(Bukkit.getPlayer(uuid), YmlStorage.getDouble("CapCash", village.getLocation()));
+			});
 			EconAPI.addFunds(village.getOwner().getUUID(), YmlStorage.getDouble("CapCash", village.getLocation()));
-			EconAPI.addFunds(player, YmlStorage.getDouble("CapCash", village.getLocation()));
 			new Rocket(village.getLocation(), false, true, 1, 35, village.getOwner().getIntColor()); // Rocket on Success
 		}
 		new Message(MessageType.BROADCAST, "{Captured}");
-		pm.callEvent(new CaptureZoneExitEvent(player, village));
-		village.addDefender(player);
+		
+		pm.callEvent(new CaptureZoneExitEvent(null, village));
 	}
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
@@ -101,9 +121,10 @@ public class CaptureProgressListener implements Listener{
 		village.setNeutral();
 		if (village.hasParent())
 			village.getParent().setNeutral();
-		
+
+		new Message(MessageType.BROADCAST, "{WarnNeutral}");
 		if (village.isNeutral() && village.getProgress() <= 10.0){
-			//Bukkit.getServer().getPluginManager().callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+			//pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 			
 			//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 		}

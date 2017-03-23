@@ -12,7 +12,7 @@ public class Cach{
 	public static Reward StaticReward = null;
 	public static Village StaticVillage = null;
 	public static Player StaticPlayer = null;
-	public static Long StaticCooldownLeft;
+	public static Integer[] StaticCooldownLeft;
 	public static Town StaticTown = null;
 	public static Long tpDelay;
 	

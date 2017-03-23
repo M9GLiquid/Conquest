@@ -19,6 +19,7 @@ public class RewardGUI extends ChestGui{
 	private ChestGui previous;
 	private Reward reward;
 	private Player player;
+	private Integer[] cooldown;
 	
 	public RewardGUI(Player player, ChestGui previous){
 		super();
@@ -27,18 +28,18 @@ public class RewardGUI extends ChestGui{
 		this.player = player;
 		create();
 	}
-
+	
 	@Override
 	public void create(){
 		createGui(player, "&6Reward Gui", Reward.getRewards(player.getWorld()).size());
 		display();
 	}
-
+	
 	@Override
 	public void display(){
 		setCurrentItem(0);
 		clearSlots();
-
+		
 		//Slot 0
 		playerInfo(player);
 		//Slot 3
@@ -58,7 +59,7 @@ public class RewardGUI extends ChestGui{
 			reward = Reward.getRewards(player.getWorld()).get(getCurrentItem());
 			if (Validate.hasPerm(player, ".admin.kit"))
 				editButton(slot, reward);
-			else if (reward.getOwner().equals(wrapper.getKingdom(player.getWorld())))
+			else if (reward.getParent().getOwner().equals(wrapper.getKingdom(player.getWorld())))
 				buyButton(slot, reward);
 			setCurrentItem(getCurrentItem() + 1);
 		}
@@ -66,9 +67,12 @@ public class RewardGUI extends ChestGui{
 	}
 	
 	private void buyButton(int slot, Reward reward){
+		if (Validate.notNull(wrapper.getRewardCooldown(reward)))
+			cooldown =  Validate.getTime(wrapper.getRewardCooldown(reward));
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
+			PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 			if (getClickType().equals(ClickType.RIGHT)){ // Buy
-				if (PlayerWrapper.getWrapper(player).isRewardReady(reward)){
+				if (wrapper.isRewardReady(reward)){
 					int i = 0;
 					for (ItemStack item : player.getInventory().getContents())
 						if (Validate.isNull(item))
@@ -83,13 +87,13 @@ public class RewardGUI extends ChestGui{
 						reward.getItems().forEach((inventorySlot, item)->{
 							player.getInventory().addItem(item);
 						});
-						PlayerWrapper.getWrapper(player).setRewardCooldown(reward);
+						wrapper.setRewardCooldown(reward);
 						Cach.StaticReward = reward;
-						new Message(player, MessageType.CHAT, "{RewardBaught}");
+						new Message(player, MessageType.CHAT, "{RewardBought}");
 					}
-					close(player);
+					display();
 				}else{
-					Cach.StaticCooldownLeft = PlayerWrapper.getWrapper(player).getRewardCooldown(reward);
+					Cach.StaticCooldownLeft = cooldown;
 					new Message(player, MessageType.CHAT, "{RewardNotReady}");
 				}
 			}else if (getClickType().equals(ClickType.LEFT)){ // View
@@ -97,15 +101,21 @@ public class RewardGUI extends ChestGui{
 			}
 		},"&6Reward Information" , 
 				"&7Name: &3" + reward.getName()
-				+ "\n&7Owner: &3" + (Validate.notNull(reward.getOwner()) ? reward.getOwner().getName(): "")
+				+ "\n&7Parent: &3" + (Validate.notNull(reward.getParent()) ? reward.getParent().getOwner().getColor() + reward.getParent().getName(): "None")
 				+ "\n&7Cost: &3" + reward.getCost()
 				+ "\n&7Cooldown: &3" + reward.getCooldown()
-				+ "\n"
-				+ "\n&3Right-Click to Buy"
+				+ "\n&3" //+ wrapper.getRewardCooldown(reward)
+				+ "\n&3" + (!wrapper.isRewardReady(reward) ? 
+						"Buyable in: " 
+						+ Double.valueOf(cooldown[0]).longValue() +"h, " 
+						+ Double.valueOf(cooldown[1]).longValue() +"m, " 
+						+ Double.valueOf(cooldown[2]).longValue() + "s" 
+						: "Right-Click to Buy")
 				+"\n&3Left-Click to View"
 				);
+		
 	}
-
+	
 	private void editButton(int slot, Reward reward){
 		setItem(slot, new ItemStack(Material.CHEST), player -> {
 			if (getClickType().equals(ClickType.SHIFT_LEFT)){
@@ -117,7 +127,7 @@ public class RewardGUI extends ChestGui{
 			}
 		},"&6Reward Information" , 
 				"&7Name: &3" + reward.getName()
-				+ "\n&7Owner: &3" + (Validate.notNull(reward.getOwner()) ? reward.getOwner().getName(): "None")
+				+ "\n&7Parent: &3" + (Validate.notNull(reward.getParent()) ? reward.getParent().getOwner().getColor() + reward.getParent().getName(): "None")
 				+ "\n&7Cost: &3" + reward.getCost()
 				+ "\n&7Cooldown: &3" + reward.getCooldown()
 				+ "\n"
@@ -125,12 +135,11 @@ public class RewardGUI extends ChestGui{
 				+ "\n&bShift-Right Click to &4Remove (Cannot be undone)"
 				);
 	}
-
+	
 	private void createButton(){
 		setItem(7, new ItemStack(Material.ENDER_CHEST), player -> {
 			new RewardCreateGUI(player, this, null);
 		},"&3Create New Reward", 
 				"");
 	}
-
 }

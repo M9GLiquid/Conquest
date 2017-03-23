@@ -52,16 +52,16 @@ public class Proximity implements Listener{
 		
 	}
 	
-	public static void objectiveZoneProximity(Objective objective, Player player){
-		if (!Validate.isWithinCaptureArea(player.getLocation(), objective.getLocation())){
+	public static void objectiveZoneProximity(Village village, Player player){
+		if (!Validate.isWithinCaptureArea(player.getLocation(), village.getLocation())){
 			// If the player is outside of the area
-			if (objective.isCapturing(player)){
-				pm.callEvent(new CaptureZoneExitEvent(player, objective));
+			if (village.isCapturing(player)){
+				pm.callEvent(new CaptureZoneExitEvent(player, village));
 				return;
 			}
 			return;
 		}
-		pm.callEvent(new CaptureZoneEnterEvent(player, objective));
+		pm.callEvent(new CaptureZoneEnterEvent(player, village));
 	}
 	
 	public static void objectiveAreaProximity(Objective objective,Player player){
