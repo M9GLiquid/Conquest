@@ -14,16 +14,28 @@ import eu.kingconquest.conquest.util.MessageType;
 public class Teleport{
 	private int taskID;
 	
-	public Teleport(Player player, Location loc){
-		Cach.tpDelay = YmlStorage.getLong("TeleportDelay", loc);
+	public Teleport(Player player, Objective objective){
+		Cach.tpDelay = YmlStorage.getLong("TeleportDelay", objective.getLocation());
 		new Message(player, MessageType.CHAT, "{StartTP}");
+		Location loc = objective.getSpawn().clone();
 		Bukkit.getServer().getScheduler().runTaskLater(Main.getInstance(), new Runnable(){
 			@Override
 			public void run(){
-				player.setInvulnerable(true);
-				loc.setY(256);
-				player.teleport(loc);
-				startFall(player);
+				if (objective instanceof Town){
+					player.setInvulnerable(true);
+					loc.setY(256);
+					player.teleport(loc);
+					
+					startFall(player);
+				}else if (objective instanceof Village){
+					player.setInvulnerable(true);
+					loc.setY(256);
+					player.teleport(loc);
+					
+					startFall(player);
+				}else if (objective instanceof Kingdom){
+					player.teleport(loc);
+				}
 			}
 		}, Cach.tpDelay);
 	}

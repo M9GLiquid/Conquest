@@ -59,6 +59,9 @@ public class CaptureProgressListener implements Listener{
 		});
 		UUID key = Collections.max(compare.entrySet(), Map.Entry.comparingByValue()).getKey();
 		village.getAttackers().forEach((uuid, kuuid)->{
+			System.out.println("Users: " + Bukkit.getPlayer(uuid).getName());
+			System.out.println("Users Kingdom: " + Kingdom.getKingdom(kuuid, village.getWorld()).getName());
+			System.out.println("Key: " + Kingdom.getKingdom(key, village.getWorld()).getName());
 			if (kuuid.equals(key)){
 				player = Bukkit.getPlayer(uuid);
 				return;
@@ -98,6 +101,7 @@ public class CaptureProgressListener implements Listener{
 				});
 				village.getParent().setOwner(village.getOwner());
 				village.getParent().updateGlass();
+				Marker.update(village.getParent());
 			}
 		}else{ //If Child without Parent
 			village.getAttackers().forEach((uuid, kuuid)->{
@@ -122,12 +126,10 @@ public class CaptureProgressListener implements Listener{
 		village.setNeutral();
 		if (village.hasParent())
 			village.getParent().setNeutral();
-
+		
 		new Message(MessageType.BROADCAST, "{WarnNeutral}");
-		if (village.isNeutral() && village.getProgress() <= 10.0){
-			pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
-			
-			//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
-		}
+		pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
+		
+		//Run Traps bought by the kingdom as defence if objective owner isn't Neutral
 	}
 }

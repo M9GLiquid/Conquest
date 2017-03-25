@@ -22,6 +22,7 @@ public class Proximity implements Listener{
 	 * @param player
 	 */
 	public static void villageZoneProximity(Player player){
+		
 		// If Player isn't in a Kingdom, break or if there is no villages to capture
 		if (!PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()) 
 				|| Village.getVillages().size() < 1)

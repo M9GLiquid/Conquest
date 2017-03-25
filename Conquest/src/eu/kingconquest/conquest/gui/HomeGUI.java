@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import eu.kingconquest.conquest.Main;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.PlayerWrapper;
+import eu.kingconquest.conquest.core.Teleport;
 import eu.kingconquest.conquest.database.YmlStorage;
 import eu.kingconquest.conquest.gui.objective.KingdomGUI;
 import eu.kingconquest.conquest.gui.objective.TownGUI;
@@ -181,7 +182,7 @@ public class HomeGUI extends ChestGui{
 
 	private void spawnButton(){
 		setItem(slot, new ItemStack(Material.ENDER_PEARL), player -> {
-			player.teleport(PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getSpawn());
+			new Teleport(player, PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()));
 		}, "&2Kingdom Spawn", 
 				"&7Teleport to Kingdom spawn"
 						+ "\n");

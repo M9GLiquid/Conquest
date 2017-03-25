@@ -74,10 +74,10 @@ public class PlayerActionGUI extends ChestGui{
 			moveToButton(16);
 		}else{
 			if (Validate.notNull(wrapper.isInKingdom(target.getWorld()))){
-				if (viewer.equals(target)) 
+				if (viewer.equals(target) && Validate.hasPerm(target, ".basic.leave")) 
 					leaveButton(13);
 			}else
-				if (viewer.equals(target)) 
+				if (viewer.equals(target) && Validate.hasPerm(target, ".basic.join")) 
 					joinButton(13);
 		}
 	}
