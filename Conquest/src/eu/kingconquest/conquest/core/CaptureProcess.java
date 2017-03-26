@@ -72,7 +72,7 @@ public class CaptureProcess{
 			warnNeutral = !warnNeutral;
 		}
 		
-		if (village.getProgress() > 100.0d){ // If Kingdom takes from neutral Kingdom
+		if (village.getProgress() >= 100.0d){ // If Kingdom takes from neutral Kingdom
 			callEvent(new CaptureCompleteEvent(player, village));
 			return;
 		}

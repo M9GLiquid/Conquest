@@ -126,7 +126,9 @@ public class CaptureProgressListener implements Listener{
 		village.setNeutral();
 		if (village.hasParent())
 			village.getParent().setNeutral();
-		
+
+		Cach.StaticVillage = village;
+		Cach.StaticKingdom = village.getOwner();
 		new Message(MessageType.BROADCAST, "{WarnNeutral}");
 		pm.callEvent(new NeutralCaptureTrapEvent(village.getPreOwner().getUUID(), "ZombieTrap", village.getLocation(), true, 20));
 		
