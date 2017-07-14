@@ -126,7 +126,7 @@ public class PlayerWrapper{
 	public BoardType getBoardType(){
 		return boardType;
 	}
-	public Board getBoardType(Player player){
+	public Board callBoardType(Player player){
 		switch (boardType){
 			case KINGDOMBOARD:
 				return new KingdomBoard(player);

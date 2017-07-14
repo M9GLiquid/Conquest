@@ -16,16 +16,17 @@ import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 
 public class CaptureProcess{
-	private PluginManager pm = Bukkit.getServer().getPluginManager();
-	private double capRate;
-	private boolean warnNeutral = false;
-	private boolean warnDistress = false;
-	private boolean standStill = false;
-	
+	private PluginManager	pm				= Bukkit.getServer().getPluginManager();
+	private double			capRate;
+	private boolean			warnNeutral		= false;
+	private boolean			warnDistress	= false;
+	private boolean			standStill		= false;
+
 	/**
 	 * Start capturing!
 	 * 
-	 * @param player - Player instance
+	 * @param player
+	 *            - Player instance
 	 * @return void
 	 */
 	public CaptureProcess(Player player, Village village){
@@ -35,26 +36,26 @@ public class CaptureProcess{
 			village.removeDefender(player);
 			return;
 		}
-		new CaptureBoard(village);	
-		
+		new CaptureBoard(village);
+
 		// If Task already running or somebody already Attacking
-		if (village.getTaskID() > 0 || 
-				(village.getProgress() >= 100.0d 
-				&& village.getAttackers().size() < 1))
+		if (village.getTaskID() > 0 ||
+				(village.getProgress() >= 100.0d
+						&& village.getAttackers().size() < 1))
 			return;
-		
+
 		village.setTaskID(Bukkit.getServer().getScheduler()
 				.scheduleSyncRepeatingTask(Main.getInstance(), new Runnable(){
 					@Override
 					public void run(){
-						
+
 						capRate = YmlStorage.getDouble("CaptureRate", village.getLocation());
 						new CaptureBoard(village);
-												
+
 						if (village.getDefenders().size() > village.getAttackers().size()) // Defending
 							onDefend(player, village);
 						else if (village.getDefenders().size() < village.getAttackers().size()){ // Attacking
-							if  (!village.getOwner().isNeutral() && !village.getPreOwner().isNeutral()) // Attacking Kingdom
+							if (!village.getOwner().isNeutral() && !village.getPreOwner().isNeutral()) // Attacking Kingdom
 								onAttackKingdom(player, village);
 							else // Attacking Neutral
 								onAttackNeutral(player, village);
@@ -63,7 +64,7 @@ public class CaptureProcess{
 					}
 				}, 0, 10));
 	}
-	
+
 	private void onAttackNeutral(Player player, Village village){
 		//When player start to capture from Neutral Kingdom
 		if (!warnNeutral){ //Send Event once
@@ -71,7 +72,7 @@ public class CaptureProcess{
 			pm.callEvent(new CaptureNeutralEvent(player, village));
 			warnNeutral = !warnNeutral;
 		}
-		
+
 		if (village.getProgress() >= 100.0d){ // If Kingdom takes from neutral Kingdom
 			callEvent(new CaptureCompleteEvent(player, village));
 			return;
@@ -80,14 +81,14 @@ public class CaptureProcess{
 
 		standStill = false;
 	}
-	
+
 	private void onAttackKingdom(Player player, Village village){
-		 // If Kingdom captures from another kingdom to neutral Kingdom
+		// If Kingdom captures from another kingdom to neutral Kingdom
 		if (village.getProgress() <= 0.0d){
 			callEvent(new CaptureNeutralEvent(player, village));
 			return;
 		}
-		
+
 		//When player start to capture from another Kingdom
 		if (!warnDistress){ //Send Event once
 			//If Objective is under attack Call Event
@@ -95,42 +96,50 @@ public class CaptureProcess{
 			warnDistress = !warnDistress;
 		}
 		village.setProgress(village.getProgress() - (((capRate * village.getAttackers().size()) * 0.33) + ((capRate * village.getDefenders().size()) * 0.11)));
-		
+
 		// On successfull capture call event
-		if (village.getProgress() >= 100.0d 
-				&& village.getAttackers().size() > 0  
+		if (village.getProgress() >= 100.0d
+				&& village.getAttackers().size() > 0
 				&& village.getPreOwner().equals(Kingdom.getNeutral(village.getWorld())))
 			callEvent(new CaptureCompleteEvent(player, village));
 
 		standStill = false;
 	}
-	
+
 	private void onDefend(Player player, Village village){
-		 //Defending Kingdom (If It's under attack)
-		if  (village.getProgress() < 100.0d)
+		//Defending Kingdom (If It's under attack)
+		if (village.getProgress() < 100.0d)
 			village.setProgress(village.getProgress() + (((capRate * village.getAttackers().size()) * 0.33) - ((capRate * village.getDefenders().size()) * 0.11)));
 	}
-	
+
 	private void onStandStill(Player player, Village village){
 		if (!standStill){
-			village.getAttackers().forEach((playerID, kingdomID)->{
+			village.getAttackers().forEach((playerID, kingdomID) ->{
 				new Message(Bukkit.getPlayer(playerID), MessageType.CHAT, "{CannotCapture}");
 			});
-			village.getDefenders().forEach((playerID, kingdomID)->{
+			village.getDefenders().forEach((playerID, kingdomID) ->{
 				new Message(Bukkit.getPlayer(playerID), MessageType.CHAT, "{CaptureHaulted}");
 			});
 			standStill = !standStill;
 		}
 	}
-	
-	private void callEvent(Event event) throws IllegalStateException{
-		for (int i = 0; i <= 10; i++){
-			try{
-				pm.callEvent(event);
+
+	int i = 0;
+
+	private void callEvent(Event event){
+		try{
+			pm.callEvent(event);
+			return;
+		}catch (Exception e){
+			if (i < 1)
+				e.printStackTrace();
+			new Message(MessageType.ERROR, "Tried too Call Event: " + event.getEventName());
+			new Message(MessageType.ERROR, "Try: " + i);
+			callEvent(event);
+			if (i >= 10)
 				return;
-			}catch(IllegalStateException e){
-				new Message(null, MessageType.CONSOLE, "Tried too Call Event: " + event.getEventName());
-			}
+
+			i++;
 		}
 	}
 }

@@ -1,0 +1,50 @@
+######## Testing ########
+Need Testing = ?
+Fixed = #	
+Working on = !
+
+######## TODO LIST ##########
+Capturing sometimes captures it for another kingdom
+
+ #Bug Fixes
+	Fix, PaginationGUI (Paginations allways showing)
+	?Fix, RewardEditGUI - Add items bugged
+	Fix, Manage Members
+	Fix, Replace Owner/Parent & update objectives on parent/owner change
+ 
+ ?Implement, Delete/Create on "Dynmap" Location Edit (TownGUI/VillageGUI) the physical position
+ ?Implement, Kit Cooldown, System
+ 
+ Add, Option to remove (ParentGUI/OwnerGUI)
+ Implement, toggle for kingdom spawn instead of default in the world on login
+ Implement, Debug messages (Message Class + MessageType.DEBUG)
+ Implement, WorldGUI for ResetGUI
+ 
+######### Future Features: #########
+ PlayerWrapper						- Implement, Friends
+ PlayerActionGUI						- Add, XP(Take/Give), Money(Take/Give), Kick, Ban, Global Mute, Promote Rank, Demote Rank, MoveTo Kingdom
+ EditGUI(Kingdom) 				- Add, Children(Add, Remove)
+ EditGUI(Town)						- Add, Children(Add, Remove)
+ Village/Town							- Implement, objective area (area around the objective larger than the capture zone)
+ Village/Town							- Add, notification if Player inside objective area
+ Village/Town							- Remove, Beacon light
+ Village/Town							- Add, Capture Point
+ EditGUI									- Implement Edit of Color for Kingdoms (After Beacon Removed Update)
+ FriendsGUI								- Add, Notification when friend(s) comes online (Toggle Button)
+ FriendsGUI								- Add, Management of friends(Add, Remove)
+ FriendsGUI								- Add, Chat suggestion button for PM(Private Message)
+ Objective								- Add, Save/Load functionality of old blocks(WE Schematics) of old objective location on objective relocation
+ WorldGUI								- Implement GUI
+ ResetGUI								- Add, WorldGUI Button world selection
+ Kingdom								- Add, Capture Point
+ Village/Town							- Add, particle effect around capture zone/objective area (Zone = capable of capturing)
+ onCaptureStart						- Add, Spawn Mobs around objective
+ Traps										- Implement Traps
+ TrapsGUI								- Implement TrapsGUI
+ 
+######### Future Changes: #########
+ New way todo Rewards:
+  ItemCost 								- Methods: getValue(), calculate(), ItemCost()
+   Methods do: 						- Constructor, ItemCost(MaterialType item, cost): Create a ItemCost by sending in the Item and it's cost
+   Methods do: 						- getValue(MaterialType item) : Get the Value(cost) of an item, return int
+   Methods do: 						- calculate(int totalCost) : Send in an int of total cost and calculate out random Items upto totalCost, return ItemStack[]
