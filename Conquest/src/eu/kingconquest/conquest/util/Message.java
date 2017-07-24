@@ -13,6 +13,10 @@ import eu.kingconquest.conquest.database.YmlStorage;
 public class Message{
 	private static String cooldownLeft = "";
 
+	/**
+	 * @param type
+	 * @param message
+	 */
 	public Message(MessageType type, String message){
 		this(null, type, message);
 	}

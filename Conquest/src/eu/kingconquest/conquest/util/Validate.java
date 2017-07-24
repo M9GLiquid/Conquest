@@ -93,4 +93,8 @@ public class Validate{
 		//time[1] = (seconds / 60) - Math.floor(seconds / 60);
 		return time;
 	}
+
+	public static boolean debug(Location location){
+		return YmlStorage.getBoolean("Debug", location);
+	}
 }

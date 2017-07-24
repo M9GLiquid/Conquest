@@ -70,11 +70,14 @@ public class YmlStorage extends YamlConfiguration{
 			setName(fileName);
 			addConfig(this);
 			UUID.fromString(fileName);
+			if (!fileName.replace(".yml", "").matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")){
+				loadMsg.put("&6| --&3 " + fileName, false);
+			}
 		}catch (IllegalArgumentException e){
-			loadMsg.put("&6| --&3 " + fileName, true);
-			return;
+			if (!fileName.replace(".yml", "").matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")){
+				loadMsg.put("&6| --&3 " + fileName, true);
+			}
 		}
-		loadMsg.put("&6| --&3 " + fileName, false);
 	}
 
 	/**
@@ -331,8 +334,8 @@ public class YmlStorage extends YamlConfiguration{
 				lmap.put("TeleportDelay",
 						(20 * config.getLong("ActiveWorlds." + world.getName() + ".General.TeleportDelay")));
 
-				bmap.put("DebugDynmapMarkers",
-						config.getBoolean("ActiveWorlds." + world.getName() + ".Debug.DynmapMarkers"));
+				bmap.put("Debug",
+						config.getBoolean("ActiveWorlds." + world.getName() + ".General.Debug"));
 
 				doubles.put(world.getUID(), dmap);
 				longs.put(world.getUID(), lmap);
