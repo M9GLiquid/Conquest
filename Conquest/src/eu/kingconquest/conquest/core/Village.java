@@ -4,6 +4,7 @@ import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.IRON_BLOCK;
 import static org.bukkit.Material.STEP;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -14,15 +15,18 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Village extends Objective{
+	private DecimalFormat  format = new DecimalFormat("###.##");  
+	private double progress = 0.0d;
+	
 	public Village(String name, Location loc, Location spawn, Kingdom owner, Kingdom preOwner, Town parent) {
 		this(name
 				, null
@@ -47,22 +51,20 @@ public class Village extends Objective{
 			setParent(parent);
 		
 		addVillage(this);
-		Marker.create(this);
+		Marker.update(this);
 		Marker.setDescription(this);
 	}
 	
-//Getters
+	//Getters
 	/**
 	 * Get Village Capture Progress
 	 * 
 	 * @return double
 	 */
-	private final static double SPEED = 1.2d;
-	private double progress = 0.0d;
 	public double getProgress(){
-		return progress;
+		return Double.valueOf(format.format(progress).replaceAll(",", "."));
 	}
-
+	
 	/**
 	 * Get Village Parent
 	 * 
@@ -72,7 +74,18 @@ public class Village extends Objective{
 	public Town getParent(){
 		return parent;
 	}
-
+	public void setParent(Town parent){
+		this.parent = parent;
+		//If parent owner not same as this owner update parent to neutral
+		if (Validate.notNull(parent))
+			if (!parent.getOwner().equals(getOwner()))
+				parent.setNeutral();
+	}
+	public void removeParent(){
+		this.parent.removeChild(this);
+		this.parent = null;
+	}
+	
 	private Kingdom preOwner = null;
 	public Kingdom getPreOwner(){
 		if (Validate.isNull(preOwner))
@@ -80,7 +93,7 @@ public class Village extends Objective{
 		return preOwner;
 	}
 	
-//Setters
+	//Setters
 	/**
 	 * Set Village Capture Progress
 	 * 
@@ -92,19 +105,7 @@ public class Village extends Objective{
 		if (getProgress() > 100.0d)
 			this.progress = 100.0d;
 	}
-
-	/**
-	 * Set Village Parent
-	 * 
-	 * @param parent - Objective
-	 * @return void
-	 */
-	public void setParent(Town parent){
-		this.parent = parent;
-		//If parent owner not same as this owner update parent to neutral
-		if (!parent.getOwner().equals(this))
-			parent.setNeutral();
-	}
+	
 	
 	/**
 	 * Set Village as Neutral
@@ -112,14 +113,21 @@ public class Village extends Objective{
 	 */
 	public void setNeutral(){
 		setOwner(Kingdom.getKingdom("Neutral", getWorld()));
+		setProgress(0.0d);
 		updateGlass();
 		Marker.update(this);
+	}
+	
+	public boolean isNeutral(){
+		if (getOwner().isNeutral())
+			return true;
+		return false;
 	}
 	
 	public void setPreOwner(Kingdom kingdom){
 		this.preOwner = kingdom;
 	}
-//boolean checks
+	//boolean checks
 	/**
 	 * If Village has parent
 	 * 
@@ -131,10 +139,6 @@ public class Village extends Objective{
 		return false;
 	}
 	
-//Others
-	public static double getCapSpeed(){
-		return SPEED;
-	}
 	/**
 	 * Outpost Agressors(Player)
 	 */
@@ -142,13 +146,23 @@ public class Village extends Objective{
 	public HashMap<UUID, UUID> getAttackers(){
 		return attackers;
 	}
-	public void addAttacker(Player p){
-		attackers.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getUUID());
+	public void addAttacker(Player player){
+		attackers.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getUUID());
 	}
-	public void removeAttacker(Player p){
-		attackers.remove(p.getUniqueId());
+	public void removeAttacker(Player player){
+		attackers.remove(player.getUniqueId());
 	}
-
+	public void clearAttackers(){
+		attackers.clear();
+	}
+	
+	public boolean isCapturing(Player player){
+		if (attackers.containsKey(player.getUniqueId()) || defenders.containsKey(player.getUniqueId()))
+			return true;
+		return false;
+	}
+	
+	
 	/**
 	 * Outpost Defenders(Player)
 	 */
@@ -156,12 +170,15 @@ public class Village extends Objective{
 	public HashMap<UUID, UUID> getDefenders(){
 		return defenders;
 	}
-	public  void addDefender(Player p){
-		defenders.put(p.getUniqueId(), PlayerWrapper.getWrapper(p).getKingdom(p.getWorld()).getUUID());
+	public  void addDefender(Player player){
+		defenders.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getUUID());
 	}
-	public  void removeDefender(Player p){
-		defenders.remove(p.getUniqueId());
+	public  void removeDefender(Player player){
+		defenders.remove(player.getUniqueId());
 	}
+	public void clearDefender(){
+		defenders.clear();
+	}	
 	
 	private static ArrayList<Village> villages = new ArrayList<Village>();
 	public static ArrayList<Village> getVillages(){
@@ -170,10 +187,10 @@ public class Village extends Objective{
 	public static ArrayList<Village> getVillages(World world){
 		ArrayList<Village> villages = new ArrayList<Village>();
 		Village.getVillages().stream()
-			.filter(village->village.getWorld().equals(world))
-			.forEach(village->{
-				villages.add(village);
-			});
+		.filter(village->village.getWorld().equals(world))
+		.forEach(village->{
+			villages.add(village);
+		});
 		return villages;
 	}
 	public static Village getVillage(UUID ID, World world) {
@@ -208,7 +225,6 @@ public class Village extends Objective{
 		Village.getVillages().forEach(village->{
 			village.attackers.clear();
 			village.defenders.clear();
-			village.clearCapturing();
 			village.parent = null;
 			village.preOwner = null;			
 		});
@@ -232,38 +248,40 @@ public class Village extends Objective{
 				if (objective.equals(this))
 					continue;
 				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(player, Config.getChat("ToClose"));
+					new Message(player, MessageType.CHAT, "{ToClose}");
+					removeVillage(this);
 					return false;
 				}
 			}
 			if (getVillages(getName(), getWorld()).size() > 1) 
-					ChatManager.Chat(player, Config.getChat("AlreadyExists"));
+				new Message(player, MessageType.CHAT, "{AlreadyExists}");
 			
 			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
 			setPreOwner(Kingdom.getKingdom("Neutral", getWorld()));
-
+			
 			Location loc = player.getLocation().clone();
 			int rows = 3;
-
+			
 			loc.setY(loc.getY() -3);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Iron Blocks! 3x3 area
 			setBeaconBase(rows, loc, IRON_BLOCK, null);
-
+			
 			loc = player.getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Upper Blocks! 3x3 area
 			setBeaconBase(rows, loc.clone(), STEP, 7);
 			updateGlass();
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
-
+			
 			Cach.StaticVillage = this;
-			ChatManager.Chat(player, Config.getChat("VillageCreated"));
+			Cach.StaticKingdom = this.getOwner();
+			new Message(player, MessageType.CHAT, "{VillageCreated}");
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -280,25 +298,25 @@ public class Village extends Objective{
 			}
 			int rows = 3;
 			loc = getLocation().clone();
-
+			
 			loc.setY(loc.getY() - 4);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Iron Blocks! 3x3 area
 			setBeaconBase(rows, loc, AIR, null);
-
+			
 			loc = getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Upper Blocks! 3x3 area
 			setBeaconBase(rows, loc, AIR, null);
 			
-
+			
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
-			ChatManager.Chat(player, Config.getChat("VillageDeleted"));
+			new Message(player, MessageType.CHAT, "{VillageDeleted}");
 			removeVillage(this);
 			Marker.remove(this);
 			return true;
@@ -327,5 +345,4 @@ public class Village extends Objective{
 	public void setTaskID(int taskID){
 		this.taskID = taskID;
 	}
-	
 }

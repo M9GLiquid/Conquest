@@ -11,8 +11,8 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11/plugins/dynmap-2.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11.2/plugins/Vault.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/TestServer/1.11.2/spigot.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Server/TestServer/1.11.2/plugins/Vault.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Server/buildTools/spigot-1.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Thomas/Desktop/Server/TestServer/1.12Plugins/dynmap-2.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

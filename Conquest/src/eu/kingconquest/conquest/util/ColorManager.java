@@ -2,59 +2,8 @@ package eu.kingconquest.conquest.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.entity.Player;
 
 public class ColorManager{
-
-	/**
-	 * Workaround for ColorCodes
-	 * @param string - Text to Check
-	 * @return String
-	 */
-	public static String extendColorCodes(Player p, String text){
-		text = ChatManager.placeholders(p, text);
-		String[] words = text.split("\\s");
-		if (words.length < 2)
-			return text;
-
-		// StringBuilder > String concatenation
-		StringBuilder builder = new StringBuilder();
-		String lastColor = null;
-		for (String word : words){
-			if (lastColor != null && !lastColor.isEmpty())
-				builder.append(lastColor);
-			builder.append(word).append(' ');
-			if (lastColor != null && !lastColor.isEmpty())
-				word = lastColor + word;
-			lastColor = ChatColor.getLastColors(word);
-		}
-		return builder.deleteCharAt(builder.length() - 1).toString();
-	}
-	
-	/**
-	 * Workaround for ColorCodes
-	 * @param string - Text to Check
-	 * @return String
-	 */
-	public static String extendColorCodes(String text){
-		text = ChatManager.placeholders(text);
-		String[] words = text.split("\\s");
-		if (words.length < 2)
-			return text;
-
-		// StringBuilder > String concatenation
-		StringBuilder builder = new StringBuilder();
-		String lastColor = null;
-		for (String word : words){
-			if (lastColor != null && !lastColor.isEmpty())
-				builder.append(lastColor);
-			builder.append(word).append(' ');
-			if (lastColor != null && !lastColor.isEmpty())
-				word = lastColor + word;
-			lastColor = ChatColor.getLastColors(word);
-		}
-		return builder.deleteCharAt(builder.length() - 1).toString();
-	}
 
 	/**
 	 * Convert int to & Color Codes

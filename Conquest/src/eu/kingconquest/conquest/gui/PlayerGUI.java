@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
-import eu.kingconquest.conquest.util.ChestGui;
 
 	//Make sure to setup a discard and a save button for this one
 public class PlayerGUI extends ChestGui{
@@ -84,7 +84,7 @@ public class PlayerGUI extends ChestGui{
 		skull.setOwner(targetPlayer.getName());
 		head.setItemMeta(skull);
         setSkullItem(slot, head, player ->{
-			new PlayerActionGUI(player, targetPlayer, objective, this);
+			new PlayerActionGUI(player, targetPlayer, this);
 		}, "§4" + targetPlayer.getName(),
         		"\n§cClick to get into Player specific GUI"
 				+ "\n"

@@ -15,12 +15,12 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.util.Cach;
-import eu.kingconquest.conquest.util.ChatManager;
 import eu.kingconquest.conquest.util.Marker;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;
 
 public class Town extends Objective{
@@ -33,18 +33,17 @@ public class Town extends Objective{
 	}
 	public Town(String name, String uniqueID, Location loc, Location spawn, Kingdom owner){
 		super(name, loc, spawn, uniqueID);
-		
 		if (Validate.notNull(owner))
 			setOwner(owner);
 		else
 			setOwner(Kingdom.getNeutral(getWorld()));
 
 		addTown(this);
-		Marker.create(this);
+		Marker.update(this);
 		Marker.setDescription(this);
 	}
 	
-//Getters
+	//Getters
 	/**
 	 * Get Arraylist of Child Outposts
 	 * @return Arraylist<Outpost>
@@ -52,18 +51,18 @@ public class Town extends Objective{
 	public ArrayList<Village> getChildren(){
 		return children;
 	}
-
-//Setters
+	
+	//Setters
 	/**
 	 * Set Outpost as Neutral
 	 * @return void
 	 */
 	public void setNeutral(){
-			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
-			updateGlass();
-			Marker.update(this);
+		setOwner(Kingdom.getKingdom("Neutral", getWorld()));
+		updateGlass();
+		Marker.update(this);
 	}
-
+	
 	private ArrayList<Village> children = new ArrayList<Village>();
 	/**
 	 * If Town has Children
@@ -98,8 +97,8 @@ public class Town extends Objective{
 	public void removeChild(Village village){
 		children.remove(village);
 	}
-
-
+	
+	
 	private static ArrayList<Town> towns = new ArrayList<Town>();
 	
 	public static ArrayList<Town> getTowns() {
@@ -108,10 +107,10 @@ public class Town extends Objective{
 	public static ArrayList<Town> getTowns(World world) {
 		ArrayList<Town> towns = new ArrayList<Town>();
 		Town.getTowns().stream()
-			.filter(town->town.getWorld().equals(world))
-			.forEach(town->{
-				towns.add(town);
-			});
+		.filter(town->town.getWorld().equals(world))
+		.forEach(town->{
+			towns.add(town);
+		});
 		return towns;
 	}
 	public static Town getTown(UUID ID, World world) {
@@ -167,36 +166,37 @@ public class Town extends Objective{
 				if (objective.equals(this))
 					continue;
 				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
-					ChatManager.Chat(player, Config.getChat("ToClose"));
+					new Message(player, MessageType.CHAT, "{ToClose}");
+					removeTown(this);
 					return false;
 				}
 			}
 			if (getTowns(getName(), getWorld()).size() > 1) 
-				ChatManager.Chat(player, Config.getChat("AlreadyExists"));
+				new Message(player, MessageType.CHAT, "{AlreadyExists}");
 			
 			setOwner(Kingdom.getKingdom("Neutral", getWorld()));
-
+			
 			Location loc = player.getLocation().clone();
 			int rows = 5;
-
+			
 			loc.setY(loc.getY() - 3);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
 			//Set Iron Blocks! 5x5 area
 			setBeaconBase(rows, loc.clone(), IRON_BLOCK, null);
-
+			
 			loc = player.getLocation().clone();
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Upper Blocks! 5x5 area
 			setBeaconBase(rows, loc.clone(), STEP, 7);
 			updateGlass();
 			Bukkit.getPluginManager().callEvent(new ObjectiveCreateEvent(player, this));
 			
 			Cach.StaticTown = this;
-			ChatManager.Chat(player, Config.getChat("TownCreated"));
+			new Message(player, MessageType.CHAT, "{TownCreated}");
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -224,28 +224,28 @@ public class Town extends Objective{
 				loc.setX(loc.getX() - 1);
 			}
 			setBase(loc, AIR);
-
+			
 			int rows = 5;
 			loc = getLocation().clone();
 			
 			loc.setY(loc.getY() - 4);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Iron Blocks! 5x5 area
 			setBeaconBase(rows, loc, AIR, null);
-
+			
 			loc = getLocation().clone();
 			
 			loc.setY(loc.getY() - 1);
 			loc.setX(loc.getX() - Math.ceil((rows / 2)) - 1);
 			loc.setZ(loc.getZ() - Math.ceil((rows / 2)) - 1);
-
+			
 			//Set Upper Blocks! 5x5 area
 			setBeaconBase(rows, loc, AIR, null);
-
+			
 			Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
-			ChatManager.Chat(player, Config.getChat("TownDeleted"));
+			new Message(player, MessageType.CHAT, "{TownDeleted}");
 			removeTown(this);
 			Marker.remove(this);
 			return true;
@@ -257,20 +257,20 @@ public class Town extends Objective{
 	@Override
 	public void updateGlass(){
 		Location loc = getLocation().clone();
-			loc.setY(loc.getY() - 1);
-			setBlock(loc, STAINED_GLASS);
-			loc.setX(loc.getX() - 1);
-			setBlock(loc, STAINED_GLASS);
-			loc.setX(loc.getX() + 1);
-			loc.setZ(loc.getZ() - 1);
-			setBlock(loc, STAINED_GLASS);
-			loc.setZ(loc.getZ() + 1);
-			loc.setZ(loc.getZ() + 1);
-			setBlock(loc, STAINED_GLASS);
-			loc.setZ(loc.getZ() - 1);
-			loc.setX(loc.getX() + 1);
-			setBlock(loc, STAINED_GLASS);
-			loc.setX(loc.getX() - 1);
+		loc.setY(loc.getY() - 1);
+		setBlock(loc, STAINED_GLASS);
+		loc.setX(loc.getX() - 1);
+		setBlock(loc, STAINED_GLASS);
+		loc.setX(loc.getX() + 1);
+		loc.setZ(loc.getZ() - 1);
+		setBlock(loc, STAINED_GLASS);
+		loc.setZ(loc.getZ() + 1);
+		loc.setZ(loc.getZ() + 1);
+		setBlock(loc, STAINED_GLASS);
+		loc.setZ(loc.getZ() - 1);
+		loc.setX(loc.getX() + 1);
+		setBlock(loc, STAINED_GLASS);
+		loc.setX(loc.getX() - 1);
 		setBase(loc, BEACON);
 	}
 	private void setBase(Location loc, Material block){

@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 
-import eu.kingconquest.conquest.database.Config;
 import eu.kingconquest.conquest.event.CaptureZoneEnterEvent;
 import eu.kingconquest.conquest.event.CaptureZoneExitEvent;
 import eu.kingconquest.conquest.util.Validate;
@@ -23,22 +22,18 @@ public class Proximity implements Listener{
 	 * @param player
 	 */
 	public static void villageZoneProximity(Player player){
+		
 		// If Player isn't in a Kingdom, break or if there is no villages to capture
 		if (!PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld()) 
 				|| Village.getVillages().size() < 1)
 			return;
 		
 		Village.getVillages(player.getWorld()).forEach(village->{
-			if (Validate.isWithinArea(
-					player.getLocation()
-					,village.getLocation()
-					,2
-					,Config.getDouble("CaptureMaxY", village.getLocation())
-					, Config.getDouble("CaptureMinY", village.getLocation()))){
+			if (Validate.isWithinCaptureArea(player.getLocation(), village.getLocation())){
 				pm.callEvent(new CaptureZoneEnterEvent(player, village));
 			}else{
 				// If the player is outside of the area
-				if (village.isCapturing(player)){
+				if (village.isCapturing(player)) {
 					pm.callEvent(new CaptureZoneExitEvent(player, village));
 					return;
 				}
@@ -47,7 +42,7 @@ public class Proximity implements Listener{
 	}
 	
 	public static void villageAreaProximity(Player player){
-	
+		
 	}
 	
 	public static void townZoneProximity(Player player){
@@ -58,18 +53,18 @@ public class Proximity implements Listener{
 		
 	}
 	
-	public static void objectiveZoneProximity(Objective objective, Player player){
-		if (!Validate.isWithinCaptureArea(player.getLocation(), objective.getLocation())){
+	public static void objectiveZoneProximity(Village village, Player player){
+		if (!Validate.isWithinCaptureArea(player.getLocation(), village.getLocation())){
 			// If the player is outside of the area
-			if (objective.isCapturing(player)){
-				pm.callEvent(new CaptureZoneExitEvent(player, objective));
+			if (village.isCapturing(player)){
+				pm.callEvent(new CaptureZoneExitEvent(player, village));
 				return;
 			}
 			return;
 		}
-		pm.callEvent(new CaptureZoneEnterEvent(player, objective));
+		pm.callEvent(new CaptureZoneEnterEvent(player, village));
 	}
-
+	
 	public static void objectiveAreaProximity(Objective objective,Player player){
 		
 	}

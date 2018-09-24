@@ -23,7 +23,7 @@ public class Vault {
 		else
 			Hooks.put("&6| --&3 Permissions [&6Vault API&3]", false);
 		
-		if (setupEcoonomy() && Validate.isNull(TNEApi.econ))
+		if (setupEcoonomy() && Validate.isNull(EconAPI.econ))
 			Hooks.put("&6| --&3 Economy [&6Vault API&3]", true);
 		else
 			Hooks.put("&6| --&3 Economy [&6Vault API&3]", false);
