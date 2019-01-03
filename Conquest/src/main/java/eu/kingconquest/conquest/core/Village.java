@@ -233,7 +233,7 @@ public class Village extends Objective{
 			for (Objective objective : Objective.getObjectives(getWorld())){
 				if (objective.equals(this))
 					continue;
-				if (Validate.isWithinArea(player.getLocation(), objective.getLocation(), 20.0d, 20.0d, 20.0d)){
+				if (Validate.isWithinCircle(player, objective.getLocation(), 20.0d, 20.0d, 20.0d)) {
 					new Message(player, MessageType.CHAT, "{ToClose}");
 					removeVillage(this);
 					return false;

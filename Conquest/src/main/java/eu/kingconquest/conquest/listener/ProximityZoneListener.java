@@ -20,10 +20,13 @@ public class ProximityZoneListener implements Listener{
 	public void onZoneEnter(CaptureZoneEnterEvent e){
 		Village village = (Village) e.getObjective();
 		this.player = e.getPlayer();
-		if (!player.getGameMode().equals(GameMode.SURVIVAL))
+
+        if (!player.getGameMode().equals(GameMode.SURVIVAL)) // If player not in survival mode don't interact
 			return;
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		// If Player already is Capturing
+
+        PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+
+        // If Player already is Capturing
 		if (village.isCapturing(player))
 			return;
 		

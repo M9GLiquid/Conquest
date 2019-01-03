@@ -80,12 +80,12 @@ public class YmlStorage extends YamlConfiguration{
             reload();
             setName(fileName);
             addConfig(this);
-            if (!fileName.replace(".yml", "").matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")){
-                loadMsg.put("&6| --&3 " + fileName, false);
+			if (fileName.replace(".yml", "").matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) {
+				loadMsg.put("&6| --&3 " + fileName, true);
             }
         }catch (IllegalArgumentException e){
             if (!fileName.replace(".yml", "").matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")){
-                loadMsg.put("&6| --&3 " + fileName, true);
+				loadMsg.put("&6| --&3 " + fileName, false);
             }
         }
     }
@@ -217,6 +217,7 @@ public class YmlStorage extends YamlConfiguration{
 	//Config Loads
 	public static boolean loadDefault(){
 		YmlStorage config = getConfig("Config");
+		loadMsg.put("&6| --&3 " + config.getName(), true);
 
 		strings.put("Port",
 				(config.getString("Database.MySql.Port") != null ? config.getString("Database.MySql.Port") : "3306"));
@@ -230,8 +231,11 @@ public class YmlStorage extends YamlConfiguration{
 				? config.getString("Database.MySql.Database") : "Conquest"));
 		strings.put("AutoSaveInterval", (config.getString("Database.AutoSaveInterval") != null
 				? config.getString("Database.AutoSaveInterval") : "5"));
-		if (!config.isSet("ActiveWorlds"))
+		if (!config.isSet("ActiveWorlds")) {
+			new Message(MessageType.ERROR, "No Active worlds Set, Please setup an active world");
+			loadMsg.put("&6| --&3 " + config.getName(), false);
 			return false;
+		}
 		getPathSection(config, "ActiveWorlds").forEach(aWorld ->{
 			if (getWorlds().size() > 0 && !isActiveWorld(aWorld))
 				return;
@@ -261,28 +265,30 @@ public class YmlStorage extends YamlConfiguration{
 				addWorld(world);
 			});
 		});
+		loadMsg.put("&6| --&3 " + config.getName(), true);
 		return true;
 	}
 
 	public static boolean loadLanguage(){
-		YmlStorage lang = getConfig("Language");
+		YmlStorage config = getConfig("Language");
 
 		try{
-			getPathSection(lang, "Language").forEach(path ->
-                    getPathSection(lang, "Language." + path).forEach(pathSection -> {
+			getPathSection(config, "Language").forEach(path ->
+					getPathSection(config, "Language." + path).forEach(pathSection -> {
                         if (!pathSection.toLowerCase().equals("admin")) {
-                            strings.put(pathSection, (lang.getString("Language." + path + "." + pathSection) != null
-                                    ? lang.getString("Language." + path + "." + pathSection) : ""));
+							strings.put(pathSection, (config.getString("Language." + path + "." + pathSection) != null
+									? config.getString("Language." + path + "." + pathSection) : ""));
                         } else {
-                            getPathSection(lang, "Language." + path + "." + pathSection).forEach(adminSection ->
+							getPathSection(config, "Language." + path + "." + pathSection).forEach(adminSection ->
                                     strings.put("Admin" + adminSection,
-							(lang.getString("Language." + path + ".Admin." + adminSection) != null
-                                    ? lang.getString("Language." + path + ".Admin." + adminSection) : "")));
+											(config.getString("Language." + path + ".Admin." + adminSection) != null
+													? config.getString("Language." + path + ".Admin." + adminSection) : "")));
                         }
                     }));
+			loadMsg.put("&6| --&3 " + config.getName(), true);
             return true;
 		}catch (Exception e){
-			e.printStackTrace();
+			loadMsg.put("&6| --&3 " + config.getName(), false);
 			return false;
 		}
 	}
@@ -291,8 +297,10 @@ public class YmlStorage extends YamlConfiguration{
 	private static void loadKingdoms(World world){
 		YmlStorage config = getConfig("Kingdoms");
 
-		if (!config.isSet(world.getUID().toString()))
+		if (!config.Exists(config)) {
+			loadMsg.put("&6| --&3 " + config.getName(), false);
 			return;
+		}
 		for (String uniqueID : getPathSection(config, world.getUID().toString())){
 			if (Validate.notNull(Kingdom.getKingdom(UUID.fromString(uniqueID), world)))
 				return; //Kingdom already loaded!
@@ -313,13 +321,15 @@ public class YmlStorage extends YamlConfiguration{
 			Kingdom kingdom = new Kingdom("Neutral", null, world.getSpawnLocation().clone(), -1);
 			kingdom.create(null);
 		}
+		loadMsg.put("&6| --&3 " + config.getName(), true);
 	}
 
 	private static void loadTowns(World world){
 		YmlStorage config = getConfig("Towns");
-
-		if (!config.isSet(world.getUID().toString()))
+		if (!config.Exists(config)) {
+			loadMsg.put("&6| --&3 " + config.getName(), false);
 			return;
+		}
 		getPathSection(config, world.getUID().toString()).forEach(uniqueID ->{
 			if (Validate.notNull(Town.getTown(UUID.fromString(uniqueID), world)))
 				return; //Town already loaded!
@@ -330,12 +340,15 @@ public class YmlStorage extends YamlConfiguration{
 							UUID.fromString(config.getString(world.getUID().toString() + "." + uniqueID + ".Owner")),
 							world));
 		});
+		loadMsg.put("&6| --&3 " + config.getName(), true);
 	}
 
 	private static void loadVillages(World world){
 		YmlStorage config = getConfig("Villages");
-		if (!config.isSet(world.getUID().toString()))
+		if (!config.Exists(config)) {
+			loadMsg.put("&6| --&3 " + config.getName(), false);
 			return;
+		}
 		getPathSection(config, world.getUID().toString()).forEach(uniqueID ->{
 			Town parent = null;
 			if (Validate.notNull(Village.getVillage(UUID.fromString(uniqueID), world)))
@@ -364,6 +377,7 @@ public class YmlStorage extends YamlConfiguration{
 				if (!village.getOwner().isNeutral())
 					village.setProgress(100.0d);
 		});
+		loadMsg.put("&6| --&3 " + config.getName(), true);
 	}
 
 	private static void loadUsers(World world){
@@ -686,37 +700,17 @@ public class YmlStorage extends YamlConfiguration{
 	private static HashMap<UUID, HashMap<String, Integer>>	integers	= new HashMap<>();
 	private static HashMap<UUID, HashMap<String, Double>>	doubles		= new HashMap<>();
 
-	/**
-	 * Reload configuration return void
-     */
-    public void reload() {
-        if (!file.exists()) {
-            try {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            } catch (IOException exception) {
-                MainClass.getInstance().getLogger().severe("Error while creating file " + file.getName());
-                return;
-            }
-        }
-
-        try {
-            load(file);
-            if (defaults != null) {
-                InputStreamReader reader = new InputStreamReader(MainClass.getInstance().getResource(defaults));
-                FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);
-
-                setDefaults(defaultsConfig);
-                options().copyDefaults(true);
-
-                reader.close();
-                saveConfig();
-            }
-        } catch (IOException | InvalidConfigurationException e) {
-            MainClass.getInstance().getLogger().severe("Error while loading file " + file.getName());
-            e.printStackTrace();
-        }
-    }
+	public static YmlStorage getConfig(String name) {
+		for (YmlStorage config : getConfigs()) {
+			if (config.getName().replace(".yml", "").equals(name)) {
+				config.reload();
+				return config;
+			}
+		}
+		new Message(MessageType.ERROR, "Could not find config: " + name + " file");
+		new Message(MessageType.CONSOLE, "&4: Wrong name?");
+		return null;
+	}
 
     public static String getStr(String str){
 		return strings.get(str);
@@ -763,16 +757,38 @@ public class YmlStorage extends YamlConfiguration{
 		return configs;
 	}
 
-	public static YmlStorage getConfig(String name){
-		for (YmlStorage c : getConfigs()){
-			if (c.getName().replace(".yml", "").equals(name)){
-				c.reload();
-				return c;
+	/**
+	 * Reload configuration return void
+	 */
+	public void reload() {
+		if (!file.exists()) {
+			loadMsg.put("&6| --&3 " + file.getName() + " is Empty or Missing", false);
+			try {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			} catch (IOException exception) {
+				new Message(MessageType.ERROR, "Error while creating file: " + file.getName());
+				return;
 			}
+		} else
+			loadMsg.put("&6| --&3 " + file.getName(), true);
+
+		try {
+			load(file);
+			if (defaults != null) {
+				InputStreamReader reader = new InputStreamReader(MainClass.getInstance().getResource(defaults));
+				FileConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(reader);
+
+				setDefaults(defaultsConfig);
+				options().copyDefaults(true);
+
+				reader.close();
+				saveConfig();
+			}
+		} catch (IOException | InvalidConfigurationException e) {
+			new Message(MessageType.ERROR, "Error while loading file: " + file.getName());
+			e.printStackTrace();
 		}
-		new Message(MessageType.ERROR, "Could not find config: " + name + " file");
-		new Message(MessageType.CONSOLE, "&4: Wrong name?");
-		return null;
 	}
 
 	public static void addConfig(YmlStorage config){
@@ -800,6 +816,9 @@ public class YmlStorage extends YamlConfiguration{
 		this.name = name;
 	}
 
+	public Boolean Exists(YmlStorage config) {
+		return config.file.exists();
+	}
 	/**
 	 * Get location from config
      *

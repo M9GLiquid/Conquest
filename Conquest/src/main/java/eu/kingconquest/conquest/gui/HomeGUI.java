@@ -5,6 +5,7 @@ import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Teleport;
 import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.gui.objective.ArenaGUI;
 import eu.kingconquest.conquest.gui.objective.KingdomGUI;
 import eu.kingconquest.conquest.gui.objective.TownGUI;
 import eu.kingconquest.conquest.gui.objective.VillageGUI;
@@ -65,6 +66,9 @@ public class HomeGUI extends ChestGui{
 		//friendsButton();
 
 		kingdomButton();
+
+        arenaButton();
+
 
 		if (Validate.hasPerm(player, ".admin")){
 			townButton();
@@ -208,6 +212,30 @@ public class HomeGUI extends ChestGui{
                 new KingdomGUI(player, this), "&6Kingdom Menu", details);
 		slot++;
 	}
+
+    private void arenaButton() {
+        PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+        String details;
+        if (Validate.hasPerm(player, ".admin")) {
+            details =
+                    "&4Admin only:"
+                            + "\n&aCreate &7an Arena!"
+                            + "\n&3Edit &7an Arena!"
+                            + "\n&cDelete &7an Arena!"
+                            + "\n";
+        } else {
+            if (wrapper.isInArena(player.getWorld())) {
+                details = "\n&cLeave an " + wrapper.getArena(player.getWorld()).getName()
+                        + "\n";
+            } else {
+                details = "\n&aJoin &7an Arena!"
+                        + "\n";
+            }
+        }
+        setItem(slot, new ItemStack(Material.NETHER_BRICK_FENCE), player ->
+                new ArenaGUI(player, this), "&6Arena Menu", details);
+        slot++;
+    }
 
 	private void townButton(){
         setItem(slot, new ItemStack(Material.BEACON), player ->

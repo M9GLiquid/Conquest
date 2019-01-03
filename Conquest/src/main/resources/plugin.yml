@@ -1,9 +1,10 @@
-name: Conquest 2.0
+name: Conquest
 main: eu.kingconquest.conquest.MainClass
+api-version: 1.13
 load: POSTWORLD
 depend: [Vault, dynmap]
 softdepend: [TheNewEconomy]
-version: 0.7.9.0
+version: 0.8.0    # Major . Minor . Revision
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 
@@ -170,6 +171,8 @@ permissions:
      default: false
      description: Gives admin access to edit commands
      children:
+       conquest.admin.edit.arena: true
+       conquest.admin.edit.arena.name: true       #TODO Setup Permissions for Arena
        conquest.admin.edit.kingdom: true
        conquest.admin.edit.kingdom.name: true
        conquest.admin.edit.kingdom.parent: true

@@ -22,6 +22,9 @@ public class PlayerMoveListener implements Listener{
 			//Village Zone Proximity
 			Proximity.villageZoneProximity(player);
 
+			//Village Zone Proximity
+			//Proximity.arenaAreaProximity(player);
+
 			//Village Area Proximity
 			//proximity.villageAreaProximity(player);
 			
@@ -34,10 +37,10 @@ public class PlayerMoveListener implements Listener{
 //To Replace all above on Kingdom Capture Implementation
 			
 			//Objective Zone Proximity
-			//proximity.objectiveZoneProximity(player);
+			//proximity.kingdomZoneProximity(player);
 			
 			//Objective Area Proximity
-			//proximity.objectiveAreaProximity(player);
+			//proximity.kingdomAreaProximity(player);
 		}
 	}
 }

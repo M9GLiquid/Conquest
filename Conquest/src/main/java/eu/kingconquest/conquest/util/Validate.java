@@ -7,32 +7,47 @@ import org.bukkit.entity.Player;
 
 public class Validate{
 	/**
-	 * Check to see whether the player is within an outpost
+	 * Check to see whether the player is within an Circle
 	 */
-	public static boolean isWithinArea(Location location1, Location location2, double radius, double maxY, double minY){
+	public static boolean isWithinCircle(Player player, Location location2, double radius, double maxY, double minY) {
+		Location location1 = player.getLocation();
 		if (!location1.getWorld().equals(location2.getWorld()))
 			return false;
+
 		double dx = Math.abs(location1.getX() - location2.getX());
 		double dz = Math.abs(location1.getZ() - location2.getZ());
 		return dx <= radius
 				&& dz <= radius
-				&& location1.getY() <= location2.getY() + maxY
-				&& location1.getY() >= location2.getY() - minY;
+				&& location1.getY() <= (location2.getY() + maxY)
+				&& location1.getY() >= (location2.getY() - minY);
+
+	}
+
+	/**
+	 * Check to see whether the player is within an Square
+	 */
+	public static boolean isWithinSquare(Location loc1, Location loc2, double maxY, double minY) {
+		return loc1.getWorld().equals(loc2.getWorld());
+
 	}
 
 	/**
 	 * Check to see whether the player is within an outpost
 	 */
-	public static boolean isWithinCaptureArea(Location player, Location target){
-		double dx = Math.abs(player.getX() - target.getX());
-		double dz = Math.abs(player.getZ() - target.getZ());
-		double radius = YmlStorage.getDouble("CaptureDistance", player);
-		double maxY = YmlStorage.getDouble("CaptureMaxY", player);
-		double MinY = YmlStorage.getDouble("CaptureMinY", player);
+	public static boolean isWithinCapture(Player player, Location targetLocation) {
+		Location location1 = player.getLocation();
+		if (!location1.getWorld().equals(targetLocation.getWorld()))
+			return false;
+
+		double dx = Math.abs(location1.getX() - targetLocation.getX());
+		double dz = Math.abs(location1.getZ() - targetLocation.getZ());
+		double radius = YmlStorage.getDouble("CaptureDistance", location1);
+		double maxY = YmlStorage.getDouble("CaptureMaxY", location1);
+		double MinY = YmlStorage.getDouble("CaptureMinY", location1);
 		return dx <= radius
 				&& dz <= radius
-				&& player.getY() <= target.getY() + maxY
-				&& player.getY() >= target.getY() - MinY;
+				&& location1.getY() <= (targetLocation.getY() + maxY)
+				&& location1.getY() >= (targetLocation.getY() - MinY);
 	}
 
 	public static boolean hasPerm(Player p, String path){

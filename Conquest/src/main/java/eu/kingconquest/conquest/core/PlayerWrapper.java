@@ -78,6 +78,7 @@ public class PlayerWrapper{
             return false;
     }
 
+    private UUID arena;
 	public void setRewardCooldown(UUID uuid, Long cooldown){
 		LocalDateTime date = LocalDateTime.now();
         cooldowns.put(uuid, date.plusMinutes(cooldown));
@@ -108,7 +109,15 @@ public class PlayerWrapper{
         });
 
         return c;
-	}
+    }
+
+    public void setArena(UUID uuid) {
+        this.arena = uuid;
+    }
+
+    public Arena getArena(World world) {
+        return Arena.getArena(arena, world);
+    }
 	
 	public Player getPlayer(UUID uuid){
 		return Bukkit.getPlayer(uuid);
@@ -121,6 +130,10 @@ public class PlayerWrapper{
 
     public boolean isInKingdom(World world) {
         return Validate.notNull(Kingdom.getKingdom(kingdom, world));
+    }
+
+    public boolean isInArena(World world) {
+        return Validate.notNull(Arena.getArena(arena, world));
     }
 
     public void setBoardType(BoardType board) {

@@ -28,7 +28,7 @@ public class Proximity implements Listener{
 			return;
 		
 		Village.getVillages(player.getWorld()).forEach(village->{
-			if (Validate.isWithinCaptureArea(player.getLocation(), village.getLocation())){
+			if (Validate.isWithinCapture(player, village.getLocation())) {
 				pm.callEvent(new CaptureZoneEnterEvent(player, village));
 			}else{
 				// If the player is outside of the area
@@ -52,7 +52,7 @@ public class Proximity implements Listener{
 	}
 	
 	public static void objectiveZoneProximity(Village village, Player player){
-		if (!Validate.isWithinCaptureArea(player.getLocation(), village.getLocation())){
+		if (!Validate.isWithinCapture(player, village.getLocation())) {
 			// If the player is outside of the area
 			if (village.isCapturing(player)){
 				pm.callEvent(new CaptureZoneExitEvent(player, village));
@@ -62,8 +62,24 @@ public class Proximity implements Listener{
 		}
 		pm.callEvent(new CaptureZoneEnterEvent(player, village));
 	}
-	
-	public static void objectiveAreaProximity(Objective objective,Player player){
-		
+
+	public static void objectiveAreaProximity(Objective objective, Player player){
+
+	}
+
+	public static void isWithinSquareArea(Player player) {
+
+		// If Player isn't in a Arena, break or if there is no arena's
+		/*if (!PlayerWrapper.getWrapper(player).isInArena(player.getWorld())
+				|| Arena.getArenas().size() < 1)
+			return;
+
+		Arena.getArenas(player.getWorld()).forEach(arena->{
+			if (Validate.isWithinSquare(player.getLocation(), arena.getLocation(), 50.0d, 5.0d)){
+				pm.callEvent(new ArenaZoneEnter(player, arena));
+			}else{
+                pm.callEvent(new ArenaZoneExit(player, arena));
+			}
+		});*/
 	}
 }

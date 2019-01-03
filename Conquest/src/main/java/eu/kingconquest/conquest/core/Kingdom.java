@@ -37,7 +37,7 @@ public class Kingdom extends Objective{
 		Marker.setDescription(this);
 	}
 
-	//kingdomitals
+	//kingdoms
 	private static ArrayList<Kingdom> kingdoms = new ArrayList<>();
 	//Outposts
 	private ArrayList<Village> villages = new ArrayList<>();
@@ -135,6 +135,7 @@ public class Kingdom extends Objective{
 		if (!getMembers().contains(player.getUniqueId()))
 			return;
 
+		//Player leaves this Kingdom
 		Cach.StaticKingdom = this;
 		new Message(player, MessageType.CHAT, "{LeaveSuccess}");
 		wrapper.setKingdom(null);
@@ -346,7 +347,7 @@ public class Kingdom extends Objective{
 	public boolean delete(Player player){
 		Cach.StaticKingdom = this;
 		new Message(player, MessageType.CHAT, "{KingdomDeleted}");
-		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this));
+		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this)); //TODO add Objective Delete Listener (Remove as owner to all, remove anything assosiated with the kingdom)
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp deletegroup " + getName());
 		removeKingdom(this);
 		return Marker.remove(this);
