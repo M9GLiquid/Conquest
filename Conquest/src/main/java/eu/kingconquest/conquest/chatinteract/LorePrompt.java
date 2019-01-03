@@ -40,7 +40,6 @@ public class LorePrompt extends StringPrompt{
 		context.getForWhom().sendRawMessage(Message.getMessage(" "));
 		return "";
 	}
-
 	public ArrayList<String> get(){
 		return lore;
 	}

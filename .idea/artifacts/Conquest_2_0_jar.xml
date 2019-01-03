@@ -6,6 +6,8 @@
         <element id="file-copy" path="$PROJECT_DIR$/target/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="Conquest" />
+      <element id="file-copy" path="$PROJECT_DIR$/Conquest/src/main/java/plugin.yml" />
+      <element id="dir-copy" path="$PROJECT_DIR$/Conquest/src/main/resources" />
     </root>
   </artifact>
 </component>

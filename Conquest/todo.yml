@@ -1,0 +1,40 @@
+#                                             Bugs
+# BUG - PaginationGUI (Paginations allways showing)
+# BUG - RewardEditGUI - Add items bugged
+# BUG - Manage Members
+# BUG - Replace Owner/Parent & update objectives on parent/owner change
+# BUG - Capturing sometimes captures it for another kingdom
+#                                       Implementations
+# IMPLEMENTED - Arena Class
+# IMPLEMENTED - ArenaGUI Class
+# IMPLEMENTED - CreateArenaGUI Class
+# IMPLEMENT - Delete/Create on "Dynmap" Location Edit (TownGUI/VillageGUI) the physical position
+# IMPLEMENT - Kit Cooldown, System
+# IMPLEMENT - Option to remove (ParentGUI/OwnerGUI)
+# IMPLEMENT - toggle for kingdom spawn instead of default in the world on login
+# IMPLEMENT - Debug messages (Message Class + MessageType.DEBUG)
+# IMPLEMENT - WorldGUI for ResetGUI
+#                                            Future stuff
+# FUTURE - PlayerWrapper,  Friends System
+# FUTURE - PlayerActionGUI, XP(Take/Give), Money(Take/Give), Kick, Ban, Global Mute, Promote Rank, Demote Rank, MoveTo Kingdom
+# FUTURE - EditGUI(Kingdom) Children(Add, Remove)
+# FUTURE - EditGUI(Town) Children(Add, Remove)
+# FUTURE - Town/Village area (area around the objective larger than the capture zone)
+# FUTURE - Notification if Player within objective area
+# FUTURE - Remove, Beacon light
+# FUTURE - EditGUI, Edit of Color for Kingdoms (After Beacon Removed Update)
+# FUTURE - FriendsGUI, Notification when friend(s) comes online (Toggle Button)
+# FUTURE - FriendsGUI, Management of friends(Add, Remove)
+# FUTURE - FriendsGUI, Chat suggestion button for PM(Private Message)
+# FUTURE - Save/Load of replaced blocks on objective creation for relocations and deletions
+# FUTURE - ResetGUI, WorldGUI Button world selection
+# FUTURE - WorldGUI System
+# FUTURE - Particle effect around capture zone/objective area (Zone = capable of capturing)
+# FUTURE - onCaptureStart, Spawn Mobs around objective
+# FUTURE - Traps System (Personal and Objective based traps)
+# FUTURE - TrapsGUI
+# FUTURE - Kit Management System, Add a value to every item in the game
+# FUTURE - Kit Management System, Objectives have "kit reward points" for the automatic kit system
+#                                          Optimizations
+# OPTIMIZE - Kit Management System (Item Value) See future
+# OPTIMIZE - Capture Mechanics See future

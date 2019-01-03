@@ -4,13 +4,13 @@ api-version: 1.13
 load: POSTWORLD
 depend: [Vault, dynmap]
 softdepend: [TheNewEconomy]
-version: 0.8.0    # Major . Minor . Revision
+version: 0.8.0
 author: Thomas Lundqvist
 website: www.kingconquest.eu
 description: World Domination, Done Right! 
 
 commands:
-  kingconquest:
+  conquest:
     description: Main Commmand
     aliases: [c, kc, kingc, conquest]
     permission: conquest.basic
@@ -172,7 +172,7 @@ permissions:
      description: Gives admin access to edit commands
      children:
        conquest.admin.edit.arena: true
-       conquest.admin.edit.arena.name: true       #TODO Setup Permissions for Arena
+       conquest.admin.edit.arena.name: true
        conquest.admin.edit.kingdom: true
        conquest.admin.edit.kingdom.name: true
        conquest.admin.edit.kingdom.parent: true
