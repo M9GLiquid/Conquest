@@ -5,7 +5,7 @@
 # ========================================================
 # |                                  Information
 # | Database:
-# |   Backend:                                            FlatFile, SqlLite, MySQL
+# |   Backend:                                            SQLite, MySQL
 # |   MySql:
 # |     Host: localhost                                   Host IP or Localhost
 # |     Database: conquest                                Database
@@ -34,7 +34,7 @@
 # |     <CaptureBelowHeight>:	                          Amount of Blocks below the outpost you can be to capture it (Y).
 # ========================================================
 Database:
-  Backend: MySql
+  Backend: SQLite
   MySql:
     Host: localhost
     Database: conquest

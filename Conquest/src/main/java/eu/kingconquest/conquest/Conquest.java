@@ -50,8 +50,8 @@ public class Conquest extends JavaPlugin implements Listener {
 	public void onEnable(){
 		instance = this;
 		YmlStorage.load();
+		new DatabaseManager();
 
-		DatabaseManager database = new DatabaseManager();
 		new EconAPI();
 		new Vault();
 		new Dynmap();

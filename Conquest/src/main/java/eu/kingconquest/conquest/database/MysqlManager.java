@@ -17,7 +17,7 @@ import java.util.UUID;
 public class MysqlManager {
     private static Database database;
     private static String tablePrefix;
-    private static String outputStream = "&6| - &cFailed:";
+    private static String outputStream = "&6| - &cFailed:";//TODO: Move into last executed method for Failed/Success state (Try/Catch)
     private YmlStorage config;
 
     public MysqlManager(DataType option) {
@@ -30,7 +30,7 @@ public class MysqlManager {
                 userLoad();
                 townLoad(); // Need Testing
                 villageLoad(); // Need Testing
-                outputStream = "&6| - &aSuccess:";
+                outputStream = "&6| - &aSuccess:"; //TODO: Move into last executed method for Failed/Success state (Try/Catch)
                 break;
             case REMOVE:
                 kingdomRemove(); // Need Testing
@@ -45,7 +45,7 @@ public class MysqlManager {
                 usersSave();
                 townSave(); // Need Testing
                 villageSave(); // Need Testing
-                outputStream = "&6| - &aSuccess:";
+                outputStream = "&6| - &aSuccess:";//TODO: Move into last executed method for Failed/Success state (Try/Catch)
                 break;
             case CREATE:
                 kingdomTableCreate(); // Working

@@ -239,9 +239,7 @@ public class YmlStorage extends YamlConfiguration {
                     ? config.getString("Database.MySql.Password") : "root"));
             strings.put("TablePrefix", (config.getString("Database.MySql.TablePrefix") != null
                     ? config.getString("Database.MySql.TablePrefix") : "conquest_"));
-        }//else if (Database.getType().equals(DatabaseType.SQLITE)) {
-        //TODO: Sql data
-        //}
+        }
     }
 
     public static boolean hasConfigs() {
