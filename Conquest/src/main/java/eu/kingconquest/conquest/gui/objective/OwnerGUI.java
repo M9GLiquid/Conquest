@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.gui.objective;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import org.bukkit.Material;
@@ -21,7 +22,7 @@ public class OwnerGUI extends ChestGui{
 
 	@Override
 	public void create(){
-		owner = Kingdom.getKingdom("Neutral", player.getWorld());
+        owner = Kingdom.getKingdom("Neutral", ActiveWorld.getActiveWorld(player.getWorld()));
 		createGui(player, "OwnerShip GUI", Kingdom.getKingdoms().size());
 		display();
 	}

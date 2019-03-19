@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.hook;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
@@ -65,7 +65,7 @@ public class Dynmap{
 	 * @return boolean
 	 */
 	private boolean setupDynmap(){
-        PluginManager pm = MainClass.getInstance().getServer().getPluginManager();
+        PluginManager pm = Conquest.getInstance().getServer().getPluginManager();
 		dynMap = pm.getPlugin("dynmap");
         return dynMap != null;
 	}
@@ -83,7 +83,7 @@ public class Dynmap{
 				MarkerIcon icon = dynmapAPI.getMarkerAPI().getMarkerIcon(image);
 				if (Validate.isNull(icon)){
                     String path = "/eu/kingconquest/conquest/img/";
-                    stream = MainClass.class.getResourceAsStream(path + image + ".png");
+                    stream = Conquest.class.getResourceAsStream(path + image + ".png");
 					icon = dynmapAPI.getMarkerAPI().createMarkerIcon(image, image, stream);
 				}
 				icons.add(icon);

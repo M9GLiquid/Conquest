@@ -1,11 +1,11 @@
 package eu.kingconquest.conquest.gui;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Teleport;
-import eu.kingconquest.conquest.database.YmlStorage;
-import eu.kingconquest.conquest.gui.objective.ArenaGUI;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.gui.objective.KingdomGUI;
 import eu.kingconquest.conquest.gui.objective.TownGUI;
 import eu.kingconquest.conquest.gui.objective.VillageGUI;
@@ -67,9 +67,6 @@ public class HomeGUI extends ChestGui{
 
 		kingdomButton();
 
-        arenaButton();
-
-
 		if (Validate.hasPerm(player, ".admin")){
 			townButton();
 			villageButton();
@@ -79,7 +76,7 @@ public class HomeGUI extends ChestGui{
 				resetButton();
 			reloadButton();
 		}else{
-			if (PlayerWrapper.getWrapper(player).isInKingdom(player.getWorld())){
+            if (PlayerWrapper.getWrapper(player).isInKingdom(ActiveWorld.getActiveWorld(player.getWorld()))) {
 				spawnButton();
 				if (Validate.hasPerm(player, ".basic.teleport"))
 					conflictButton();
@@ -149,7 +146,7 @@ public class HomeGUI extends ChestGui{
 			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
 				if(Desktop.isDesktopSupported()){
 					try{
-                        Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite()));
+                        Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite()));
                     } catch (Exception ignored) {
                     }
 				}
@@ -161,14 +158,14 @@ public class HomeGUI extends ChestGui{
 	String str = "";
 	private String aboutInfo() {
 
-        str = "&7Plugin Name: &3" + MainClass.getInstance().getDescription().getName()
-                + "\n&7Version: &3" + MainClass.getInstance().getDescription().getVersion()
-                + "\n&7Website: &3" + MainClass.getInstance().getDescription().getWebsite()
+        str = "&7Plugin Name: &3" + Conquest.getInstance().getDescription().getName()
+                + "\n&7Version: &3" + Conquest.getInstance().getDescription().getVersion()
+                + "\n&7Website: &3" + Conquest.getInstance().getDescription().getWebsite()
 				+ "\n&7Author: ";
-        MainClass.getInstance().getDescription().getAuthors().forEach(author ->
+        Conquest.getInstance().getDescription().getAuthors().forEach(author ->
                 str += "&3" + author + "\n");
 		str += "&7Plugin Description: "
-                + "\n&8" + MainClass.getInstance().getDescription().getDescription()
+                + "\n&8" + Conquest.getInstance().getDescription().getDescription()
 				+ "\n"
 				+ "\n&bDouble-Click to open website";
 		return str;
@@ -183,7 +180,9 @@ public class HomeGUI extends ChestGui{
 
 	private void spawnButton(){
         setItem(slot, new ItemStack(Material.ENDER_PEARL), player ->
-                        new Teleport(player, PlayerWrapper.getWrapper(player).getKingdom(player.getWorld())), "&2Kingdom Spawn",
+                        new Teleport(player,
+                                PlayerWrapper.getWrapper(player).getKingdom(ActiveWorld.getActiveWorld(player.getWorld()))),
+                "&2Kingdom Spawn",
 				"&7Teleport to Kingdom spawn"
 						+ "\n");
 		slot++;
@@ -200,8 +199,11 @@ public class HomeGUI extends ChestGui{
 							+ "\n&cDelete &7a Kingdom!"
 							+ "\n";
 		}else{
-			if (wrapper.isInKingdom(player.getWorld())){
-				details = "\n&cLeave " + wrapper.getKingdom(player.getWorld()).getColor() + wrapper.getKingdom(player.getWorld()).getName()
+            if (wrapper.isInKingdom(ActiveWorld.getActiveWorld(player.getWorld()))) {
+                details = "\n&cLeave " +
+                        wrapper.getKingdom(
+                                ActiveWorld.getActiveWorld(player.getWorld())).getColor() +
+                        wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())).getName()
 						+ "\n";
 			}else{
 				details = "\n&aJoin &7a Kingdom!"
@@ -213,29 +215,6 @@ public class HomeGUI extends ChestGui{
 		slot++;
 	}
 
-    private void arenaButton() {
-        PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-        String details;
-        if (Validate.hasPerm(player, ".admin")) {
-            details =
-                    "&4Admin only:"
-                            + "\n&aCreate &7an Arena!"
-                            + "\n&3Edit &7an Arena!"
-                            + "\n&cDelete &7an Arena!"
-                            + "\n";
-        } else {
-            if (wrapper.isInArena(player.getWorld())) {
-                details = "\n&cLeave an " + wrapper.getArena(player.getWorld()).getName()
-                        + "\n";
-            } else {
-                details = "\n&aJoin &7an Arena!"
-                        + "\n";
-            }
-        }
-        setItem(slot, new ItemStack(Material.NETHER_BRICK_FENCE), player ->
-                new ArenaGUI(player, this), "&6Arena Menu", details);
-        slot++;
-    }
 
 	private void townButton(){
         setItem(slot, new ItemStack(Material.BEACON), player ->

@@ -1,7 +1,7 @@
 package eu.kingconquest.conquest.util;
 
-import eu.kingconquest.conquest.MainClass;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.Conquest;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -51,7 +51,7 @@ public class Validate{
 	}
 
 	public static boolean hasPerm(Player p, String path){
-		return p.hasPermission(MainClass.getInstance().getName() + path);
+		return p.hasPermission(Conquest.getInstance().getName() + path);
 	}
 
 	public static boolean notNull(Object reference){
@@ -87,6 +87,12 @@ public class Validate{
 				(seconds / 60) - Math.floor(seconds / 60) //Seconds left
 		};
 	}
+
+	/*public static boolean ResultSetExist(ResultSet rs){
+		do (rs.next()){
+
+		}while
+	}*/
 
 	public static boolean debug(Location location){
 		return YmlStorage.getBoolean("Debug", location);

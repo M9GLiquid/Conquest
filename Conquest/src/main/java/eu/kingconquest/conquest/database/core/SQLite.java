@@ -1,6 +1,8 @@
-package eu.kingconquest.conquest.database;
+package eu.kingconquest.conquest.database.core;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,14 +24,14 @@ public class SQLite extends Database {
             return connection;
         }
 
-		String pathway = MainClass.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "database.ql";
+        String pathway = Conquest.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "database.sql";
 		File file = new File(pathway);
 		if (!file.exists()) {
 			try {
 				file.getParentFile().mkdirs();
 				file.createNewFile();
 			}catch (IOException exception){
-				MainClass.getInstance().getLogger().severe("Error while creating file " + file.getName());
+                new Message(MessageType.ERROR, "Error while creating file " + file.getName());
 			}
 		}
         Class.forName("org.sqlite.JDBC");

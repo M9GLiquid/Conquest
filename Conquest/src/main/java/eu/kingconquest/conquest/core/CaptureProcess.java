@@ -1,8 +1,8 @@
 package eu.kingconquest.conquest.core;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.Scoreboard.CaptureBoard;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.event.CaptureCompleteEvent;
 import eu.kingconquest.conquest.event.CaptureNeutralEvent;
 import eu.kingconquest.conquest.event.CaptureStartEvent;
@@ -44,7 +44,7 @@ public class CaptureProcess{
 			return;
 
 		village.setTaskID(Bukkit.getServer().getScheduler()
-                .scheduleSyncRepeatingTask(MainClass.getInstance(), () -> {
+                .scheduleSyncRepeatingTask(Conquest.getInstance(), () -> {
 
                     capRate = YmlStorage.getDouble("CaptureRate", village.getLocation());
                     new CaptureBoard(village);

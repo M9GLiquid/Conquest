@@ -1,8 +1,9 @@
 package eu.kingconquest.conquest.listener;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -30,10 +31,10 @@ public class PlayerRespawnListener implements Listener{
 				PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
 				player.setGameMode(GameMode.SPECTATOR);
 				player.setCanPickupItems(false);
-				player.getServer().getScheduler().runTaskLater(MainClass.getInstance(), () -> {
+                player.getServer().getScheduler().runTaskLater(Conquest.getInstance(), () -> {
 					player.setCanPickupItems(true);
-					if (wrapper.isInKingdom(player.getWorld())) {
-						player.teleport(wrapper.getKingdom(player.getWorld()).getSpawn());
+                    if (wrapper.isInKingdom(ActiveWorld.getActiveWorld(player.getWorld()))) {
+                        player.teleport(wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())).getSpawn());
 					} else {
 						player.teleport(player.getWorld().getSpawnLocation());
 					}

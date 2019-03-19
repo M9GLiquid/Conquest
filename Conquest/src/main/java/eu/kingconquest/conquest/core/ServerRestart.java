@@ -1,28 +1,24 @@
-package eu.kingconquest.conquest.listener;
+package eu.kingconquest.conquest.core;
 
 import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
-import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.database.YmlStorage;
-import eu.kingconquest.conquest.util.Validate;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
-public class ServerRestartListener{ // Not a real Listener since it can't listend for a server restart :(
+public class ServerRestart {
 	private static PlayerWrapper wrapper;
 
-	public static void onServerRestart(Collection<? extends Player> players){
-		createNeutralKingdom();
-        players.forEach(player ->
+    public ServerRestart(Collection<? extends Player> onlinePlayers) {
+        onlinePlayers.forEach(player ->
                 YmlStorage.getWorlds().forEach(uniqueID -> {
                     if (player.getWorld().equals(Bukkit.getWorld(uniqueID))) {
 
                         wrapper = PlayerWrapper.getWrapper(player);
-                        if (!wrapper.isInKingdom(Bukkit.getWorld(uniqueID))) {
+                        if (!wrapper.isInKingdom(ActiveWorld.getActiveWorld(Bukkit.getWorld(uniqueID)))) {
                             new NeutralBoard(player);
                             return;
                         }
@@ -30,9 +26,9 @@ public class ServerRestartListener{ // Not a real Listener since it can't listen
                             case KINGDOMBOARD:
                                 new KingdomBoard(player);
                                 break;
-					/*case TRAPBOARD:
-							new TrapBoard(player);
-					break;*/
+                            /*case TRAPBOARD:
+                                new TrapBoard(player);
+					            break;*/
                             case PLAYERBOARD:
                                 new PlayerBoard(player);
                                 break;
@@ -42,16 +38,5 @@ public class ServerRestartListener{ // Not a real Listener since it can't listen
                         }
                     }
                 }));
-	}
-
-	private static void createNeutralKingdom(){
-		YmlStorage.getWorlds().forEach(uniqueID->{
-			if (Validate.isNull(Kingdom.getKingdom("Neutral", Bukkit.getWorld(uniqueID))))
-				new Kingdom(
-						"Neutral", 
-						null, 
-						Bukkit.getWorld(uniqueID).getSpawnLocation(), 
-						-1);
-		});
 	}
 }

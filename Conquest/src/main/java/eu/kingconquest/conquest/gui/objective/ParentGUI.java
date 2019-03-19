@@ -1,9 +1,6 @@
 package eu.kingconquest.conquest.gui.objective;
 
-import eu.kingconquest.conquest.core.ChestGui;
-import eu.kingconquest.conquest.core.Objective;
-import eu.kingconquest.conquest.core.Town;
-import eu.kingconquest.conquest.core.Village;
+import eu.kingconquest.conquest.core.*;
 import eu.kingconquest.conquest.util.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,9 +31,9 @@ public class ParentGUI extends ChestGui{
 		if (objective instanceof Village){
 			village = (Village) objective;
 
-			targets.addAll(Town.getTowns(player.getWorld()));
+            targets.addAll(Town.getTowns(ActiveWorld.getActiveWorld(player.getWorld())));
 		}else if(Validate.isNull(objective)){
-			targets = Town.getTowns(player.getWorld());
+            targets = Town.getTowns(ActiveWorld.getActiveWorld(player.getWorld()));
 		}
 		createGui(player, "Parent GUI", targets.size());
 		display();

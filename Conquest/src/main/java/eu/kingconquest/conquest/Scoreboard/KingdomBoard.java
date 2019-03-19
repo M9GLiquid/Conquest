@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.Scoreboard;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.core.Village;
@@ -8,19 +9,21 @@ import eu.kingconquest.conquest.util.Validate;
 import org.bukkit.entity.Player;
 
 public class KingdomBoard extends Board{
+
     @SuppressWarnings("all")
 	public KingdomBoard(Player player){
 		setType(BoardType.KINGDOMBOARD);
 		SimpleScoreboard board = new SimpleScoreboard();
-		
+        ActiveWorld activeWorld = ActiveWorld.getActiveWorld(player.getWorld());
+
 		int x = 0;
-		Kingdom kingdom = getWrapper(player).getKingdom(player.getWorld());
-		for (Village village : Village.getVillages(player.getWorld())){
+        Kingdom kingdom = getWrapper(player).getKingdom(activeWorld);
+        for (Village village : Village.getVillages(activeWorld)) {
 			if (village.getOwner().equals(kingdom))
 				if (!village.hasParent())
 					x++;
 		}
-		for (Town town : Town.getTowns(player.getWorld())){
+        for (Town town : Town.getTowns(activeWorld)) {
 			if (town.getOwner().equals(kingdom))
 				x++;
 		}

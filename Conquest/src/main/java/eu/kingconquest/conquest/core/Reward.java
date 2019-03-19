@@ -1,7 +1,6 @@
 package eu.kingconquest.conquest.core;
 
 import eu.kingconquest.conquest.util.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
@@ -15,20 +14,21 @@ public class Reward{
 	private long cooldown;
 	private UUID parent;
 	private String name;
-	private UUID world;
+    private World world;
 	private UUID uuid;
 	private long cost;
-	
-	public Reward(String name, World world, long cost, long cooldown, UUID parent){
+
+    public Reward(String name, ActiveWorld world, long cost, long cooldown, UUID parent) {
 		this(name,world,cost, cooldown,parent,null);
 	}
-	public Reward(String name, World world, long cost, long cooldown, UUID parent, UUID uuid){
+
+    public Reward(String name, ActiveWorld world, long cost, long cooldown, UUID parent, UUID uuid) {
 		this.name = name;
 		if(Validate.notNull(uuid))
 			this.uuid = uuid;
 		else
 			newUUID();
-		this.world = world.getUID();
+        this.world = world.getWorld();
 		this.cost = cost;
 		this.cooldown = cooldown;
 		this.parent = parent;
@@ -44,7 +44,7 @@ public class Reward{
 	}
 	
 	public World getWorld(){
-		return Bukkit.getWorld(world);
+        return world;
 	}
 	
 	public Long getCost(){
@@ -52,10 +52,10 @@ public class Reward{
 	}
 	
 	public Objective getParent(){
-		if (Validate.notNull(Town.getTown(parent, getWorld())))
-			return Town.getTown(parent, getWorld());
-		if (Validate.notNull(Village.getVillage(parent, getWorld())))
-			return Village.getVillage(parent, getWorld());
+        if (Validate.notNull(Town.getTown(parent, ActiveWorld.getActiveWorld(world))))
+            return Town.getTown(parent, ActiveWorld.getActiveWorld(world));
+        if (Validate.notNull(Village.getVillage(parent, ActiveWorld.getActiveWorld(world))))
+            return Village.getVillage(parent, ActiveWorld.getActiveWorld(world));
 		return null;
 	}
 	

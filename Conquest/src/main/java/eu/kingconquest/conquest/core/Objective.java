@@ -5,7 +5,6 @@ import eu.kingconquest.conquest.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -17,42 +16,56 @@ public abstract class Objective{
 	private Location location;
 	private Location spawn;
 	private UUID uniqueID;
-	Objective(String name, Location location, Location spawn, String uniqueID){
-		this.name = name;
-		this.location = location;
-		if (Validate.isNull(this.spawn))
-			this.spawn = location;
-		else
-			this.spawn = spawn;
-		if (Validate.notNull(uniqueID))
-			setUUID(uniqueID);
-		else
-			newUUID();
-	}
-	
+    private boolean update;
+
+    Objective(String name, Location location, Location spawn, String uniqueID) {
+        this.name = name;
+        this.location = location;
+        if (Validate.isNull(this.spawn))
+            this.spawn = location;
+        else
+            this.spawn = spawn;
+        if (Validate.notNull(uniqueID))
+            setUUID(uniqueID);
+        else
+            newUUID();
+        update(true);
+    }
+
+    public static ArrayList<Objective> getObjectives(ActiveWorld world) {
+        ArrayList<Objective> objectives = new ArrayList<>();
+        objectives.addAll(Town.getTowns(world));
+        objectives.addAll(Village.getVillages(world));
+        return objectives;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
 	public void setName(String name){
 		this.name = name;
-	}
-	public String getName(){
-		return this.name;
-	}
-	public void setLocation(Location location){
-		this.location = location;
+        update(true);
 	}
 	public Location getLocation(){
 		return this.location;
 	}
-	public World getWorld(){
-		return this.location.getWorld();
-	}
-	public void setSpawn(Location spawn){
-		this.spawn = spawn;
+
+    public void setLocation(Location location) {
+        this.location = location;
+        update(true);
+    }
+
+    public ActiveWorld getWorld() {
+        return ActiveWorld.getActiveWorld(location.getWorld());
 	}
 	public Location getSpawn(){
 		return this.spawn;
 	}
-	public void setOwner(Kingdom owner) {
-		this.owner = owner;
+
+    public void setSpawn(Location spawn) {
+        this.spawn = spawn;
+        update(true);
 	}
 	public Kingdom getOwner() {
 		return this.owner;
@@ -72,7 +85,6 @@ public abstract class Objective{
 	 * @param block - Material
 	 * @return void
 	 */
-	@SuppressWarnings("deprecation")
     public static void setBeaconBase(int rows, Location loc, Material block) {
         for (int x = 0; x < rows; x++) {
 			loc.setX(loc.getX() + 1);
@@ -94,7 +106,6 @@ public abstract class Objective{
         }
     }
 
-    @SuppressWarnings("deprecation")
     public void setBlock(Location loc, Material block) {
         Bukkit.getServer().getWorld(loc.getWorld().getName()).getBlockAt(loc).setType(block);
         if (owner != null) {
@@ -106,14 +117,19 @@ public abstract class Objective{
     }
 	public abstract boolean create(Player player);
 
-    @SuppressWarnings("all")
-    public abstract boolean delete(Player player);
+    public void setOwner(Kingdom owner) {
+        this.owner = owner;
+        update(true);
+    }
 	public abstract void updateGlass();
-	
-	public static ArrayList<Objective> getObjectives(World world){
-		ArrayList<Objective> objectives = new ArrayList<Objective>();
-		objectives.addAll(Town.getTowns(world));
-		objectives.addAll(Village.getVillages(world));
-		return objectives;
+
+    public abstract void delete(Player player);
+
+    public void update(boolean update) {
+        this.update = update;
+    }
+
+    public boolean getUpdate() {
+        return this.update;
 	}
 }

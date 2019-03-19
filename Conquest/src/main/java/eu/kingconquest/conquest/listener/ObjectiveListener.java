@@ -1,17 +1,17 @@
 package eu.kingconquest.conquest.listener;
 
-import eu.kingconquest.conquest.core.Arena;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.hook.EconAPI;
+import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class CreateListener implements Listener{
+public class ObjectiveListener implements Listener {
 	
 	@EventHandler
 	public void onCreate(ObjectiveCreateEvent event){
@@ -27,9 +27,8 @@ public class CreateListener implements Listener{
             Bukkit.dispatchCommand(
                     Bukkit.getConsoleSender(),
                     "/lp group " + kingdom.getName() + " permission set \"suffix.100.§6{" + kingdom.getColor() + kingdom.getName() + "§6}§r\"");
+            Cach.StaticKingdom = kingdom;
             new Message(event.getPlayer(), MessageType.CONSOLE, "{KingdomCreated}");
-        } else if (objective instanceof Arena) {
-            new Message(event.getPlayer(), MessageType.BROADCAST, "{ArenaCreated}"); //TODO Language file addition
         }
 		/*
 		 * Code to add to Objective on Creation

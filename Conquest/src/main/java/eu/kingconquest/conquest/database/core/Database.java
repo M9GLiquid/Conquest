@@ -1,4 +1,6 @@
-package eu.kingconquest.conquest.database;
+package eu.kingconquest.conquest.database.core;
+
+import eu.kingconquest.conquest.util.DatabaseType;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -13,6 +15,8 @@ import java.sql.Statement;
  * @author tips48
  */
 public abstract class Database {
+	protected static Database database;
+	private static DatabaseType databaseType;
 
 	protected Connection connection;
 
@@ -96,11 +100,23 @@ public abstract class Database {
 		return statement.executeQuery(query);
 	}
 
+	public static DatabaseType getType() {
+		return databaseType;
+	}
+
+	public static void setType(DatabaseType type) {
+		databaseType = type;
+	}
+
+	public static Database getDatabase() {
+		return database;
+	}
+
 	/**
 	 * Executes an Update SQL Query<br>
 	 * See {@link java.sql.Statement#executeUpdate(String)}<br>
 	 * If the connection is closed, it will be opened
-	 * 
+	 *
 	 * @param query
 	 *            Query to be run
 	 * @return Result Code, see {@link java.sql.Statement#executeUpdate(String)}
@@ -109,7 +125,7 @@ public abstract class Database {
 	 * @throws ClassNotFoundException
 	 *             If the driver cannot be found; see {@link #connect()}
 	 */
-	public int updateSQL(String query) throws SQLException,
+	public void updateSQL(String query) throws SQLException,
 			ClassNotFoundException {
 		if (!checkConnection()) {
 			connect();
@@ -117,6 +133,6 @@ public abstract class Database {
 
 		Statement statement = connection.createStatement();
 
-		return statement.executeUpdate(query);
+		statement.executeUpdate(query);
 	}
 }

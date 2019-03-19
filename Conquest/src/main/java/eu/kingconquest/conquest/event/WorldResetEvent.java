@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.event;
 
-import org.bukkit.World;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -10,9 +10,9 @@ public class WorldResetEvent extends Event{
     private boolean saveKingdoms;
     private boolean saveMembers;
     private Player player;
-    private World world;
+    private ActiveWorld world;
 
-    public WorldResetEvent(Player player, World world, boolean saveKingdoms, boolean saveMembers){
+    public WorldResetEvent(Player player, ActiveWorld world, boolean saveKingdoms, boolean saveMembers) {
     	this.saveKingdoms = saveKingdoms;
     	this.saveMembers = saveMembers;
     	this.player = player;
@@ -28,7 +28,8 @@ public class WorldResetEvent extends Event{
     public Player getPlayer(){
     	return player;
     }
-    public World getWorld(){
+
+    public ActiveWorld getWorld() {
     	return world;
     }
     

@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: eu.kingconquest.conquest.MainClass
+Main-Class: eu.kingconquest.conquest.Conquest

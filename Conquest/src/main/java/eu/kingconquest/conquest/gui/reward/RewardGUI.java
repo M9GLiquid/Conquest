@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.gui.reward;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Reward;
@@ -57,7 +58,7 @@ public class RewardGUI extends ChestGui{
             Reward reward = Reward.getRewards(player.getWorld()).get(getCurrentItem());
 			if (Validate.hasPerm(player, ".admin.kit"))
 				editButton(slot, reward);
-			else if (reward.getParent().getOwner().equals(wrapper.getKingdom(player.getWorld())))
+            else if (reward.getParent().getOwner().equals(wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld()))))
 				buyButton(slot, reward);
 			setCurrentItem(getCurrentItem() + 1);
 		}

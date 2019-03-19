@@ -1,7 +1,7 @@
 package eu.kingconquest.conquest.core;
 
-import eu.kingconquest.conquest.MainClass;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.Conquest;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.util.Cach;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
@@ -17,7 +17,7 @@ public class Teleport{
 		Cach.tpDelay = YmlStorage.getLong("TeleportDelay", objective.getLocation());
 		new Message(player, MessageType.CHAT, "{StartTP}");
 		Location loc = objective.getSpawn().clone();
-		Bukkit.getServer().getScheduler().runTaskLater(MainClass.getInstance(), () -> {
+        Bukkit.getServer().getScheduler().runTaskLater(Conquest.getInstance(), () -> {
 			if (objective instanceof Town) {
 				player.setInvulnerable(true);
 				loc.setY(256);
@@ -43,7 +43,7 @@ public class Teleport{
 	 */
 	private void startFall(Player player){
 		player.setFlying(false);
-		taskID = Bukkit.getServer().getScheduler().runTaskTimer(MainClass.getInstance(), () -> {
+        taskID = Bukkit.getServer().getScheduler().runTaskTimer(Conquest.getInstance(), () -> {
 			if (player.getLocation().subtract(0, 1, 0).getBlock().getType() != Material.AIR)
 				stopFall(player);
 		}, 0, 10).getTaskId();

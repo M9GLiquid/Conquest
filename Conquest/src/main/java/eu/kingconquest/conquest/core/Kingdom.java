@@ -1,21 +1,21 @@
 package eu.kingconquest.conquest.core;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.event.ObjectiveCreateEvent;
 import eu.kingconquest.conquest.event.ObjectiveDeleteEvent;
 import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Kingdom extends Objective{
+public class Kingdom extends Objective {
 	private UUID	king;
 	private int		color;
 
@@ -42,10 +42,7 @@ public class Kingdom extends Objective{
 	//Outposts
 	private ArrayList<Village> villages = new ArrayList<>();
 
-	//Getters
-	public Player getKing() {
-		return Bukkit.getPlayer(king);
-	}
+	private static ArrayList<Kingdom> removedKingdoms = new ArrayList<>();
 
 	/**
 	 * Get Kingdom Color by Integer
@@ -72,7 +69,8 @@ public class Kingdom extends Objective{
 	//Members
 	private ArrayList<UUID> members = new ArrayList<>();
 
-	public static ArrayList<Kingdom> getKingdoms(World world) {
+	public static ArrayList<Kingdom> getKingdoms(ActiveWorld world) {
+
 		ArrayList<Kingdom> kingdoms = new ArrayList<>();
 		Kingdom.getKingdoms().stream()
 				.filter(kingdom -> kingdom.getWorld().equals(world))
@@ -102,46 +100,20 @@ public class Kingdom extends Objective{
 		return villages;
 	}
 
-	/**
-	 * Kingdom Join
-	 *
-	 * @param player
-	 *            - Player Instance
-	 * @return void
-	 */
-	public void join(Player player){
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-
-		//Player joins this Kingdom
-		Cach.StaticKingdom = this;
-		new Message(player, MessageType.CHAT, "{JoinSuccess}");
-		wrapper.setKingdom(getUUID());
-		new KingdomBoard(player);
-		addMember(player.getUniqueId());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent add " + getName() + " " + MainClass.getInstance().getServer().getServerName());
+	public static Kingdom getKingdom(UUID ID, ActiveWorld world) {
+		for (Kingdom kingdom : getKingdoms())
+			if (kingdom.getUUID().equals(ID)
+					&& kingdom.getWorld().equals(world))
+				return kingdom;
+		return null;
 	}
 
-	/**
-	 * Kingdom Leave
-	 *
-	 * @param player
-	 *            - Player Instance
-	 * @return void
-	 */
-	public void leave(Player player){
-		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
-		if (!wrapper.getKingdom(player.getWorld()).equals(this))
-			return;
-		if (!getMembers().contains(player.getUniqueId()))
-			return;
-
-		//Player leaves this Kingdom
-		Cach.StaticKingdom = this;
-		new Message(player, MessageType.CHAT, "{LeaveSuccess}");
-		wrapper.setKingdom(null);
-		new NeutralBoard(player);
-		removeMember(player.getUniqueId());
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent remove " + getName() + " " + MainClass.getInstance().getServer().getServerName());
+	public static Kingdom getKingdom(String name, ActiveWorld world) {
+		for (Kingdom kingdom : getKingdoms(world))
+			if (kingdom.getName().equals(name)
+					&& kingdom.getWorld().equals(world))
+				return kingdom;
+		return null;
 	}
 
 	/**
@@ -289,24 +261,23 @@ public class Kingdom extends Objective{
 		this.members.addAll(members);
 	}
 
-	public static Kingdom getKingdom(UUID ID, World world){
-		for (Kingdom kingdom : getKingdoms())
-			if (kingdom.getUUID().equals(ID)
-					&& kingdom.getWorld().equals(world))
-				return kingdom;
-		return null;
-	}
-
-	public static Kingdom getKingdom(String name, World world){
-		for (Kingdom kingdom : getKingdoms(world))
-			if (kingdom.getName().equals(name)
-					&& kingdom.getWorld().equals(world))
-				return kingdom;
-		return null;
-	}
-
-	public static Kingdom getNeutral(World world){
+	public static Kingdom getNeutral(ActiveWorld world) {
 		return getKingdom("Neutral", world);
+	}
+
+	public static ArrayList<Kingdom> getRemovedKingdoms() {
+		return removedKingdoms;
+	}
+
+	public static void createNeutralKingdom() {
+		YmlStorage.getWorlds().forEach(uniqueID -> {
+			if (Validate.isNull(Kingdom.getKingdom("Neutral", ActiveWorld.getActiveWorld(Bukkit.getWorld(uniqueID)))))
+				new Kingdom(
+						"Neutral",
+						null,
+						Bukkit.getWorld(uniqueID).getSpawnLocation(),
+						-1);
+		});
 	}
 
 	public static void addKingdoms(ArrayList<Kingdom> kingdom){
@@ -343,17 +314,67 @@ public class Kingdom extends Objective{
 		return Marker.update(this);
 	}
 
+	//Getters
+	public Player getKing() {
+
+		if (Validate.isNull(Bukkit.getPlayer(king)))
+			return null;
+		else
+			return Bukkit.getPlayer(king);
+	}
+
+	/**
+	 * Kingdom Join
+	 *
+	 * @param player - Player Instance
+	 * @return void
+	 */
+	public void join(Player player) {
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+
+		//Player joins this Kingdom
+		Cach.StaticKingdom = this;
+		new Message(player, MessageType.CHAT, "{JoinSuccess}");
+		wrapper.setKingdom(getUUID());
+		new KingdomBoard(player);
+		addMember(player.getUniqueId());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent add " + getName() + " " + Conquest.getInstance().getServer().getName());
+	}
+
 	@Override
-	public boolean delete(Player player){
+	public void updateGlass() {
+	}
+
+	/**
+	 * Kingdom Leave
+	 *
+	 * @param player - Player Instance
+	 * @return void
+	 */
+	public void leave(Player player) {
+		PlayerWrapper wrapper = PlayerWrapper.getWrapper(player);
+		if (!wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())).equals(this))
+			return;
+		if (!getMembers().contains(player.getUniqueId()))
+			return;
+
+		//Player leaves this Kingdom
+		Cach.StaticKingdom = this;
+		new Message(player, MessageType.CHAT, "{LeaveSuccess}");
+		wrapper.setKingdom(null);
+		new NeutralBoard(player);
+		removeMember(player.getUniqueId());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " parent remove " + getName() + " " + Conquest.getInstance().getServer().getName());
+	}
+
+	@Override
+	public void delete(Player player) {
+		removedKingdoms.add(this);
 		Cach.StaticKingdom = this;
 		new Message(player, MessageType.CHAT, "{KingdomDeleted}");
 		Bukkit.getPluginManager().callEvent(new ObjectiveDeleteEvent(player, this)); //TODO add Objective Delete Listener (Remove as owner to all, remove anything assosiated with the kingdom)
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp deletegroup " + getName());
 		removeKingdom(this);
-		return Marker.remove(this);
-	}
-
-	@Override
-	public void updateGlass(){
+		Marker.remove(this);
 	}
 }

@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.hook;
 
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.util.Message;
 import eu.kingconquest.conquest.util.MessageType;
 import eu.kingconquest.conquest.util.Validate;

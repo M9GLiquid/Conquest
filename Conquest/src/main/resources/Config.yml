@@ -2,37 +2,52 @@
 # | Author: Thomas (Liquid) Lundqvist
 # | Server IP: play.kingconquest.eu
 # | Website: www.kingconquest.eu
-#========================================================
-# |                                                      Information
+# ========================================================
+# |                                  Information
+# | Database:
+# |   Backend:                                            FlatFile, SqlLite, MySQL
+# |   MySql:
+# |     Host: localhost                                   Host IP or Localhost
+# |     Database: conquest                                Database
+# |     User: root                                        Username
+# |     Password: root                                    Password
+# |     TablePrefix: kc_                                  MySQL Table Prefix ( kc_<table> ) Example: kc_kingdoms.
+# |     Port: 3306                                        MySQL Port, Default: 3306 <localhost>
+# |   SqlLite:
+# |     Database: conquest                                Name of Database, Defaults to conquest
+# |   FlatFile:
+# |     AutoSaveInterval: 5 #Minutes                      How often to save Flatfiles
 # | ActiveWorlds:
-# |  <World>: 								What worlds you want the plugin to be running on (name of World).
+# |  <World>: 								              What worlds you want the plugin to be running on (name of World).
 # |    General:
-# |     <RespawnDelay>: 			Delay before you are respawned (seconds).
-# |     <TeleportDelay>: 				Delay before you are teleported (seconds).
-# |   Income:
-# |     <CapCash>: 						Cash you are rewarded for capturing (instant and directly to the player).
-# |    <IncomeDelay>: 				Time before Capital Rewards are devided out (minutes).
-# |     <TownBaseValue>: 			Base value of Capturing a complete Objective.
-# |     <VillageBaseValue>: 		Base value of Capturing a Beacon.
+# |     <RespawnDelay>: 			                      Delay before you are respawned (seconds).
+# |     <TeleportDelay>: 				                  Delay before you are teleported (seconds).
+# |    Income:
+# |     <CapCash>: 						                  Cash you are rewarded for capturing (instant and directly to the player).
+# |     <IncomeDelay>: 				                      Time before Capital Rewards are devided out (minutes).
+# |     <TownBaseValue>: 			                      Base value of Capturing a complete Objective.
+# |     <VillageBaseValue>: 		                      Base value of Capturing a Beacon.
 # |    Combat:
-# |     <CaptureRate>:					Rate of which a player captures an objective (seconds)
-# |     <CaptureDistance>:			Amount of Blocks away from the outpost you can be to capture it (X|Z).
-# |     <CaptureAboveHeight>:	Amount of Blocks above the outpost you can be to capture it (Y).
-# |     <CaptureBelowHeight>:	Amount of Blocks below the outpost you can be to capture it (Y).
+# |     <CaptureRate>:					                  Rate of which a player captures an objective (seconds)
+# |     <CaptureDistance>:			                      Amount of Blocks away from the outpost you can be to capture it (X|Z).
+# |     <CaptureAboveHeight>:	                          Amount of Blocks above the outpost you can be to capture it (Y).
+# |     <CaptureBelowHeight>:	                          Amount of Blocks below the outpost you can be to capture it (Y).
 # ========================================================
 Database:
-  Backend: FlatFile
+  Backend: MySql
   MySql:
     Host: localhost
+    Database: conquest
     User: root
     Password: root
-    Database: Conquest
-    Port: 21
+    TablePrefix: kc_
+    Port: 3306
   SqlLite:
+    Database: conquest
   FlatFile:
     AutoSaveInterval: 5 #Minutes
 ActiveWorlds:
-  world:
+  World:
     General:
       Debug: false
       RespawnDelay: 10

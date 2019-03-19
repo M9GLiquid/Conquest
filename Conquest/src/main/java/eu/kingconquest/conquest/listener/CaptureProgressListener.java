@@ -1,10 +1,7 @@
 package eu.kingconquest.conquest.listener;
 
-import eu.kingconquest.conquest.core.Kingdom;
-import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.core.Rocket;
-import eu.kingconquest.conquest.core.Village;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.core.*;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.event.*;
 import eu.kingconquest.conquest.hook.EconAPI;
 import eu.kingconquest.conquest.util.*;
@@ -61,8 +58,8 @@ public class CaptureProgressListener implements Listener{
 
 		wrapper.callBoardType(player);
 
-		village.setOwner(wrapper.getKingdom(player.getWorld()));
-		village.setPreOwner(wrapper.getKingdom(player.getWorld()));
+        village.setOwner(wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())));
+        village.setPreOwner(wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())));
 		Marker.update(village);
 		village.updateGlass();
 

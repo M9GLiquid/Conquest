@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.hook;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.util.Validate;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -33,7 +33,7 @@ public class Vault {
 	 * @return boolean
 	 */
     private boolean setupPermissions(){
-		RegisteredServiceProvider<Permission> rsp = MainClass.getInstance().getServer().getServicesManager().getRegistration(Permission.class);
+        RegisteredServiceProvider<Permission> rsp = Conquest.getInstance().getServer().getServicesManager().getRegistration(Permission.class);
         if (Validate.isNull(rsp))
         	return false;
         perms = rsp.getProvider();
@@ -45,7 +45,7 @@ public class Vault {
 	 * @return boolean
 	 */
     private boolean setupEcoonomy(){
-		RegisteredServiceProvider<Economy> rsp = MainClass.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> rsp = Conquest.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
         if (Validate.isNull(rsp))
         	return false;
         econ = rsp.getProvider();

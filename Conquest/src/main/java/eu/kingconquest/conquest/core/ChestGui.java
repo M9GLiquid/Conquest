@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.core;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.gui.HomeGUI;
 import eu.kingconquest.conquest.gui.PlayerActionGUI;
 import eu.kingconquest.conquest.gui.util.Pagination;
@@ -79,7 +79,7 @@ public abstract class ChestGui extends Pagination{
 				open(player);
 				Bukkit.getScheduler().cancelTask(oldTaskID);
 			}
-        }.runTaskLater(MainClass.getInstance(), 1).getTaskId());
+        }.runTaskLater(Conquest.getInstance(), 1).getTaskId());
 		create(getItems(), str);
 		clearSlots();
 
@@ -108,7 +108,7 @@ public abstract class ChestGui extends Pagination{
         setSkullItem(0, head, p ->
                 new PlayerActionGUI(p, p, this), "&6" + player.getName() + " Information", "&7ScoreBoard: &3"
 				+ (Validate.notNull(wrapper.getBoardType()) ? wrapper.getBoardType() : "") + "\n&7Kingdom: &3"
-				+ (wrapper.isInKingdom(player.getWorld()) ? wrapper.getKingdom(player.getWorld()).getName() : "None")
+                + (wrapper.isInKingdom(ActiveWorld.getActiveWorld(player.getWorld())) ? wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())).getName() : "None")
 				+ "\n&7Money: &6" + EconAPI.getBalance(player) + "\n&7Friends : &a" + wrapper.getOnlineFriends()
 				+ "&6/&2" + wrapper.getNumberOfFriends() + " &aOnline" + "\n" + "\n&bClick for Settings");
 	}

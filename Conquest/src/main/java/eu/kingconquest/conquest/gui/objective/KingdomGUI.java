@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.gui.objective;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class KingdomGUI extends ChestGui{
 	private PlayerWrapper wrapper ;
+	private ActiveWorld activeWorld;
 	private Player p;
 	private ChestGui previous;
 
@@ -18,13 +20,14 @@ public class KingdomGUI extends ChestGui{
 		super();
 		this.p = p;
 		this.previous = (ChestGui) previousGui;
+		activeWorld = ActiveWorld.getActiveWorld(p.getWorld());
 		create();
 	}
 
 	@Override
 	public void create(){
 		wrapper = PlayerWrapper.getWrapper(p);
-		if (wrapper.isInKingdom(p.getWorld()))
+		if (wrapper.isInKingdom(activeWorld))
 			createGui(p, "&6Kingdom Gui", 18);
 		else
 			createGui(p, "&6Kingdom Gui", Kingdom.getKingdoms().size() -1);
@@ -51,10 +54,10 @@ public class KingdomGUI extends ChestGui{
 		
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (Kingdom.getKingdoms(p.getWorld()).size() -1) || getItems() < 1)
+			if (getCurrentItem() > (Kingdom.getKingdoms(activeWorld).size() - 1) || getItems() < 1)
 				break;
-			
-			Kingdom kingdom = Kingdom.getKingdoms(p.getWorld()).get(getCurrentItem());
+
+			Kingdom kingdom = Kingdom.getKingdoms(activeWorld).get(getCurrentItem());
 			if (kingdom.isNeutral()){
 				setCurrentItem(getCurrentItem()+1);
 				i--;
@@ -63,8 +66,8 @@ public class KingdomGUI extends ChestGui{
 			if (Validate.hasPerm(p, ".admin.edit.kingdom")) 
 				editButton(i, kingdom);
 			else if  (Validate.hasPerm(p, ".basic")){
-				if (wrapper.isInKingdom(p.getWorld())){
-					if (wrapper.getKingdom(p.getWorld()).equals(kingdom))
+				if (wrapper.isInKingdom(activeWorld)) {
+					if (wrapper.getKingdom(activeWorld).equals(kingdom))
 						if (Validate.hasPerm(p, ".basic.leave"))
 						leave(13, kingdom);
 				}else 
@@ -120,7 +123,6 @@ public class KingdomGUI extends ChestGui{
 		, displayInfo(kingdom));
 	}
 
-    @SuppressWarnings("all")
     private void leave(int slot, Kingdom kingdom) {
         setItem(9, new ItemStack(Material.REDSTONE_BLOCK), player -> {
                     setCurrentItem(0);

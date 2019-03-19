@@ -1,6 +1,7 @@
 package eu.kingconquest.conquest.gui.reward;
 
 import eu.kingconquest.conquest.chatinteract.NamePrompt;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Objective;
 import eu.kingconquest.conquest.core.Reward;
@@ -203,7 +204,7 @@ public class RewardCreateGUI extends ChestGui{
 
 	private void saveButton(){
 		setItem(8, new ItemStack(Material.EMERALD_BLOCK), player -> {
-			Reward reward = new Reward(name, player.getWorld(), cost, cooldown, parent.getUUID());
+            Reward reward = new Reward(name, ActiveWorld.getActiveWorld(player.getWorld()), cost, cooldown, parent.getUUID());
 			reward.addItems(0, items);
 			new RewardGUI(player, null);
 			close(player);

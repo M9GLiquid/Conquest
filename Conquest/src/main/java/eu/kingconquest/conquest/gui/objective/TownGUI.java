@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.gui.objective;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Town;
 import eu.kingconquest.conquest.util.Validate;
@@ -8,19 +9,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class TownGUI extends ChestGui{
-	private Player p;
+    private Player player;
 	private ChestGui previous;
-	
-	public TownGUI(Player p, Object previousGui) {
+
+    public TownGUI(Player player, Object previousGui) {
 		super();
-		this.p = p;
+        this.player = player;
 		this.previous = (ChestGui) previousGui;
 		create();
 	}
 
 	@Override
 	public void create(){
-		createGui( p, "&6Town Gui", Town.getTowns().size());
+        createGui(player, "&6Town Gui", Town.getTowns().size());
 		setCurrentItem(0);
 		display();
 	}
@@ -29,7 +30,7 @@ public class TownGUI extends ChestGui{
 	public void display() {
 		clearSlots();
 		//Slot 0
-		playerInfo(p);
+        playerInfo(player);
 		//Slot 1
 		homeButton();
 		//Slot 3
@@ -37,18 +38,18 @@ public class TownGUI extends ChestGui{
 		//Slot 5
 		next(this);
 		//Slot 7
-		if (Validate.hasPerm(p, ".admin.create.town"))
+        if (Validate.hasPerm(player, ".admin.create.town"))
 			createButton();
 		//Slot 8
 		backButton(previous);
 
 		//Slot MAIN
 		for(int i = 9; i < 54; i++) {
-			if (getCurrentItem() > (Town.getTowns(p.getWorld()).size() -1) || getItems() < 1)
+            if (getCurrentItem() > (Town.getTowns(ActiveWorld.getActiveWorld(player.getWorld())).size() - 1) || getItems() < 1)
 				break;
 
-			if (Validate.hasPerm(p, "admin.village.edit")) 
-				editButton(i, Town.getTowns(p.getWorld()).get(getCurrentItem()));
+            if (Validate.hasPerm(player, "admin.village.edit"))
+                editButton(i, Town.getTowns(ActiveWorld.getActiveWorld(player.getWorld())).get(getCurrentItem()));
 			
 			setCurrentItem(getCurrentItem()+1);
 		}

@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.gui;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.core.ChestGui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -65,7 +65,7 @@ public class HelpGUI extends ChestGui{
 			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
 				if(Desktop.isDesktopSupported()){
 					try{
-                        Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                        Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                     } catch (Exception ignored) {
                     }
 				}
@@ -80,7 +80,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }
@@ -98,7 +98,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }
@@ -122,7 +122,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }
@@ -143,7 +143,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }
@@ -170,7 +170,7 @@ public class HelpGUI extends ChestGui{
 			if (getClickType().equals(ClickType.DOUBLE_CLICK)){
 				if(Desktop.isDesktopSupported()){
 					try{
-                        Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                        Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                     } catch (Exception ignored) {
                     }
 				}
@@ -185,7 +185,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }
@@ -203,7 +203,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }
@@ -221,7 +221,7 @@ public class HelpGUI extends ChestGui{
                     if (getClickType().equals(ClickType.DOUBLE_CLICK)){
                         if(Desktop.isDesktopSupported()){
                             try{
-                                Desktop.getDesktop().browse(new URI(MainClass.getInstance().getDescription().getWebsite() + "/Wiki"));
+                                Desktop.getDesktop().browse(new URI(Conquest.getInstance().getDescription().getWebsite() + "/Wiki"));
                             } catch (Exception ignored) {
                             }
                         }

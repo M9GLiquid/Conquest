@@ -23,15 +23,15 @@ public class ConflictGUI extends ChestGui{
 		super();
 		this.previous = previousGui;
 		this.player = player;
-		owner = PlayerWrapper.getWrapper(player).getKingdom(player.getWorld());
+        owner = PlayerWrapper.getWrapper(player).getKingdom(ActiveWorld.getActiveWorld(player.getWorld()));
 		create();
 	}
 	
 	@Override
 	public void create(){
 		if (Validate.isNull(owner)) return;
-		
-		Village.getVillages(player.getWorld()).forEach(village->{
+
+        Village.getVillages(ActiveWorld.getActiveWorld(player.getWorld())).forEach(village -> {
 			if (!owner.equals(village.getOwner())) return;
 			if (village.hasParent()){ // IF Village has a parent
 				if (village.getParent().getOwner().equals(owner)) // If Village parent kingdom is same as players kingdom
@@ -42,7 +42,7 @@ public class ConflictGUI extends ChestGui{
 		});
 		
 		if (targets.size() < 1){
-			Cach.StaticKingdom = PlayerWrapper.getWrapper(player).getKingdom(player.getWorld());
+            Cach.StaticKingdom = PlayerWrapper.getWrapper(player).getKingdom(ActiveWorld.getActiveWorld(player.getWorld()));
 			new Message(player, MessageType.CHAT, "{NoCapturedTowns}");
 			new Message(player, MessageType.CHAT, "{ConflictGUIInfo}");
 			return;

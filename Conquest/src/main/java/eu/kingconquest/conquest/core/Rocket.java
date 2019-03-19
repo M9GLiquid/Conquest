@@ -1,6 +1,6 @@
 package eu.kingconquest.conquest.core;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.util.ColorManager;
 import eu.kingconquest.conquest.util.Validate;
 import org.bukkit.Bukkit;
@@ -57,6 +57,6 @@ public class Rocket{
 
 	public void spawn(){
 		int lifetime = 0;
-		Bukkit.getScheduler().runTaskLater(MainClass.getInstance(), () -> detonate(), lifetime);
+        Bukkit.getScheduler().runTaskLater(Conquest.getInstance(), this::detonate, lifetime);
 	}
 }

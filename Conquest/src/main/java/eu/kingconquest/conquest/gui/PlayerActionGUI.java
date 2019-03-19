@@ -3,6 +3,7 @@ package eu.kingconquest.conquest.gui;
 import eu.kingconquest.conquest.Scoreboard.BoardType;
 import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
@@ -20,17 +21,19 @@ public class PlayerActionGUI extends ChestGui{
 	private PlayerWrapper wrapper;
 	private Kingdom kingdom;
 	private ChestGui previous;
-	private Player target;
+    private Player targetPlayer;
 	private Player viewer;
+    private ActiveWorld activeWorld;
 	
 	public PlayerActionGUI(Player viewingPlayer, Player targetPlayer, ChestGui previousGui){
 		super();
 		this.viewer = viewingPlayer;
-		this.target = (Validate.notNull(targetPlayer) ? targetPlayer : viewingPlayer);
+        this.targetPlayer = (Validate.notNull(targetPlayer) ? targetPlayer : viewingPlayer);
 		this.previous = previousGui;
-		wrapper = PlayerWrapper.getWrapper(target);
-		if (wrapper.isInKingdom(target.getWorld()))
-			kingdom = wrapper.getKingdom(target.getWorld());
+        activeWorld = ActiveWorld.getActiveWorld(targetPlayer.getWorld());
+        wrapper = PlayerWrapper.getWrapper(targetPlayer);
+        if (wrapper.isInKingdom(activeWorld))
+            kingdom = wrapper.getKingdom(activeWorld);
 		create();
 	}
 	
@@ -45,7 +48,7 @@ public class PlayerActionGUI extends ChestGui{
 		clearSlots();
 		
 		//Slot 0
-		playerInfo(target);
+        playerInfo(targetPlayer);
 		//Slot 1
 		homeButton();
 		//Slot 3
@@ -60,23 +63,22 @@ public class PlayerActionGUI extends ChestGui{
 		
 		//Slot MAIN
 		if (Validate.hasPerm(viewer, ".admin.edit.player.*")){
-			if (Validate.notNull(wrapper.isInKingdom(target.getWorld()))){
+            if (Validate.notNull(wrapper.isInKingdom(activeWorld))) {
 				scoreboardButton(10);
-				if (!viewer.equals(target)) 
+                if (!viewer.equals(targetPlayer))
 					kickButton(12);
 				if (Validate.isNull(kingdom.getKing()))
 					promoteButton(14);
 				else if (Validate.notNull(kingdom.getKing()))
-					if (kingdom.getKing().getUniqueId().equals(target.getUniqueId()))
+                    if (kingdom.getKing().getUniqueId().equals(targetPlayer.getUniqueId()))
 						demoteButton(14);
 			}
 			moveToButton(16);
 		}else{
-			if (Validate.notNull(wrapper.isInKingdom(target.getWorld()))){
-				if (viewer.equals(target) && Validate.hasPerm(target, ".basic.leave")) 
+            if (Validate.notNull(wrapper.isInKingdom(activeWorld))) {
+                if (viewer.equals(targetPlayer) && Validate.hasPerm(targetPlayer, ".basic.leave"))
 					leaveButton(13);
-			}else
-				if (viewer.equals(target) && Validate.hasPerm(target, ".basic.join")) 
+            } else if (viewer.equals(targetPlayer) && Validate.hasPerm(targetPlayer, ".basic.join"))
 					joinButton(13);
 		}
 	}
@@ -90,12 +92,12 @@ public class PlayerActionGUI extends ChestGui{
 					wrapper.setBoardType(BoardType.PLAYERBOARD);
 					break;*/
 				case PLAYERBOARD: // if PlayerBoard witch to next in line
-					new KingdomBoard(target);
+                    new KingdomBoard(targetPlayer);
 					wrapper.setBoardType(BoardType.KINGDOMBOARD);
 					break;
 				case KINGDOMBOARD:// if KingdomBoard witch to next in line
 				default:
-					new PlayerBoard(target);
+                    new PlayerBoard(targetPlayer);
 					wrapper.setBoardType(BoardType.PLAYERBOARD); //When TrapBoard Implemented Change to it
 					break;
 					
@@ -113,7 +115,7 @@ public class PlayerActionGUI extends ChestGui{
     @SuppressWarnings("all")
 	private void joinButton(int slot){
         setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player ->
-                        new KingdomGUI(target, this), "&2Join a kingdom",
+                        new KingdomGUI(targetPlayer, this), "&2Join a kingdom",
 				"\n&c");
 	}
 
@@ -121,8 +123,8 @@ public class PlayerActionGUI extends ChestGui{
 	private void leaveButton(int slot){
 		setItem(slot, new ItemStack(Material.REDSTONE_BLOCK), player -> {
 			Cach.StaticKingdom = kingdom;
-			new Message(target, MessageType.CHAT, "{LeaveSuccess}");
-			kingdom.leave(target);
+                    new Message(targetPlayer, MessageType.CHAT, "{LeaveSuccess}");
+                    kingdom.leave(targetPlayer);
 			display();
 		}, "&4Leave " + kingdom.getColor() + kingdom.getName(), 
 				"\n&c\n");
@@ -134,8 +136,8 @@ public class PlayerActionGUI extends ChestGui{
     @SuppressWarnings("all")
     private void promoteButton(int slot){
 		setItem(slot, new ItemStack(Material.GOLD_INGOT), player -> {
-			
-		}, "&2Promote &f" + target.getDisplayName(), 
+
+                }, "&2Promote &f" + targetPlayer.getDisplayName(),
 				"&cComing Soon");
 		//Promote Count/Countess 		-> 	King/Queen
 		//Promote Baron/Baronesss 		-> 	Count/Countess
@@ -149,8 +151,8 @@ public class PlayerActionGUI extends ChestGui{
     @SuppressWarnings("all")
     private void demoteButton(int slot){
 		setItem(slot, new ItemStack(Material.IRON_INGOT), player -> {
-			
-		}, "&4Demote &f" + target.getDisplayName(), 
+
+                }, "&4Demote &f" + targetPlayer.getDisplayName(),
 				"&cComing Soon");
 		//Demote King/Queen				-> 	Count/Countess
 		//Demote Count/Countess 		-> 	Baron/Baroness
@@ -162,13 +164,13 @@ public class PlayerActionGUI extends ChestGui{
 	private void kickButton(int slot){
         setItem(slot, new ItemStack(Material.GOLDEN_AXE), player -> {
 			Cach.StaticKingdom = kingdom;
-			Cach.StaticPlayer = target;
+                    Cach.StaticPlayer = targetPlayer;
 			new Message(viewer, MessageType.CHAT, "{AdminRemoveSuccess}");
 			Cach.StaticPlayer = viewer;
-			new Message(target, MessageType.CHAT, "{RemoveSuccess}");
-			kingdom.leave(target);
+                    new Message(targetPlayer, MessageType.CHAT, "{RemoveSuccess}");
+                    kingdom.leave(targetPlayer);
 			display();
-		}, "&4Kick " +target.getDisplayName() + " from " + kingdom.getColor() + kingdom.getName(), 
+                }, "&4Kick " + targetPlayer.getDisplayName() + " from " + kingdom.getColor() + kingdom.getName(),
 				"\n&c\n");
 	}
 	
@@ -184,11 +186,11 @@ public class PlayerActionGUI extends ChestGui{
         if (Validate.notNull(ownerGui)){
             Cach.StaticKingdom = ownerGui.get();
             Cach.StaticPlayer = viewer;
-            new Message(target, MessageType.CHAT, "MoveSuccess");
-            Cach.StaticPlayer = target;
-            new Message(target, MessageType.CHAT, "AdminMoveSuccess");
-            kingdom.leave(target);
-            ownerGui.get().join(target);
+            new Message(targetPlayer, MessageType.CHAT, "MoveSuccess");
+            Cach.StaticPlayer = targetPlayer;
+            new Message(targetPlayer, MessageType.CHAT, "AdminMoveSuccess");
+            kingdom.leave(targetPlayer);
+            ownerGui.get().join(targetPlayer);
             ownerGui = null;
         }
 

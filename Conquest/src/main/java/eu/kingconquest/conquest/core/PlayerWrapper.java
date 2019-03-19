@@ -1,9 +1,9 @@
 package eu.kingconquest.conquest.core;
 
 import eu.kingconquest.conquest.Scoreboard.*;
+import eu.kingconquest.conquest.util.HierarchyRank;
 import eu.kingconquest.conquest.util.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -13,12 +13,21 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class PlayerWrapper{
-	
+
+    private static HashMap<UUID, PlayerWrapper> wrapper = new HashMap<>();
+    private ArrayList<UUID> friends = new ArrayList<>();
+    private HashMap<UUID, LocalDateTime> cooldowns = new HashMap<>();
+
+    private SimpleScoreboard scoreboard;
+    private HierarchyRank hierarchy = HierarchyRank.DEFAULT;
+    private BoardType boardType = BoardType.NEUTRALBOARD;
+
+    private UUID kingdom;
+
 	public PlayerWrapper(UUID uuid){
 		wrapper.put(uuid, this);
 	}
 
-    private static HashMap<UUID, PlayerWrapper> wrapper = new HashMap<>();
 	public void addFriend(Player friend){
 		friends.add(friend.getUniqueId());
 	}
@@ -45,8 +54,6 @@ public class PlayerWrapper{
 		return friends;
 	}
 
-    private ArrayList<UUID> friends = new ArrayList<>();
-    private HashMap<UUID, LocalDateTime> cooldowns = new HashMap<>();
 	public boolean isRewardReady(UUID reward){
 		if (Validate.isNull(cooldowns.get(reward)))
 			return true;
@@ -78,7 +85,6 @@ public class PlayerWrapper{
             return false;
     }
 
-    private UUID arena;
 	public void setRewardCooldown(UUID uuid, Long cooldown){
 		LocalDateTime date = LocalDateTime.now();
         cooldowns.put(uuid, date.plusMinutes(cooldown));
@@ -91,12 +97,12 @@ public class PlayerWrapper{
 			return null;
 		}
 	}
-	
-	private UUID kingdom;
+
 	public void setKingdom(UUID uuid){
 		this.kingdom = uuid;
 	}
-	public Kingdom getKingdom(World world){
+
+    public Kingdom getKingdom(ActiveWorld world) {
 		return Kingdom.getKingdom(kingdom, world);
 	}
 
@@ -111,29 +117,18 @@ public class PlayerWrapper{
         return c;
     }
 
-    public void setArena(UUID uuid) {
-        this.arena = uuid;
-    }
-
-    public Arena getArena(World world) {
-        return Arena.getArena(arena, world);
-    }
 	
 	public Player getPlayer(UUID uuid){
 		return Bukkit.getPlayer(uuid);
 	}
-	
-	private BoardType boardType = BoardType.NEUTRALBOARD;
-	public BoardType getBoardType(){
+
+
+    public BoardType getBoardType() {
 		return boardType;
 	}
 
-    public boolean isInKingdom(World world) {
+    public boolean isInKingdom(ActiveWorld world) {
         return Validate.notNull(Kingdom.getKingdom(kingdom, world));
-    }
-
-    public boolean isInArena(World world) {
-        return Validate.notNull(Arena.getArena(arena, world));
     }
 
     public void setBoardType(BoardType board) {
@@ -146,7 +141,6 @@ public class PlayerWrapper{
                 this.boardType = type;
     }
 
-    private SimpleScoreboard scoreboard;
 
     public void setScoreboard(SimpleScoreboard scoreboard) {
         this.scoreboard = scoreboard;
@@ -156,19 +150,20 @@ public class PlayerWrapper{
         return scoreboard;
     }
 
-    @SuppressWarnings("all")
-    public Board callBoardType(Player player){
+    public void callBoardType(Player player) {
         switch (boardType){
             case KINGDOMBOARD:
-                return new KingdomBoard(player);
+                new KingdomBoard(player);
+                return;
 				/*case TRAPBOARD:
 			return new TrapBoard(player);
 			break;*/
             case PLAYERBOARD:
-                return new PlayerBoard(player);
+                new PlayerBoard(player);
+                return;
             case NEUTRALBOARD:
             default:
-                return new NeutralBoard(player);
+                new NeutralBoard(player);
         }
     }
 	public static PlayerWrapper getWrapper(Player player){
@@ -189,4 +184,12 @@ public class PlayerWrapper{
 	public static void clear(){
 		wrapper.clear();
 	}
+
+    public HierarchyRank getHierarchy() {
+        return hierarchy;
+    }
+
+    public void setHierarchy(HierarchyRank hierarchy) {
+        this.hierarchy = hierarchy;
+    }
 }

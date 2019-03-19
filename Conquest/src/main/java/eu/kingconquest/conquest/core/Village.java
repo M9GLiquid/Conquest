@@ -6,7 +6,6 @@ import eu.kingconquest.conquest.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
@@ -47,6 +46,7 @@ public class Village extends Objective{
 		addVillage(this);
 		Marker.update(this);
 		Marker.setDescription(this);
+        update(true);
 	}
 	
 	//Getters
@@ -68,16 +68,22 @@ public class Village extends Objective{
 	public Town getParent(){
 		return parent;
 	}
-	public void setParent(Town parent){
-		this.parent = parent;
-		//If parent owner not same as this owner update parent to neutral
-		if (Validate.notNull(parent))
-			if (!parent.getOwner().equals(getOwner()))
-				parent.setNeutral();
-	}
-	public void removeParent(){
-		this.parent.removeChild(this);
-		this.parent = null;
+
+    public static ArrayList<Village> getVillages(ActiveWorld world) {
+        ArrayList<Village> villages = new ArrayList<>();
+        Village.getVillages().stream()
+                .filter(village -> village.getWorld().equals(world))
+                .forEach(villages::add);
+        return villages;
+    }
+
+    public static ArrayList<Village> getVillages(String name, ActiveWorld world) {
+        ArrayList<Village> villages = new ArrayList<>();
+        for (Village village : getVillages())
+            if (village.getName().equals(name)
+                    && village.getWorld().equals(world))
+                villages.add(village);
+        return villages;
 	}
 	
 	private Kingdom preOwner = null;
@@ -99,23 +105,24 @@ public class Village extends Objective{
 		if (getProgress() > 100.0d)
 			this.progress = 100.0d;
 	}
-	
-	
-	/**
-	 * Set Village as Neutral
-	 * @return void
-	 */
-	public void setNeutral(){
-		setOwner(Kingdom.getKingdom("Neutral", getWorld()));
-		setProgress(0.0d);
-		updateGlass();
-		Marker.update(this);
+
+    public static Village getVillage(UUID ID, ActiveWorld world) {
+        for (Village village : getVillages())
+            if (village.getUUID().equals(ID)
+                    && village.getWorld().equals(world))
+                return village;
+        return null;
 	}
 
 	private static ArrayList<Village> villages = new ArrayList<>();
-	
-	public void setPreOwner(Kingdom kingdom){
-		this.preOwner = kingdom;
+
+    public void setParent(Town parent) {
+        this.parent = parent;
+        //If parent owner not same as this owner update parent to neutral
+        if (Validate.notNull(parent))
+            if (!parent.getOwner().equals(getOwner()))
+                parent.setNeutral();
+        update(true);
 	}
 	//boolean checks
 	/**
@@ -129,8 +136,11 @@ public class Village extends Objective{
 	public HashMap<UUID, UUID> getAttackers(){
 		return attackers;
 	}
-	public void addAttacker(Player player){
-		attackers.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getUUID());
+
+    public void removeParent() {
+        this.parent.removeChild(this);
+        this.parent = null;
+        update(true);
 	}
 	public void removeAttacker(Player player){
 		attackers.remove(player.getUniqueId());
@@ -139,27 +149,29 @@ public class Village extends Objective{
 		attackers.clear();
 	}
 
-	public static ArrayList<Village> getVillages(World world) {
-		ArrayList<Village> villages = new ArrayList<>();
-		Village.getVillages().stream()
-				.filter(village -> village.getWorld().equals(world))
-				.forEach(villages::add);
-		return villages;
-	}
+    /**
+     * Set Village as Neutral
+     *
+     * @return void
+     */
+    public void setNeutral() {
+        setOwner(Kingdom.getKingdom("Neutral", getWorld()));
+        setProgress(0.0d);
+        updateGlass();
+        Marker.update(this);
+        update(true);
+    }
 
-	public static ArrayList<Village> getVillages(String name, World world) {
-		ArrayList<Village> villages = new ArrayList<>();
-		for (Village village : getVillages())
-			if (village.getName().equals(name)
-					&& village.getWorld().equals(world))
-				villages.add(village);
-		return villages;
+    public void setPreOwner(Kingdom kingdom) {
+        update(true);
+        this.preOwner = kingdom;
 	}
 	public HashMap<UUID, UUID> getDefenders(){
 		return defenders;
-	}
-	public  void addDefender(Player player){
-		defenders.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(player.getWorld()).getUUID());
+    }
+
+    public void addAttacker(Player player) {
+        attackers.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(ActiveWorld.getActiveWorld(player.getWorld())).getUUID());
 	}
 	public  void removeDefender(Player player){
 		defenders.remove(player.getUniqueId());
@@ -182,13 +194,10 @@ public class Village extends Objective{
 	 */
 	public boolean hasParent() {
 		return Validate.notNull(parent);
-	}
-	public static Village getVillage(UUID ID, World world) {
-		for (Village village : getVillages())
-			if (village.getUUID().equals(ID) 
-					&& village.getWorld().equals(world))
-				return village;
-		return null;
+    }
+
+    public void addDefender(Player player) {
+        defenders.put(player.getUniqueId(), PlayerWrapper.getWrapper(player).getKingdom(ActiveWorld.getActiveWorld(player.getWorld())).getUUID());
 	}
 
 	public boolean isCapturing(Player player) {
@@ -268,14 +277,16 @@ public class Village extends Objective{
 			Cach.StaticVillage = this;
 			Cach.StaticKingdom = this.getOwner();
 			new Message(player, MessageType.CHAT, "{VillageCreated}");
+            update(true);
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
-		}
-	}
-	@Override
-	public boolean delete(Player player){
+        }
+    }
+
+    @Override
+    public void delete(Player player) {
 		try{
 			Location loc = getLocation().clone();
 			for (int y = 0; y <= 2; y++){
@@ -305,13 +316,10 @@ public class Village extends Objective{
 			new Message(player, MessageType.CHAT, "{VillageDeleted}");
 			removeVillage(this);
 			Marker.remove(this);
-			return true;
-			
-			
-		}catch (Exception e){
+            update(true);
+        } catch (Exception e) {
 			e.printStackTrace();
-			return false;
-		}
+        }
 	}
 	@Override
 	public void updateGlass(){

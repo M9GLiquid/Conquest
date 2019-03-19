@@ -1,6 +1,7 @@
 package eu.kingconquest.conquest.listener;
 
 import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.CaptureProcess;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.core.Village;
@@ -31,7 +32,7 @@ public class ProximityZoneListener implements Listener{
 			return;
 		
 		// If Defenders  Kingdom is owner of Objective
-		if (village.getOwner().equals(wrapper.getKingdom(player.getWorld()))){
+        if (village.getOwner().equals(wrapper.getKingdom(ActiveWorld.getActiveWorld(player.getWorld())))) {
 			village.removeAttacker(player);
 			village.addDefender(player);
 		}else{

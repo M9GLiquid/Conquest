@@ -1,11 +1,12 @@
 package eu.kingconquest.conquest.listener;
 
-import eu.kingconquest.conquest.MainClass;
+import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.Scoreboard.KingdomBoard;
 import eu.kingconquest.conquest.Scoreboard.NeutralBoard;
 import eu.kingconquest.conquest.Scoreboard.PlayerBoard;
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.PlayerWrapper;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.hook.Vault;
 import eu.kingconquest.conquest.util.Validate;
 import org.bukkit.Bukkit;
@@ -27,10 +28,10 @@ public class PlayerJoinListener implements Listener{
 		Player player = e.getPlayer();
 		YmlStorage.getWorlds().forEach(uniqueID->{
 			if (!Validate.hasPerm(player, ".basic"))
-				Vault.perms.playerAdd(player, MainClass.getInstance().getName() + ".basic");
+                Vault.perms.playerAdd(player, Conquest.getInstance().getName() + ".basic");
 			if (player.getWorld().equals(Bukkit.getWorld(uniqueID))){
 				wrapper = PlayerWrapper.getWrapper(player);
-				if (!wrapper.isInKingdom(Bukkit.getWorld(uniqueID))){
+                if (!wrapper.isInKingdom(ActiveWorld.getActiveWorld(Bukkit.getWorld(uniqueID)))) {
 					new NeutralBoard(player);
 					return;
 				}

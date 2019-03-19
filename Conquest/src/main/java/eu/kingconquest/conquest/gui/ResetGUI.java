@@ -1,11 +1,11 @@
 package eu.kingconquest.conquest.gui;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.ChestGui;
 import eu.kingconquest.conquest.event.ServerResetEvent;
 import eu.kingconquest.conquest.event.WorldResetEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,14 +14,14 @@ public class ResetGUI extends ChestGui{
 	private boolean saveMembers = false;
 	private boolean serverReset = false;
 	private ChestGui previous;
-	private World world;
+    private ActiveWorld world;
 	private Player player;
 
 	public ResetGUI(Player player, ChestGui previousGui){
 		super();
 		this.player = player;
 		this.previous = previousGui;
-		this.world = player.getWorld();
+        this.world = ActiveWorld.getActiveWorld(player.getWorld());
 		
 		create();
 	}
@@ -63,7 +63,7 @@ public class ResetGUI extends ChestGui{
 	private void infoButton(){
 		String str =  "";
 		if (!serverReset)
-			str = "\n&6 -: World: &7" + world.getName();
+            str = "\n&6 -: World: &7" + world.getWorld().getName();
 		setItem(4, new ItemStack(Material.PAPER), player -> {
 		}, "&6Current Settings:", 
 				"\n&6Server Reset: &7" + serverReset

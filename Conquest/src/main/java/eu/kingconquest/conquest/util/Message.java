@@ -1,7 +1,7 @@
 package eu.kingconquest.conquest.util;
 
-import eu.kingconquest.conquest.MainClass;
-import eu.kingconquest.conquest.database.YmlStorage;
+import eu.kingconquest.conquest.Conquest;
+import eu.kingconquest.conquest.database.core.YmlStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -35,7 +35,7 @@ public class Message{
 			Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} &6[&c" + type.getName() + "&6] &4" + message));
 			break;
 		case BROADCAST:
-			MainClass.getInstance().getServer().broadcastMessage(getMessage("&6[&c" + type.getName() + "&6] " + message));
+            Conquest.getInstance().getServer().broadcastMessage(getMessage("&6[&c" + type.getName() + "&6] " + message));
 			break;
 		case CONSOLE:
 			Bukkit.getConsoleSender().sendMessage(getMessage(" {Prefix} &d" + message));

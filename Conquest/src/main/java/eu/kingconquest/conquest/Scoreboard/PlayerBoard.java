@@ -1,5 +1,6 @@
 package eu.kingconquest.conquest.Scoreboard;
 
+import eu.kingconquest.conquest.core.ActiveWorld;
 import eu.kingconquest.conquest.core.Kingdom;
 import eu.kingconquest.conquest.core.PlayerWrapper;
 import eu.kingconquest.conquest.hook.Vault;
@@ -12,10 +13,11 @@ public class PlayerBoard extends Board{
 		setType(BoardType.PLAYERBOARD);
 		SimpleScoreboard board = new SimpleScoreboard();
 		PlayerWrapper wrapper = getWrapper(player);
-		Kingdom kingdom = 
-				(wrapper.isInKingdom(player.getWorld()) 
-				? wrapper.getKingdom(player.getWorld()) 
-						: Kingdom.getNeutral(player.getWorld()));
+        ActiveWorld activeWorld = ActiveWorld.getActiveWorld(player.getWorld());
+        Kingdom kingdom =
+                (wrapper.isInKingdom(activeWorld)
+                        ? wrapper.getKingdom(activeWorld)
+                        : Kingdom.getNeutral(activeWorld));
 
 		int i = 13;
 		board.setTitle("&6[&ePlayer Information&6]");

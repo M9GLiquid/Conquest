@@ -1,9 +1,9 @@
 package eu.kingconquest.conquest.util;
 
 public enum CommandType {
-	PLAYERCMD("PlayerCmd"),
-	EVERYONECMD("EveryoneCmd"),
-	CONSOLECMD("ConsoleCmd");
+    PLAYER("Player Command"),
+    EVERYONE("Everyone Command"),
+    CONSOLE("Console Command");
 
 	private String name;
 

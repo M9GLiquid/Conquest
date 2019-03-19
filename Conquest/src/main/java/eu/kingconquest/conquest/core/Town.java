@@ -6,7 +6,6 @@ import eu.kingconquest.conquest.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -22,6 +21,23 @@ public class Town extends Objective{
 				,spawn
 				,owner);
 	}
+
+    private static ArrayList<Town> towns = new ArrayList<>();
+
+    //Getters
+
+    /**
+     * Get Arraylist of Child Outposts
+     *
+     * @return Arraylist<Outpost>
+     */
+    public ArrayList<Village> getChildren() {
+        return children;
+    }
+
+    //Setters
+    private ArrayList<Village> children = new ArrayList<>();
+
 	public Town(String name, String uniqueID, Location loc, Location spawn, Kingdom owner){
 		super(name, loc, spawn, uniqueID);
 		if (Validate.notNull(owner))
@@ -32,55 +48,41 @@ public class Town extends Objective{
 		addTown(this);
 		Marker.update(this);
 		Marker.setDescription(this);
-	}
-	
-	//Getters
-	/**
-	 * Get Arraylist of Child Outposts
-	 * @return Arraylist<Outpost>
-	 */
-	public ArrayList<Village> getChildren(){
-		return children;
-	}
-	
-	//Setters
-	/**
-	 * Set Outpost as Neutral
-	 * @return void
-	 */
-	public void setNeutral(){
-		setOwner(Kingdom.getKingdom("Neutral", getWorld()));
-		updateGlass();
-		Marker.update(this);
-	}
+        update(true);
+    }
 
-	private static ArrayList<Town> towns = new ArrayList<>();
-	private ArrayList<Village> children = new ArrayList<>();
-
-	public static ArrayList<Town> getTowns(World world) {
+    public static ArrayList<Town> getTowns(ActiveWorld world) {
 		ArrayList<Town> towns = new ArrayList<>();
 		Town.getTowns().stream()
 		.filter(town->town.getWorld().equals(world))
 				.forEach(towns::add);
 		return towns;
-	}
+    }
 
-	public static Town getTown(String name, World world) {
+    public static Town getTown(String name, ActiveWorld world) {
 		for (Town town : getTowns())
 			if (town.getUUID().equals(UUID.fromString(name))
 					&& town.getWorld().equals(world))
 				return town;
 		return null;
-	}
+    }
 
-	public static ArrayList<Town> getTowns(String name, World world) {
-		ArrayList<Town> townect = new ArrayList<>();
-		for (Town town : getTowns())
-			if (town.getName().equals(name)
-					&& town.getWorld().equals(world))
-				townect.add(town);
-		return townect;
-	}
+    public static ArrayList<Town> getTowns(String name, ActiveWorld world) {
+        ArrayList<Town> townect = new ArrayList<>();
+        for (Town town : getTowns())
+            if (town.getName().equals(name)
+                    && town.getWorld().equals(world))
+                townect.add(town);
+        return townect;
+    }
+
+    public static Town getTown(UUID ID, ActiveWorld world) {
+        for (Town town : getTowns(world))
+            if (town.getUUID().equals(ID)
+                    && town.getWorld().equals(world))
+                return town;
+        return null;
+    }
 
 	public static void addTowns(ArrayList<Town> tempTowns) {
 		towns.addAll(tempTowns);
@@ -92,14 +94,18 @@ public class Town extends Objective{
 
 	public static void removeTowns(ArrayList<Town> tempTowns) {
 		towns.removeAll(tempTowns);
-	}
+    }
 
-	public static Town getTown(UUID ID, World world) {
-		for (Town town : getTowns(world))
-			if (town.getUUID().equals(ID)
-					&& town.getWorld().equals(world))
-				return town;
-		return null;
+    /**
+     * Set Outpost as Neutral
+     *
+     * @return void
+     */
+    public void setNeutral() {
+        update(true);
+        setOwner(Kingdom.getKingdom("Neutral", getWorld()));
+        updateGlass();
+        Marker.update(this);
 	}
 
 	public static boolean hasTowns() {
@@ -128,10 +134,11 @@ public class Town extends Objective{
 	 *
 	 * @param village - Village
 	 * @return void
-	 */
-	public void addChild(Village village) {
-		children.add(village);
-	}
+     */
+    public void addChild(Village village) {
+        update(true);
+        children.add(village);
+    }
 	public static void removeTown(Town town) {
 		towns.remove(town);
 	}
@@ -141,20 +148,22 @@ public class Town extends Objective{
 	 *
 	 * @param villages - ArrayList<Village>
 	 * @return void
-	 */
-	public void addChildren(ArrayList<Village> villages) {
-		children = villages;
-	}
+     */
+    public void addChildren(ArrayList<Village> villages) {
+        update(true);
+        children = villages;
+    }
 
 	/**
 	 * Remove Towns bound Outposts
 	 *
 	 * @param village - Village
 	 * @return void
-	 */
-	public void removeChild(Village village){
-		children.remove(village);
-	}
+     */
+    public void removeChild(Village village) {
+        update(true);
+        children.remove(village);
+    }
 	
 	@Override
 	public boolean create(Player player){
@@ -194,14 +203,16 @@ public class Town extends Objective{
 			
 			Cach.StaticTown = this;
 			new Message(player, MessageType.CHAT, "{TownCreated}");
+            update(true);
 			return true;
 		}catch (Exception e){
 			e.printStackTrace();
-			return false;
-		}
-	}
-	@Override
-	public boolean delete(Player player){
+            return false;
+        }
+    }
+
+    @Override
+    public void delete(Player player){
 		try{
 			Location loc = getLocation().clone();
 			for (int y = 0; y <= 1; y++){
@@ -245,10 +256,9 @@ public class Town extends Objective{
 			new Message(player, MessageType.CHAT, "{TownDeleted}");
 			removeTown(this);
 			Marker.remove(this);
-			return true;
+            update(true);
 		}catch (Exception e){
 			e.printStackTrace();
-			return false;
 		}
 	}
 	@Override
