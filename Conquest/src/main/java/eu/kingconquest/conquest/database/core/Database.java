@@ -1,6 +1,8 @@
 package eu.kingconquest.conquest.database.core;
 
 import eu.kingconquest.conquest.util.DatabaseType;
+import eu.kingconquest.conquest.util.Message;
+import eu.kingconquest.conquest.util.MessageType;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,6 +17,7 @@ import java.sql.Statement;
  * @author tips48
  */
 public abstract class Database {
+    private static String outputStream = "&6| - &cFailed:";
 	protected static Database database;
 	private static DatabaseType databaseType;
 
@@ -135,4 +138,13 @@ public abstract class Database {
 
 		statement.executeUpdate(query);
 	}
+
+
+    public static void output() {
+        new Message(MessageType.CONSOLE, outputStream);
+    }
+
+    public static void setOutputStream(String stream) {
+        outputStream = stream;
+    }
 }

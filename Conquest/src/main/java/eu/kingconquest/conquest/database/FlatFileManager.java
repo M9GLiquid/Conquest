@@ -2,6 +2,7 @@ package eu.kingconquest.conquest.database;
 
 import eu.kingconquest.conquest.Conquest;
 import eu.kingconquest.conquest.core.*;
+import eu.kingconquest.conquest.database.core.Database;
 import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.util.DataType;
 import eu.kingconquest.conquest.util.Message;
@@ -28,7 +29,6 @@ import java.util.stream.Stream;
  */
 public class FlatFileManager extends YamlConfiguration {
     private static String tablePrefix;
-    private static String outputStream = "&6| - &cFailed:";
     private static int saveTaskID = 0;
     private YmlStorage config;
 
@@ -37,14 +37,15 @@ public class FlatFileManager extends YamlConfiguration {
         switch (option) {
             case LOAD:
                 //load();
-                outputStream = "&6| - &aSuccess:";
+
+                Database.setOutputStream("&6| - &aSuccess:"); //TODO: Move into last executed method for Failed/Success state (Try/Catch)
                 break;
             case REMOVE:
                 //remove();
                 break;
             case SAVE:
                 //save();
-                outputStream = "&6| - &aSuccess:";
+                Database.setOutputStream("&6| - &aSuccess:"); //TODO: Move into last executed method for Failed/Success state (Try/Catch)
                 break;
             case CREATE:
                 break;
@@ -500,9 +501,5 @@ public class FlatFileManager extends YamlConfiguration {
 
     public static void clear() {
         Bukkit.getScheduler().cancelTask(saveTaskID);
-    }
-
-    public static void output() {
-        new Message(MessageType.CONSOLE, outputStream);
     }
 }

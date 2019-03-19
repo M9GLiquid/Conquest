@@ -65,8 +65,8 @@ public class Conquest extends JavaPlugin implements Listener {
 				new MysqlManager(DataType.LOAD);
 				break;
 			case SQLITE:
-				//new SQLiteManager(DataType.CREATE);
-				//new SQLiteManager(DataType.LOAD);
+                new SQLiteManager(DataType.CREATE);
+                new SQLiteManager(DataType.LOAD);
 				break;
 		}
 
@@ -77,7 +77,7 @@ public class Conquest extends JavaPlugin implements Listener {
 		new Message(MessageType.CONSOLE, "&6|&2 Configs:");
 		YmlStorage.output();
 		new Message(MessageType.CONSOLE, "&6|&2 Database:");
-		MysqlManager.output();
+        Database.output();
 		new Message(MessageType.CONSOLE, "&6| -- &6" + Database.getType());
 		new Message(MessageType.CONSOLE, "&6|=======================================|");
 
@@ -95,13 +95,13 @@ public class Conquest extends JavaPlugin implements Listener {
 		new Message(MessageType.DEBUG, "Kingdom Created " + kingdom.getColor() + kingdom.getName());
 
 		Town town = new Town(
-				"Orion",
+                "Bagdad",
 				new Location(Bukkit.getWorlds().get(0), 123.9D, 123.8D, 123.7D, 123.6F, 123.5F),
 				new Location(Bukkit.getWorlds().get(0), 123.9D, 123.8D, 123.7D, 123.6F, 123.5F),
 				kingdom);
 		new Message(MessageType.DEBUG, "Town Created " + kingdom.getColor() + town.getName());
 		Village village = new Village(
-				"Orion",
+                "ElAmain",
 				new Location(Bukkit.getWorlds().get(0), 123.9D, 123.8D, 123.7D, 123.6F, 123.5F),
 				new Location(Bukkit.getWorlds().get(0), 123.9D, 123.8D, 123.7D, 123.6F, 123.5F),
 				kingdom,
@@ -162,17 +162,7 @@ public class Conquest extends JavaPlugin implements Listener {
 		new Message(MessageType.CONSOLE, "&6|&2 Configs:");
 		YmlStorage.output();
 		new Message(MessageType.CONSOLE, "&6|&2 Database:");
-		switch (Database.getType()) {
-			case FLATFILE:
-				FlatFileManager.output();
-				break;
-			case MYSQL:
-				MysqlManager.output();
-				break;
-			case SQLITE:
-				SQLiteManager.output();
-				break;
-		}
+        Database.output();
 		new Message(MessageType.CONSOLE, "&6| -- &6" + Database.getType());
 		new Message(MessageType.CONSOLE, "&6|=======================================|");
 

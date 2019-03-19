@@ -1,11 +1,6 @@
 package eu.kingconquest.conquest.database.core;
 
 import eu.kingconquest.conquest.database.FlatFileManager;
-import eu.kingconquest.conquest.database.MysqlManager;
-import eu.kingconquest.conquest.util.DataType;
-import eu.kingconquest.conquest.util.DatabaseType;
-import eu.kingconquest.conquest.util.Message;
-import eu.kingconquest.conquest.util.MessageType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,8 +10,7 @@ public class DatabaseManager {
 	private static Connection connection;
 
 	public DatabaseManager() {
-		YmlStorage config = YmlStorage.getConfig("Config");
-        switch (DatabaseType.valueOf(config.getString("Database.Backend").toUpperCase())) {
+        switch (Database.getType()) {
             case FLATFILE:
                 FlatFileManager.load();
                 break;
@@ -37,29 +31,25 @@ public class DatabaseManager {
                         pass);
                 try {
                     connection = mysql.connect();
-                    new MysqlManager(DataType.CREATE);
                 } catch (SQLException e) {
                     try {
                         connection.close();
                     } catch (SQLException exception) {
                         exception.printStackTrace();
                     }
+                    e.printStackTrace();
                 }
                 break;
             case SQLITE:
                 SQLite sqlite = new SQLite();
                 try {
                     connection = sqlite.connect();
-                    new Message(MessageType.CONSOLE, "-> SQLite, Connected.");
                 } catch (ClassNotFoundException | SQLException e) {
                     try {
                         connection.close();
-                        new Message(MessageType.CONSOLE, "-> SQLite, Closed.");
                     } catch (SQLException exception) {
                         exception.printStackTrace();
-                        new Message(MessageType.CONSOLE, "-> SQLite, Failed.");
                     }
-                    new Message(MessageType.CONSOLE, "-> SQLite, Failed.");
                     e.printStackTrace();
                 }
                 break;

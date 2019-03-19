@@ -237,9 +237,9 @@ public class YmlStorage extends YamlConfiguration {
                     ? config.getString("Database.MySql.Username") : "root"));
             strings.put("Password", (config.getString("Database.MySql.Password") != null
                     ? config.getString("Database.MySql.Password") : "root"));
-            strings.put("TablePrefix", (config.getString("Database.MySql.TablePrefix") != null
-                    ? config.getString("Database.MySql.TablePrefix") : "conquest_"));
         }
+        strings.put("TablePrefix", (config.getString("Database.TablePrefix") != null
+                ? config.getString("Database.TablePrefix") : "conquest_"));
     }
 
     public static boolean hasConfigs() {

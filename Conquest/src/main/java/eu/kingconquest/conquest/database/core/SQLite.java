@@ -17,14 +17,21 @@ import java.sql.SQLException;
  */
 public class SQLite extends Database {
 
+
+    /**
+     * Creates a new SQLite instance for a specific database
+     */
+    public SQLite() {
+        Database.database = this;
+    }
+
     @Override
-    public Connection connect() throws SQLException,
-            ClassNotFoundException {
+    public Connection connect() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return connection;
         }
 
-        String pathway = Conquest.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "database.sql";
+        String pathway = Conquest.getInstance().getDataFolder() + File.separator + "Data" + File.separator + "database.db";
 		File file = new File(pathway);
 		if (!file.exists()) {
 			try {

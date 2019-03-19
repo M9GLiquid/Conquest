@@ -34,13 +34,13 @@
 # |     <CaptureBelowHeight>:	                          Amount of Blocks below the outpost you can be to capture it (Y).
 # ========================================================
 Database:
+  TablePrefix: kc_
   Backend: SQLite
   MySql:
     Host: localhost
     Database: conquest
     User: root
     Password: root
-    TablePrefix: kc_
     Port: 3306
   SqlLite:
     Database: conquest

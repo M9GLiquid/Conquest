@@ -18,7 +18,6 @@ public class MySQL extends Database {
     private String host;
     private String user;
     private int port;
-    private Connection c;
 
     /**
      * Creates a new MySQL instance for a specific database

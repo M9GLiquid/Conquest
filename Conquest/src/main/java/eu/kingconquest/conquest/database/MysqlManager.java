@@ -4,10 +4,9 @@ import eu.kingconquest.conquest.core.*;
 import eu.kingconquest.conquest.database.core.Database;
 import eu.kingconquest.conquest.database.core.YmlStorage;
 import eu.kingconquest.conquest.util.DataType;
-import eu.kingconquest.conquest.util.Message;
-import eu.kingconquest.conquest.util.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,8 +16,6 @@ import java.util.UUID;
 public class MysqlManager {
     private static Database database;
     private static String tablePrefix;
-    private static String outputStream = "&6| - &cFailed:";//TODO: Move into last executed method for Failed/Success state (Try/Catch)
-    private YmlStorage config;
 
     public MysqlManager(DataType option) {
         database = Database.getDatabase();
@@ -30,7 +27,7 @@ public class MysqlManager {
                 userLoad();
                 townLoad(); // Need Testing
                 villageLoad(); // Need Testing
-                outputStream = "&6| - &aSuccess:"; //TODO: Move into last executed method for Failed/Success state (Try/Catch)
+                Database.setOutputStream("&6| - &aSuccess:"); //TODO: Move into last executed method for Failed/Success state (Try/Catch)
                 break;
             case REMOVE:
                 kingdomRemove(); // Need Testing
@@ -45,7 +42,7 @@ public class MysqlManager {
                 usersSave();
                 townSave(); // Need Testing
                 villageSave(); // Need Testing
-                outputStream = "&6| - &aSuccess:";//TODO: Move into last executed method for Failed/Success state (Try/Catch)
+                Database.setOutputStream("&6| - &aSuccess:"); //TODO: Move into last executed method for Failed/Success state (Try/Catch)
                 break;
             case CREATE:
                 kingdomTableCreate(); // Working
@@ -61,7 +58,7 @@ public class MysqlManager {
     /**
      * Kingdom Queries
      */
-    public static void kingdomSave() {
+    private void kingdomSave() {
         Kingdom.getKingdoms().forEach(kingdom -> {
             if (!kingdom.getUpdate())
                 return;
@@ -132,7 +129,7 @@ public class MysqlManager {
         });
     }
 
-    public static void kingdomLoad() {
+    private void kingdomLoad() {
         try {
             ResultSet rs = database.querySQL("SELECT * FROM " + tablePrefix + "kingdoms");
             while (rs.next()) {
@@ -162,7 +159,7 @@ public class MysqlManager {
         }
     }
 
-    public static void kingdomRemove() {
+    private void kingdomRemove() {
         Kingdom.getRemovedKingdoms().forEach(kingdom -> {
             try {
                 database.updateSQL("DELETE FROM " + tablePrefix + "kingdoms WHERE `kingdom_uuid`='" + kingdom.getUUID().toString() + "')");
@@ -173,7 +170,7 @@ public class MysqlManager {
         Kingdom.getRemovedKingdoms().clear();
     }
 
-    public static void kingdomTableCreate() {
+    private void kingdomTableCreate() {
         try {
             database.updateSQL("CREATE TABLE IF NOT EXISTS " + tablePrefix + "kingdoms (" +
                     "    kingdom_uuid VARCHAR(45) NOT NULL," +
@@ -198,7 +195,7 @@ public class MysqlManager {
     /**
      * World Queries
      */
-    public static void worldSave() {
+    private void worldSave() {
         ActiveWorld.getWorlds().forEach(world -> {
 
             if (!world.getUpdate())
@@ -245,7 +242,7 @@ public class MysqlManager {
         });
     }
 
-    public static void worldLoad() {
+    private void worldLoad() {
         try {
             ResultSet rs = database.querySQL("SELECT * FROM " + tablePrefix + "worlds");
             while (rs.next()) {
@@ -263,10 +260,10 @@ public class MysqlManager {
         }
     }
 
-    public static void worldRemove() {
+    private void worldRemove() {
     }
 
-    public static void worldTableCreate() {
+    private void worldTableCreate() {
         try {
             database.updateSQL("CREATE TABLE IF NOT EXISTS " + tablePrefix + "worlds (" +
                     "    world_uuid VARCHAR(45) NOT NULL," +
@@ -282,7 +279,7 @@ public class MysqlManager {
     /**
      * Town Queries
      */
-    public static void townSave() {
+    private void townSave() {
         Town.getTowns().forEach(town -> {
             if (!town.getUpdate())
                 return;
@@ -352,7 +349,7 @@ public class MysqlManager {
         });
     }
 
-    public static void townLoad() {
+    private void townLoad() {
         try {
             ResultSet rs = database.querySQL("SELECT * FROM " + tablePrefix + "towns");
         } catch (SQLException | ClassNotFoundException e) {
@@ -360,10 +357,10 @@ public class MysqlManager {
         }
     }
 
-    public static void townRemove() {
+    private void townRemove() {
     }
 
-    public static void townTableCreate() {
+    private void townTableCreate() {
         try {
             database.updateSQL("CREATE TABLE IF NOT EXISTS " + tablePrefix + "towns (" +
                     "    town_uuid VARCHAR(45) NOT NULL," +
@@ -389,7 +386,7 @@ public class MysqlManager {
     /**
      * Village Queries
      */
-    public static void villageSave() {
+    private void villageSave() {
         Village.getVillages().forEach(village -> {
             if (!village.getUpdate())
                 return;
@@ -462,7 +459,7 @@ public class MysqlManager {
         });
     }
 
-    public static void villageLoad() {
+    private void villageLoad() {
         try {
             ResultSet rs = database.querySQL("SELECT * FROM " + tablePrefix + "villages");
         } catch (SQLException | ClassNotFoundException e) {
@@ -470,10 +467,10 @@ public class MysqlManager {
         }
     }
 
-    public static void villageRemove() {
+    private void villageRemove() {
     }
 
-    public static void villageTableCreate() {
+    private void villageTableCreate() {
         try {
             database.updateSQL("CREATE TABLE IF NOT EXISTS " + tablePrefix + "villages (" +
                     "    `village_uuid` VARCHAR(45) NOT NULL," +
@@ -498,8 +495,7 @@ public class MysqlManager {
         }
     }
 
-
-    public static void usersSave() {
+    private void usersSave() {
         Bukkit.getOnlinePlayers().forEach(user -> {
             PlayerWrapper wrapper = new PlayerWrapper(user.getUniqueId());
             Kingdom kingdom = wrapper.getKingdom(ActiveWorld.getActiveWorld(user.getWorld()));
@@ -541,13 +537,13 @@ public class MysqlManager {
         });
     }
 
-    public static void userLoad() {
+    private void userLoad() {
     }
 
-    public static void userRemove() {
+    private void userRemove() {
     }
 
-    public static void userTableCreate() {
+    private void userTableCreate() {
         try {
             database.updateSQL("CREATE TABLE IF NOT EXISTS " + tablePrefix + "users (" +
                     "    user_uuid VARCHAR(45) NOT NULL," +
@@ -561,7 +557,47 @@ public class MysqlManager {
         }
     }
 
-    public static void output() {
-        new Message(MessageType.CONSOLE, outputStream);
+    //TODO:
+    public void saveUser(Player user) {
+        PlayerWrapper wrapper = new PlayerWrapper(user.getUniqueId());
+        Kingdom kingdom = wrapper.getKingdom(ActiveWorld.getActiveWorld(user.getWorld()));
+
+        try {
+            // TODO: Tiny Performance enhancement Don't "Select *" Instead select something specific
+            ResultSet rs = database.querySQL(
+                    "SELECT * " +
+                            "FROM " + tablePrefix + "kingdoms " +
+                            "WHERE EXISTS " +
+                            "(SELECT * FROM " + tablePrefix + "users WHERE `user_uuid`='" + user.getUniqueId().toString() + "')");
+            if (!rs.next()) {
+                database.updateSQL(
+                        "INSERT INTO " + tablePrefix + "kingdoms " +
+                                "VALUES('" +
+                                user.getUniqueId().toString() + "','" +
+                                kingdom.getUUID().toString() + "','" +
+                                wrapper.getHierarchy().getName() + "');");
+
+            } else {
+                PreparedStatement ps = database.getConnection().prepareStatement(
+                        "UPDATE " + tablePrefix + "kingdoms " +
+                                "SET " +
+                                "`kingdom_uuid` = ?," +
+                                "`rank` = ?" +
+                                "WHERE `user_uuid`=?");
+
+                // set the preparedstatement parameters
+                ps.setString(1, kingdom.getUUID().toString());
+                ps.setString(2, wrapper.getHierarchy().getName());
+                ps.setString(3, user.getUniqueId().toString());
+
+                ps.executeUpdate();
+                ps.close();
+
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
+
 }
