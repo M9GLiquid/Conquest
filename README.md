@@ -1,4 +1,5 @@
 # Conquest Minecraft Plugin for Spigot
+![Last Updated](https://img.shields.io/badge/Date-2023--09--27-green)
 
 This plugin brings a captivating conquest experience to Minecraft, allowing players to capture towns and villages for their kingdom, interact with custom NPCs and monsters, and visualize their conquests via the Dynmap plugin.
 
