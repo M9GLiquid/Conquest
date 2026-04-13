@@ -3,6 +3,7 @@
 ![Last Updated](https://img.shields.io/badge/Last%20Updated-2023--09--27-green)
 
 This plugin brings a conquest experience to Minecraft, allowing players to capture towns and villages for their kingdom, interact with custom NPCs and monsters, and visualize their conquests via the Dynmap plugin.
+Alpha Branch contains 0.8.0 and 0.9.3, None were finished sadly.
 
 ## Features
 
@@ -31,7 +32,7 @@ Administrators with the right permissions can:
 - Set up kits and modify specific values such as teleportation placements.
 
 ## Version History
-
+Jan 3, 2019
 | Version | Name                     | ETA        | Description |
 |--------:|--------------------------|------------|-------------|
 | 0.1     | Closed Beta              | 2016-06-11 | Basics such as capture system, permissions, and command structures. Also includes the first iteration of the kingdom system (Join/Leave). |
@@ -41,14 +42,15 @@ Administrators with the right permissions can:
 | 0.5     | Firework Update          | 2016-11-23 | Added fireworks feature. |
 | 0.6     | Economy Update           | 2016-12-01 | Introduced permissions, player rewards, kingdom rewards, and mob spawning. |
 | 0.7     | Kit Update               | 2017-06-14 | Introduced chat interact system, kit system, and kit reward system. |
-| 0.8     | Kingdom Hierarchy Update | TBD        | Implement player hierarchy within a kingdom, town, and village. |
-| 0.9     | Custom Spawner Update    | TBD        | Added custom spawners with custom mobs and related GUIs. |
+| 0.8     | Arena Update             | 2019-01-03 | Implement player hierarchy within a kingdom, town, and village. |
+| 0.9     | Custom Spawner Update    | 2019-03-19 | Added custom spawners with custom mobs and related GUIs. |
 | 0.10    | Worlds Update            | TBD        | Introduce multiple worlds accessibility feature. |
-| 0.11    | Events Update            | TBD        | Introduce custom events for all players. |
+| 0.11    | Kingdom Hierarchy        | TBD        | Introduce custom events for all players. |
+| 0.12    | Events Update            | TBD        | Introduce custom events for all players. |
 | 1.0     | Launch Update            | TBD        | Introduce world regrow feature, enabling mining as worlds regrow over time. |
 
 ## About
-
+Kingdom Hierarchy
 Minecraft Plugin
 
 Website: https://www.kingconquest.eu
