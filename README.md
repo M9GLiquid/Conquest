@@ -2,7 +2,7 @@
 
 ![Last Updated](https://img.shields.io/badge/Last%20Updated-2023--09--27-green)
 
-This plugin brings a conquest experience to Minecraft, allowing players to capture towns and villages for their kingdom, interact with custom NPCs and monsters, and visualize their conquests via the Dynmap plugin.
+This plugin brings a conquest experience to Minecraft, allowing players to capture towns and villages for their kingdom, interact with custom NPCs and monsters, and visualize their conquests via the Dynmap plugin.  
 Alpha Branch contains 0.8.0 and 0.9.3, None were finished sadly.
 
 ## Features
